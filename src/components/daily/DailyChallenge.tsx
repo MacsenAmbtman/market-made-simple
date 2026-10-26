@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Check, Coins, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import { useDaily } from "@/hooks/use-daily";
 import { addDays, buildCtx, challengeFor, challengeReward, claimChallenge, isClaimed } from "@/lib/daily";
@@ -118,19 +119,34 @@ export function DailyChallenge({ sim }: { sim?: SimState }) {
   );
 }
 
-/** Compact streak indicator for navigation. */
+/** Round streak button for navigation; opens a panel with the streak count. */
 export function StreakBadge({ className = "" }: { className?: string }) {
-  const { daily, streak, checkedInToday } = useDaily();
-  if (!daily) return null;
+  const { daily, streak, checkedInToday, checkIn } = useDaily();
+  if (!daily) return <div className={`h-9 w-9 shrink-0 rounded-full ${className}`} aria-hidden />;
   return (
-    <Link
-      to="/learn"
-      title={checkedInToday ? `${streak}-day streak` : "Check in today to keep your streak"}
-      className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${streak ? "border-orange-400/40 text-orange-300" : "text-muted-foreground"} ${className}`}
-    >
-      <Flame className="h-3.5 w-3.5" aria-hidden />
-      {streak}-day streak
-      {!checkedInToday && <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="Not checked in today" />}
-    </Link>
+    <Popover>
+      <PopoverTrigger
+        aria-label={checkedInToday ? `${streak}-day streak` : "Check in today to keep your streak"}
+        className={`relative grid h-9 w-9 shrink-0 place-items-center rounded-full border transition-colors ${streak ? "border-orange-400/40 bg-orange-400/10 text-orange-300 hover:bg-orange-400/20" : "border-border bg-card text-muted-foreground hover:bg-muted"} ${className}`}
+      >
+        <Flame className="h-4.5 w-4.5" aria-hidden />
+        {!checkedInToday && <span className="absolute right-0 top-0 h-2 w-2 rounded-full border-2 border-surface bg-primary" aria-label="Not checked in today" />}
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-60 p-4">
+        <p className="flex items-center gap-2 font-display text-lg font-bold">
+          <Flame className={`h-5 w-5 ${streak ? "text-orange-400" : "text-muted-foreground"}`} aria-hidden />
+          {streak}-day streak
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {checkedInToday ? "You're checked in today — come back tomorrow to keep it going." : "Check in today to keep your streak alive!"}
+          {daily.best > 0 && ` Best: ${daily.best} days.`}
+        </p>
+        {!checkedInToday && (
+          <Button size="sm" variant="secondary" className="mt-3 w-full" onClick={checkIn}>
+            <Flame /> Check in for today
+          </Button>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }
