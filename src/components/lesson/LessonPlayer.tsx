@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { getProgress, lessons, PASS_SCORE, recordQuiz, saveSlide, type Lesson, type QuizOutcome } from "@/lib/lessons";
 import { fmt } from "@/lib/simulator";
+import { ScenarioCard } from "./ScenarioCard";
 
 type Phase = "slides" | "quiz" | "result";
 
@@ -128,6 +129,7 @@ function SlideView({ lesson, index, onPrev, onNext, onJump, onQuiz }: { lesson: 
             <p className="mt-1 text-sm text-muted-foreground">{s.stat.label}</p>
           </div>
         )}
+        {s.scenario && <ScenarioCard key={s.scenario.id} scenario={s.scenario} />}
         {s.callout && <p className="mt-6 rounded-xl border-l-4 border-primary bg-accent/60 px-4 py-3 text-sm font-medium text-accent-foreground">💡 {s.callout}</p>}
       </div>
 

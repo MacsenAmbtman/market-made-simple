@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { BookOpen, LineChart, BookA, Trophy, TrendingUp } from "lucide-react";
 import type { ReactNode } from "react";
+import { StreakBadge } from "@/components/daily/DailyChallenge";
 
 const nav = [
   { to: "/learn", label: "Learn", icon: BookOpen },
@@ -34,9 +35,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             );
           })}
         </nav>
+        <StreakBadge className="mt-auto self-start" />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col pb-20 md:pb-0">
-        <header className="flex h-14 items-center border-b px-4 md:hidden"><Logo /></header>
+        <header className="flex h-14 items-center justify-between border-b px-4 md:hidden"><Logo /><StreakBadge /></header>
         <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8">{children}</main>
       </div>
       <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 border-t bg-surface md:hidden">

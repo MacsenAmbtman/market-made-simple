@@ -72,27 +72,3 @@ export function Sparkline({ data }: { data: number[] }) {
     </ResponsiveContainer>
   );
 }
-
-/** One stacked bar of where the money sits, with a labeled legend underneath. */
-export function AllocationBar({ slices }: { slices: { key: string; label: string; value: number; color: string }[] }) {
-  const total = slices.reduce((s, x) => s + x.value, 0) || 1;
-  const shown = slices.filter((s) => s.value > 0);
-  return (
-    <div>
-      <div className="flex h-3 w-full gap-[2px] overflow-hidden rounded-full" role="img" aria-label="Portfolio allocation">
-        {shown.map((s) => (
-          <div key={s.key} title={`${s.label}: ${fmt(s.value)} (${((s.value / total) * 100).toFixed(1)}%)`} style={{ width: `${(s.value / total) * 100}%`, background: s.color }} className="transition-[width] duration-500" />
-        ))}
-      </div>
-      <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm sm:grid-cols-3">
-        {shown.map((s) => (
-          <li key={s.key} className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ background: s.color }} />
-            <span className="text-muted-foreground">{s.label}</span>
-            <span className="ml-auto font-medium tabular-nums">{((s.value / total) * 100).toFixed(1)}%</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}

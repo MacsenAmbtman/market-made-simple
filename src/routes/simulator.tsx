@@ -21,6 +21,9 @@ import {
 import { PriceChart, Sparkline, ValueChart } from "@/components/simulator/charts";
 import { OrderTicket } from "@/components/simulator/OrderTicket";
 import { PortfolioTracker } from "@/components/simulator/PortfolioTracker";
+import { AllocationBreakdown } from "@/components/simulator/AllocationBreakdown";
+import { TradeHistoryLog } from "@/components/simulator/TradeHistoryLog";
+import { DailyChallenge } from "@/components/daily/DailyChallenge";
 import { useSimulator } from "@/hooks/use-simulator";
 import { contributed, fmt, holdingsValue, priceOf, reservedCash, START_CASH, STOCKS, totalValue } from "@/lib/simulator";
 import type { Reward } from "@/lib/rewards";
@@ -175,8 +178,15 @@ function Simulator() {
         })}
       </div>
 
-      <div className="mt-8">
-        <PortfolioTracker state={state} onCancel={cancel} onSelect={setSym} />
+      <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_380px]">
+        <div className="grid min-w-0 gap-6">
+          <PortfolioTracker state={state} onCancel={cancel} onSelect={setSym} />
+          <TradeHistoryLog trades={state.trades} />
+        </div>
+        <div className="grid gap-6">
+          <DailyChallenge sim={state} />
+          <AllocationBreakdown state={state} />
+        </div>
       </div>
     </AppShell>
   );

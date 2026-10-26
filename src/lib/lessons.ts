@@ -2,6 +2,7 @@
 // Passing a quiz grants one-time bonus capital through the rewards ledger.
 
 import { grantReward, hasReward } from "./rewards";
+import type { Scenario } from "./scenarios";
 
 export type Slide = {
   emoji: string;
@@ -9,6 +10,7 @@ export type Slide = {
   body: string;
   callout?: string; // highlighted key takeaway
   stat?: { value: string; label: string };
+  scenario?: Scenario; // interactive Buy / Hold / Sell news scenario
 };
 export type QuizQuestion = { q: string; options: string[]; answer: number; explain: string };
 export type Lesson = {
@@ -30,7 +32,7 @@ export const lessons: Lesson[] = [
     title: "What is a Stock?",
     emoji: "🧩",
     blurb: "Owning a tiny slice of a real company.",
-    minutes: 4,
+    minutes: 5,
     reward: 500,
     slides: [
       {
@@ -62,6 +64,28 @@ export const lessons: Lesson[] = [
         body: "A stock's price is simply what buyers and sellers agree on right now. When more people want to buy than sell, the price rises; when more want to sell, it falls. Expectations about future profits drive those decisions.",
         callout: "A stock price is the market's best guess about a company's future, updated every second.",
       },
+      {
+        emoji: "🚨",
+        title: "Scenario: breaking news",
+        body: "You own 10 shares of a coffee chain. Watch the market, then decide what to do when the headline hits.",
+        scenario: {
+          id: "bean-earnings",
+          sym: "BEAN",
+          company: "Daily Grind Coffee (fictional)",
+          headline: "Daily Grind Coffee posts record profits, plans 200 new cafés",
+          source: "MarketWire",
+          startPrice: 48,
+          owned: 10,
+          gap: 0.08,
+          drift: 0.11,
+          best: "hold",
+          feedback: {
+            buy: "You bought after the news — but the price had already jumped before you could click. Markets price in news within seconds, so chasing headlines usually means paying the new, higher price.",
+            hold: "As a part-owner, your shares rose with the company's brighter future. Good news for the business is good news for its owners.",
+            sell: "You locked in a quick gain, but missed the further rise as more investors piled in. Selling isn't wrong — just make sure it's part of your plan, not a reaction to a headline.",
+          },
+        },
+      },
     ],
     quiz: [
       {
@@ -89,7 +113,7 @@ export const lessons: Lesson[] = [
     title: "Understanding Risk & Reward",
     emoji: "🎢",
     blurb: "Why prices wiggle — and how to handle it.",
-    minutes: 5,
+    minutes: 6,
     reward: 750,
     slides: [
       {
@@ -114,6 +138,28 @@ export const lessons: Lesson[] = [
         title: "Time smooths the ride",
         body: "Over a single year the market can fall hard — the S&P 500 dropped about 37% in 2008. But over long periods it has historically averaged roughly 10% a year before inflation. Staying invested through the dips has mattered more than timing them.",
         stat: { value: "~10%", label: "S&P 500 long-run average yearly return (not guaranteed)" },
+      },
+      {
+        emoji: "🚨",
+        title: "Scenario: the market drops",
+        body: "You own 10 shares of an S&P 500 index fund. Fear is spreading — what do you do?",
+        scenario: {
+          id: "index-dip",
+          sym: "SPY",
+          company: "S&P 500 index fund",
+          headline: "Stocks tumble as recession fears grip Wall Street",
+          source: "Financial Daily",
+          startPrice: 500,
+          owned: 10,
+          gap: -0.045,
+          drift: -0.015,
+          best: "hold",
+          feedback: {
+            buy: "You bought the dip at a lower price, and the market recovered part of its fall. Adding to a diversified fund when it's \"on sale\" can work for long-term investors — as long as it's money you won't need soon.",
+            hold: "You stayed calm, and the fund won back part of its drop. Historically, sitting tight through dips has done better than panic-selling.",
+            sell: "You sold near the bottom and locked in the loss — then the price recovered without you. Panic-selling during a drop is one of the most common beginner mistakes.",
+          },
+        },
       },
       {
         emoji: "🧘",
@@ -148,7 +194,7 @@ export const lessons: Lesson[] = [
     title: "How Market Orders Work",
     emoji: "🛒",
     blurb: "What actually happens when you press Buy.",
-    minutes: 5,
+    minutes: 6,
     reward: 1000,
     slides: [
       {
@@ -167,6 +213,28 @@ export const lessons: Lesson[] = [
         title: "Bid, ask & the spread",
         body: "The bid is the highest price buyers are currently offering; the ask is the lowest price sellers will accept. A market buy usually fills at the ask, and a market sell at the bid. The small gap between them is the spread.",
         callout: "Heavily traded stocks usually have spreads of just a cent or two.",
+      },
+      {
+        emoji: "🚨",
+        title: "Scenario: a fast market",
+        body: "You own 15 shares of an electric-car maker. Bad news hits and the price moves fast — watch what happens to a market order.",
+        scenario: {
+          id: "zapp-gap",
+          sym: "ZAPP",
+          company: "Zapp Electric (fictional)",
+          headline: "Zapp Electric misses earnings; shares gap lower at the open",
+          source: "MarketWire",
+          startPrice: 80,
+          owned: 15,
+          gap: -0.12,
+          drift: -0.1,
+          slippage: 0.012,
+          feedback: {
+            buy: "Your market buy filled above the last price you saw — that's slippage, common when prices move fast. A limit order would have capped what you paid.",
+            hold: "You held through the drop. The price steadied a little, but bad earnings can weigh on a stock for a while — holding is a bet that the business recovers.",
+            sell: "Your market sell filled instantly, but below the last price on screen because buyers had pulled back. In fast markets, market orders trade price certainty for speed.",
+          },
+        },
       },
       {
         emoji: "🎯",
@@ -220,6 +288,8 @@ export type LessonProgress = {
   completed: boolean;
   bestScore: number;
   attempts: number;
+  lastScore?: number | undefined;
+  lastAttemptAt?: number | undefined;
   completedAt?: number | undefined;
 };
 
@@ -287,6 +357,8 @@ export function recordQuiz(lesson: Lesson, answers: number[]): QuizOutcome {
   all[lesson.slug] = {
     ...prev,
     attempts: prev.attempts + 1,
+    lastScore: score,
+    lastAttemptAt: Date.now(),
     bestScore: Math.max(prev.bestScore, score),
     completed: prev.completed || passed,
     completedAt: prev.completedAt ?? (passed ? Date.now() : undefined),

@@ -19,7 +19,19 @@ export const STOCKS: StockDef[] = [
 
 export type Side = "buy" | "sell";
 export type Holding = { shares: number; cost: number }; // cost = total cost basis
-export type Trade = { id: string; t: number; sym: string; side: Side; shares: number; price: number; realized?: number | undefined };
+export type OrderKind = "market" | "limit";
+export type Trade = {
+  id: string;
+  t: number; // market tick
+  at?: number | undefined; // wall-clock ms (absent on trades saved by older versions)
+  kind?: OrderKind | undefined;
+  sym: string;
+  side: Side;
+  shares: number;
+  price: number; // fill price (exit price for sells)
+  entry?: number | undefined; // average cost per share sold, for sells
+  realized?: number | undefined;
+};
 export type LimitOrder = { id: string; t: number; sym: string; side: Side; shares: number; limit: number };
 
 export type SimState = {
@@ -75,12 +87,13 @@ export function reservedShares(s: SimState, sym: string) {
 }
 
 /** Execute a fill at `price`. Returns null if the account can't cover it. */
-function fill(s: SimState, sym: string, side: Side, shares: number, price: number): { state: SimState; trade: Trade } | null {
+function fill(s: SimState, sym: string, side: Side, shares: number, price: number, kind: OrderKind): { state: SimState; trade: Trade } | null {
   const cost = round2(shares * price);
   const h = s.holdings[sym] ?? { shares: 0, cost: 0 };
   const holdings = { ...s.holdings };
   let cash = s.cash;
   let realized: number | undefined;
+  let entry: number | undefined;
 
   if (side === "buy") {
     if (cost > cash - reservedCash(s) + 1e-9) return null;
@@ -90,13 +103,14 @@ function fill(s: SimState, sym: string, side: Side, shares: number, price: numbe
     if (shares > h.shares) return null;
     const basis = h.shares ? (h.cost * shares) / h.shares : 0;
     realized = round2(cost - basis);
+    entry = h.shares ? round2(h.cost / h.shares) : undefined;
     cash = round2(cash + cost);
     const left = h.shares - shares;
     if (left > 0) holdings[sym] = { shares: left, cost: round2(h.cost - basis) };
     else delete holdings[sym];
   }
 
-  const trade: Trade = { id: uid(), t: s.tick, sym, side, shares, price, realized };
+  const trade: Trade = { id: uid(), t: s.tick, at: Date.now(), kind, sym, side, shares, price, entry, realized };
   return {
     trade,
     state: {
@@ -114,7 +128,7 @@ export function placeMarketOrder(s: SimState, sym: string, side: Side, shares: n
   const price = priceOf(s, sym);
   if (side === "sell" && shares > (s.holdings[sym]?.shares ?? 0) - reservedShares(s, sym))
     return { state: s, result: { ok: false, error: `You don't have ${shares} free ${sym} shares to sell.` } };
-  const f = fill(s, sym, side, shares, price);
+  const f = fill(s, sym, side, shares, price, "market");
   if (!f) return { state: s, result: { ok: false, error: "Not enough available cash." } };
   return { state: f.state, result: { ok: true, trade: f.trade } };
 }
@@ -149,7 +163,7 @@ export function executeOrders(s: SimState): SimState {
     if (!hit) continue;
     // Release this order's own reservation before filling it.
     const without = { ...state, orders: state.orders.filter((x) => x.id !== o.id) };
-    const f = fill(without, o.sym, o.side, o.shares, price);
+    const f = fill(without, o.sym, o.side, o.shares, price, "limit");
     state = f ? f.state : without; // unfillable orders are dropped
   }
   return state;

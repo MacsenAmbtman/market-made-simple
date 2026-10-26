@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { DailyChallenge } from "@/components/daily/DailyChallenge";
 import { Progress } from "@/components/ui/progress";
 import { getAllProgress, isRewarded, lessons, upcoming, type LessonProgress } from "@/lib/lessons";
-import { totalRewards } from "@/lib/rewards";
+import { REWARDS_EVENT, totalRewards } from "@/lib/rewards";
 import { fmt } from "@/lib/simulator";
 import { CheckCircle2, Clock, Coins, Lock } from "lucide-react";
 
@@ -26,7 +27,10 @@ function Learn() {
   useEffect(() => {
     setProgress(getAllProgress());
     setRewarded(lessons.filter((l) => isRewarded(l.slug)).map((l) => l.slug));
-    setEarned(totalRewards());
+    const refreshEarned = () => setEarned(totalRewards());
+    refreshEarned();
+    window.addEventListener(REWARDS_EVENT, refreshEarned);
+    return () => window.removeEventListener(REWARDS_EVENT, refreshEarned);
   }, []);
 
   const done = lessons.filter((l) => progress[l.slug]?.completed).length;
@@ -49,6 +53,10 @@ function Learn() {
           <p className="flex items-center gap-1.5 text-sm text-muted-foreground"><Coins className="h-4 w-4 text-primary" />Bonus capital earned</p>
           <p className="mt-1 font-display text-2xl font-bold tabular-nums">{fmt(earned)} <span className="text-sm font-normal text-muted-foreground">of {fmt(available)}</span></p>
         </Link>
+      </div>
+
+      <div className="mt-4">
+        <DailyChallenge />
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
