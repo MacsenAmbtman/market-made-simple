@@ -1,8 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Pause, Play, RotateCcw, StepForward } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { PriceChart, Sparkline, ValueChart } from "@/components/simulator/charts";
+import { OrderTicket } from "@/components/simulator/OrderTicket";
+import { PortfolioTracker } from "@/components/simulator/PortfolioTracker";
+import { useSimulator } from "@/hooks/use-simulator";
+import { fmt, holdingsValue, priceOf, reservedCash, START_CASH, STOCKS, totalValue } from "@/lib/simulator";
 
 export const Route = createFileRoute("/simulator")({
   head: () => ({
@@ -16,100 +34,139 @@ export const Route = createFileRoute("/simulator")({
   component: Simulator,
 });
 
-const START = 10000;
-const initialStocks = [
-  { sym: "AAPL", name: "Apple", price: 189.4 },
-  { sym: "TSLA", name: "Tesla", price: 242.1 },
-  { sym: "SPY", name: "S&P 500 Index", price: 512.3 },
-  { sym: "KO", name: "Coca-Cola", price: 61.2 },
-];
-const fmt = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+const pct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
 
 function Simulator() {
-  const [stocks, setStocks] = useState(initialStocks);
-  const [cash, setCash] = useState(START);
-  const [holdings, setHoldings] = useState<Record<string, number>>({});
-  const [history, setHistory] = useState([{ t: 0, value: START }]);
+  const { state, live, setLive, step, submit, cancel, reset } = useSimulator();
+  const [sym, setSym] = useState(STOCKS[0]!.sym);
 
-  const value = (s = stocks, c = cash, h = holdings) => c + s.reduce((sum, st) => sum + (h[st.sym] ?? 0) * st.price, 0);
+  const total = totalValue(state);
+  const change = ((total - START_CASH) / START_CASH) * 100;
+  const invested = holdingsValue(state);
+  const reserved = reservedCash(state);
+  const selected = STOCKS.find((s) => s.sym === sym)!;
+  const series = state.prices[sym] ?? [];
+  const windowStart = series[0] ?? selected.price;
+  const symChange = ((priceOf(state, sym) - windowStart) / windowStart) * 100;
 
-  const tick = (c: number, h: Record<string, number>) => {
-    const next = stocks.map((s) => ({ ...s, price: +(s.price * (1 + (Math.random() - 0.47) * 0.04)).toFixed(2) }));
-    setStocks(next);
-    setHistory((hs) => [...hs, { t: hs.length, value: +value(next, c, h).toFixed(2) }]);
-  };
-
-  const trade = (sym: string, dir: 1 | -1) => {
-    const st = stocks.find((s) => s.sym === sym)!;
-    const owned = holdings[sym] ?? 0;
-    if (dir === 1 && cash < st.price) return;
-    if (dir === -1 && owned < 1) return;
-    const c = cash - dir * st.price;
-    const h = { ...holdings, [sym]: owned + dir };
-    setCash(c); setHoldings(h); tick(c, h);
-  };
-
-  const total = value();
-  const change = ((total - START) / START) * 100;
+  const tiles = [
+    { label: "Portfolio value", value: fmt(total), sub: <span className={change >= 0 ? "text-primary" : "text-destructive"}>{pct(change)} all time</span> },
+    { label: "Cash", value: fmt(state.cash), sub: reserved > 0 ? `${fmt(reserved)} reserved for orders` : "Ready to invest" },
+    { label: "Invested", value: fmt(invested), sub: `${Object.keys(state.holdings).length} positions` },
+    { label: "Realized gain / loss", value: <span className={state.realized >= 0 ? "text-primary" : "text-destructive"}>{state.realized >= 0 ? "+" : "−"}{fmt(Math.abs(state.realized))}</span>, sub: "From shares you've sold" },
+  ];
 
   return (
     <AppShell>
-      <h1 className="text-3xl font-bold">Paper Simulator</h1>
-      <p className="mt-1 text-muted-foreground">Fake money, real lessons. Every trade moves the market a little.</p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        {[["Portfolio value", fmt(total)], ["Cash", fmt(cash)], ["Return", `${change >= 0 ? "+" : ""}${change.toFixed(2)}%`]].map(([l, v], i) => (
-          <div key={l} className="rounded-2xl border bg-card p-5 shadow-card">
-            <p className="text-sm text-muted-foreground">{l}</p>
-            <p className={`mt-1 font-display text-2xl font-bold ${i === 2 ? (change >= 0 ? "text-primary" : "text-destructive") : ""}`}>{v}</p>
+      <Toaster position="top-right" theme="dark" richColors />
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Paper Simulator</h1>
+          <p className="mt-1 text-muted-foreground">Fake money, real lessons. Prices move live — your portfolio saves automatically.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="flex items-center gap-2 rounded-full border px-3 py-1 text-xs text-muted-foreground" aria-live="polite">
+            <span className={`h-2 w-2 rounded-full ${live ? "animate-pulse bg-primary" : "bg-muted-foreground"}`} />
+            {live ? "Market open" : "Paused"} · tick {state.tick}
+          </span>
+          <Button size="sm" variant="secondary" onClick={() => setLive(!live)}>
+            {live ? <><Pause /> Pause</> : <><Play /> Resume</>}
+          </Button>
+          <Button size="sm" variant="secondary" onClick={step} disabled={live}>
+            <StepForward /> Step
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size="sm" variant="ghost"><RotateCcw /> Reset</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Start over with $10,000?</AlertDialogTitle>
+                <AlertDialogDescription>This clears your holdings, open orders, trade history and price history. It can't be undone.</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Keep my portfolio</AlertDialogCancel>
+                <AlertDialogAction onClick={reset}>Reset simulator</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
+
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {tiles.map((t) => (
+          <div key={t.label} className="rounded-2xl border bg-card p-4 shadow-card sm:p-5">
+            <p className="text-sm text-muted-foreground">{t.label}</p>
+            <p className="mt-1 font-display text-xl font-bold tabular-nums sm:text-2xl">{t.value}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t.sub}</p>
           </div>
         ))}
       </div>
-      <div className="mt-6 rounded-2xl border bg-card p-5 shadow-card">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Balance over time</h2>
-          <Button size="sm" variant="secondary" onClick={() => tick(cash, holdings)}>Next day →</Button>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="min-w-0 rounded-2xl border bg-card p-5 shadow-card">
+          <Tabs defaultValue="stock">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <TabsList>
+                <TabsTrigger value="stock">{sym} price</TabsTrigger>
+                <TabsTrigger value="portfolio">Portfolio value</TabsTrigger>
+              </TabsList>
+            </div>
+            <TabsContent value="stock">
+              <div className="mt-2 flex items-baseline gap-3">
+                <p className="font-display text-2xl font-bold tabular-nums">{fmt(priceOf(state, sym))}</p>
+                <p className={`text-sm ${symChange >= 0 ? "text-primary" : "text-destructive"}`}>{pct(symChange)}</p>
+                <p className="text-sm text-muted-foreground">{selected.name} · last {series.length} ticks</p>
+              </div>
+              <div className="mt-4 h-72"><PriceChart data={series} tick={state.tick} /></div>
+            </TabsContent>
+            <TabsContent value="portfolio">
+              <div className="mt-2 flex items-baseline gap-3">
+                <p className="font-display text-2xl font-bold tabular-nums">{fmt(total)}</p>
+                <p className={`text-sm ${change >= 0 ? "text-primary" : "text-destructive"}`}>{pct(change)}</p>
+                <p className="text-sm text-muted-foreground">vs. {fmt(START_CASH)} start</p>
+              </div>
+              <div className="mt-4 h-72"><ValueChart data={state.valueHistory} start={START_CASH} /></div>
+            </TabsContent>
+          </Tabs>
         </div>
-        <div className="mt-4 h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={history}>
-              <defs>
-                <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.5} />
-                  <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="t" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} />
-              <YAxis domain={["auto", "auto"]} stroke="var(--muted-foreground)" fontSize={12} tickLine={false} width={70} tickFormatter={(v) => `$${Math.round(v)}`} />
-              <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12 }} formatter={(v: number) => fmt(v)} labelFormatter={(l) => `Day ${l}`} />
-              <Area type="monotone" dataKey="value" stroke="var(--primary)" strokeWidth={2.5} fill="url(#g)" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+        <OrderTicket state={state} sym={sym} onSymChange={setSym} submit={submit} />
       </div>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {stocks.map((s, i) => {
-          const base = initialStocks[i]?.price ?? s.price;
-          const diff = ((s.price - base) / base) * 100;
+
+      <h2 className="mt-8 font-semibold">Market</h2>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {STOCKS.map((s) => {
+          const hist = state.prices[s.sym] ?? [s.price];
+          const p = priceOf(state, s.sym);
+          const diff = ((p - s.price) / s.price) * 100;
+          const owned = state.holdings[s.sym]?.shares ?? 0;
           return (
-            <div key={s.sym} className="rounded-2xl border bg-card p-5 shadow-card">
+            <button
+              key={s.sym}
+              type="button"
+              onClick={() => setSym(s.sym)}
+              aria-pressed={sym === s.sym}
+              className={`rounded-2xl border bg-card p-4 text-left shadow-card transition-colors hover:border-primary/60 ${sym === s.sym ? "border-primary" : ""}`}
+            >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="font-display text-lg font-bold">{s.sym}</p>
-                  <p className="text-sm text-muted-foreground">{s.name}</p>
+                  <p className="font-display font-bold">{s.sym}</p>
+                  <p className="text-xs text-muted-foreground">{s.name}</p>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold">{fmt(s.price)}</p>
-                  <p className={`text-xs ${diff >= 0 ? "text-primary" : "text-destructive"}`}>{diff >= 0 ? "+" : ""}{diff.toFixed(2)}%</p>
+                <div className="text-right tabular-nums">
+                  <p className="font-semibold">{fmt(p)}</p>
+                  <p className={`text-xs ${diff >= 0 ? "text-primary" : "text-destructive"}`}>{pct(diff)}</p>
                 </div>
               </div>
-              <p className="mt-3 text-sm text-muted-foreground">You own <span className="font-medium text-foreground">{holdings[s.sym] ?? 0}</span> shares</p>
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <Button onClick={() => trade(s.sym, 1)} disabled={cash < s.price}>Buy</Button>
-                <Button variant="outline" onClick={() => trade(s.sym, -1)} disabled={!holdings[s.sym]}>Sell</Button>
-              </div>
-            </div>
+              <div className="mt-2 h-10"><Sparkline data={hist} /></div>
+              <p className="mt-1 text-xs text-muted-foreground">{owned ? `You own ${owned} shares` : "Not owned"}</p>
+            </button>
           );
         })}
+      </div>
+
+      <div className="mt-8">
+        <PortfolioTracker state={state} onCancel={cancel} onSelect={setSym} />
       </div>
     </AppShell>
   );
