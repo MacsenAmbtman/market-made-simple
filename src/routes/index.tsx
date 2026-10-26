@@ -6,9 +6,9 @@ import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Stockify — Learn to invest without the jargon" },
+      { title: "Stockify — The stock market, finally in plain English" },
       { name: "description", content: "Bite-sized stock market lessons for complete beginners, plus a risk-free paper trading simulator." },
-      { property: "og:title", content: "Stockify — Learn to invest without the jargon" },
+      { property: "og:title", content: "Stockify — The stock market, finally in plain English" },
       { property: "og:description", content: "Bite-sized investing lessons and a $10,000 paper simulator." },
     ],
   }),
@@ -41,7 +41,7 @@ function Landing() {
       </header>
       <section className="mx-auto max-w-4xl px-5 pt-10 pb-20 text-center md:pt-16">
         <h1 className="text-4xl font-bold leading-tight md:text-6xl">
-          Learn to invest <span className="text-primary">without the confusing jargon.</span>
+          The stock market, <span className="text-primary">finally in plain English.</span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">Short, friendly lessons that turn "what's a stock?" into confident first steps.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
