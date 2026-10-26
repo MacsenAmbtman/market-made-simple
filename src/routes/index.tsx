@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
 });
 
 const features = [
-  { icon: Layers, title: "Bite-sized modules", text: "5-minute lessons with quick quizzes. No textbooks, no jargon." },
+  { icon: Layers, title: "Bite-sized modules", text: "5-minute lessons with quick quizzes. Zero textbooks. Zero stress." },
   { icon: Globe2, title: "Real-world examples", text: "Learn with brands you know — coffee shops, phones, and cars." },
   { icon: LineChart, title: "Paper Simulator", text: "Practice with $10,000 of fake cash. Zero risk, real lessons." },
 ];
