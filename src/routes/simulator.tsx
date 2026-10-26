@@ -88,7 +88,8 @@ function Simulator() {
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {stocks.map((s, i) => {
-          const diff = ((s.price - initialStocks[i].price) / initialStocks[i].price) * 100;
+          const base = initialStocks[i]?.price ?? s.price;
+          const diff = ((s.price - base) / base) * 100;
           return (
             <div key={s.sym} className="rounded-2xl border bg-card p-5 shadow-card">
               <div className="flex items-start justify-between">

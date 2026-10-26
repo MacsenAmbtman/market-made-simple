@@ -39,7 +39,7 @@ function Lesson() {
   const [answers, setAnswers] = useState<(number | null)[]>(quiz.map(() => null));
   const answered = answers.filter((a) => a !== null).length;
   const pct = Math.round(((sections.length + answered) / (sections.length + quiz.length)) * 100);
-  const allRight = answers.every((a, i) => a === quiz[i].a);
+  const allRight = answers.every((a, i) => a === quiz[i]?.a);
   if (allRight) markCompleted(lesson.slug);
 
   return (
