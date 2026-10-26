@@ -118,5 +118,5 @@ export function claimChallenge(ctx: ChallengeCtx): number {
   if (ch.progress(ctx) < ch.target || isClaimed(ctx.today)) return 0;
   const { streak } = checkIn(ctx.today);
   const amount = challengeReward(streak);
-  return grantReward({ id: dailyRewardId(ctx.today), amount, label: `Daily challenge: ${ch.title} (🔥 ${streak}-day streak)` }) ? amount : 0;
+  return grantReward({ id: dailyRewardId(ctx.today), amount, label: `Daily challenge: ${ch.title} (${streak}-day streak)` }) ? amount : 0;
 }

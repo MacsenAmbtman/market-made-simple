@@ -156,7 +156,7 @@ export function GrowthCalculator() {
 
         <section className="grid gap-4 sm:grid-cols-2" aria-label="Insights">
           <div className="rounded-2xl border bg-card p-5 shadow-card">
-            <p className="text-sm font-semibold">✨ The snowball moment</p>
+            <p className="text-sm font-semibold">The snowball moment</p>
             <p className="mt-1 text-sm text-muted-foreground">
               {crossover
                 ? <>In <span className="font-semibold text-foreground">year {crossover}</span>, your interest earned overtakes everything you've put in. From then on, your money does most of the work.</>

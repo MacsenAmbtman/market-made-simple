@@ -18,7 +18,7 @@ describe("market orders", () => {
   it("buys shares and debits cash at the current price", () => {
     const { state, result } = placeMarketOrder(initialState(), "AAPL", "buy", 10);
     expect(result.ok).toBe(true);
-    expect(state.holdings.AAPL).toEqual({ shares: 10, cost: 1894 });
+    expect(state.holdings["AAPL"]).toEqual({ shares: 10, cost: 1894 });
     expect(state.cash).toBe(START_CASH - 1894);
     expect(totalValue(state)).toBeCloseTo(START_CASH);
   });
@@ -39,10 +39,10 @@ describe("market orders", () => {
     s = setPrice(s, "KO", 70);
     const r = placeMarketOrder(s, "KO", "sell", 4);
     expect(r.result.ok && r.result.trade?.realized).toBeCloseTo(4 * (70 - 61.2));
-    expect(r.state.holdings.KO?.shares).toBe(6);
-    expect(r.state.holdings.KO?.cost).toBeCloseTo(6 * 61.2);
+    expect(r.state.holdings["KO"]?.shares).toBe(6);
+    expect(r.state.holdings["KO"]?.cost).toBeCloseTo(6 * 61.2);
     const all = placeMarketOrder(r.state, "KO", "sell", 6).state;
-    expect(all.holdings.KO).toBeUndefined();
+    expect(all.holdings["KO"]).toBeUndefined();
     expect(all.realized).toBeCloseTo(10 * (70 - 61.2));
   });
 });
@@ -57,7 +57,7 @@ describe("limit orders", () => {
 
     const filled = stepMarket(setPrice(placed.state, "TSLA", 199), () => 0.5);
     expect(filled.orders).toHaveLength(0);
-    expect(filled.holdings.TSLA?.shares).toBe(10);
+    expect(filled.holdings["TSLA"]?.shares).toBe(10);
   });
 
   it("fills immediately when marketable", () => {
@@ -82,14 +82,14 @@ describe("market simulation", () => {
   it("appends a price per stock and a portfolio value point each tick", () => {
     const s = stepMarket(initialState());
     expect(s.tick).toBe(1);
-    expect(s.prices.AAPL).toHaveLength(2);
+    expect(s.prices["AAPL"]).toHaveLength(2);
     expect(s.valueHistory.at(-1)).toEqual({ t: 1, value: START_CASH });
   });
 
   it("caps history length", () => {
     let s = initialState();
     for (let i = 0; i < 200; i++) s = stepMarket(s);
-    expect(s.prices.AAPL?.length).toBe(120);
+    expect(s.prices["AAPL"]?.length).toBe(120);
     expect(s.valueHistory.length).toBe(120);
   });
 });

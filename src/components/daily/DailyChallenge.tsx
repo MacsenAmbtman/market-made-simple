@@ -64,7 +64,7 @@ export function DailyChallenge({ sim }: { sim?: SimState }) {
             return (
               <div key={d} className="flex flex-col items-center gap-1">
                 <span className={`grid h-7 w-7 place-items-center rounded-full text-xs ${on ? "bg-orange-400/20 text-orange-300" : "bg-muted text-muted-foreground"} ${d === today ? "ring-2 ring-primary/60" : ""}`} title={d}>
-                  {on ? "🔥" : ""}
+                  {on ? <Flame className="h-3.5 w-3.5" /> : null}
                 </span>
                 <span className="text-[10px] text-muted-foreground">{label}</span>
               </div>
@@ -83,7 +83,7 @@ export function DailyChallenge({ sim }: { sim?: SimState }) {
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Today's challenge</p>
-            <p className="mt-1 font-semibold">{ch.emoji} {ch.title}</p>
+            <p className="mt-1 font-semibold">{ch.title}</p>
             <p className="text-sm text-muted-foreground">{ch.description}</p>
           </div>
           <span className={`flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs ${claimed ? "text-muted-foreground" : "bg-accent text-accent-foreground"}`}>

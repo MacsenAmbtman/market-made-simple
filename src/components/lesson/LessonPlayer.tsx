@@ -68,7 +68,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
 
   return (
     <>
-      <div className="sticky top-0 z-10 -mx-4 bg-background/90 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
+      <div className="sticky top-16 z-10 -mx-4 bg-background/90 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
         <div className="flex items-center gap-3">
           <Link to="/learn" aria-label="Back to lessons" className="text-muted-foreground hover:text-foreground"><ArrowLeft className="h-5 w-5" /></Link>
           <Progress value={pct} className="h-2.5 flex-1" aria-label="Lesson progress" />
@@ -78,7 +78,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
 
       <div className="mx-auto max-w-2xl pb-10">
         <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-          <span>{lesson.emoji} {lesson.title}</span>
+          <span className="font-medium text-foreground">{lesson.title}</span>
           <span className="flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground"><Coins className="h-3 w-3" />+{fmt(lesson.reward)} simulator bonus</span>
           {completedBefore && <span className="flex items-center gap-1 text-xs text-primary"><Check className="h-3 w-3" />Completed</span>}
         </div>
@@ -119,9 +119,7 @@ function SlideView({ lesson, index, onPrev, onNext, onJump, onQuiz }: { lesson: 
   return (
     <section aria-roledescription="slide" aria-label={`Slide ${index + 1} of ${lesson.slides.length}`}>
       <div key={index} className="mt-4 min-h-80 rounded-2xl border bg-card p-6 shadow-card animate-in fade-in slide-in-from-right-4 duration-300 sm:p-8">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Slide {index + 1} of {lesson.slides.length}</p>
-        <p className="mt-4 text-5xl" aria-hidden>{s.emoji}</p>
-        <h1 className="mt-4 text-2xl font-bold sm:text-3xl">{s.title}</h1>
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Slide {index + 1} of {lesson.slides.length}</p>        <h1 className="mt-6 text-3xl font-bold leading-tight sm:text-4xl">{s.title}</h1>
         <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{s.body}</p>
         {s.stat && (
           <div className="mt-6 rounded-xl border bg-background/40 p-4">
@@ -130,7 +128,7 @@ function SlideView({ lesson, index, onPrev, onNext, onJump, onQuiz }: { lesson: 
           </div>
         )}
         {s.scenario && <ScenarioCard key={s.scenario.id} scenario={s.scenario} />}
-        {s.callout && <p className="mt-6 rounded-xl border-l-4 border-primary bg-accent/60 px-4 py-3 text-sm font-medium text-accent-foreground">💡 {s.callout}</p>}
+        {s.callout && <p className="mt-6 rounded-xl border-l-4 border-primary bg-accent/60 px-4 py-3 text-sm font-medium text-accent-foreground">{s.callout}</p>}
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-3">
@@ -192,9 +190,7 @@ function QuizView({ lesson, index, picked, onPick, onNext }: { lesson: Lesson; i
 function ResultView({ lesson, answers, outcome, onRetry, onReview }: { lesson: Lesson; answers: number[]; outcome: QuizOutcome; onRetry: () => void; onReview: () => void }) {
   const next = lessons[lessons.findIndex((l) => l.slug === lesson.slug) + 1];
   return (
-    <section className="mt-4 rounded-2xl border bg-card p-6 text-center shadow-card animate-in fade-in zoom-in-95 duration-300 sm:p-8" aria-live="polite">
-      <p className="text-5xl" aria-hidden>{outcome.passed ? "🎉" : "📚"}</p>
-      <h1 className="mt-4 text-2xl font-bold">{outcome.passed ? "Lesson complete!" : "Almost there"}</h1>
+    <section className="mt-4 rounded-2xl border bg-card p-6 text-center shadow-card animate-in fade-in zoom-in-95 duration-300 sm:p-8" aria-live="polite">      <h1 className="text-3xl font-bold sm:text-4xl">{outcome.passed ? "Lesson complete!" : "Almost there"}</h1>
       <p className="mt-2 text-muted-foreground">
         You got <span className="font-semibold text-foreground">{outcome.score} of {lesson.quiz.length}</span> right.
         {!outcome.passed && ` You need ${PASS_SCORE} to pass.`}
