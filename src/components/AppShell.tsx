@@ -23,25 +23,24 @@ export function Logo() {
 export function AppShell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <div className="flex min-h-screen w-full">
-      <aside className="hidden w-60 shrink-0 flex-col gap-8 border-r bg-surface p-5 md:flex">
-        <Logo />
-        <nav className="flex flex-col gap-1">
-          {nav.map(({ to, label, icon: Icon }) => {
-            const active = path.startsWith(to);
-            return (
-              <Link key={to} to={to} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
-                <Icon className="h-4 w-4" />{label}
-              </Link>
-            );
-          })}
-        </nav>
-        <StreakBadge className="mt-auto self-start" />
-      </aside>
-      <div className="flex min-w-0 flex-1 flex-col pb-20 md:pb-0">
-        <header className="flex h-14 items-center justify-between border-b px-4 md:hidden"><Logo /><StreakBadge /></header>
-        <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8">{children}</main>
-      </div>
+    <div className="flex min-h-screen w-full flex-col pb-20 md:pb-0">
+      <header className="sticky top-0 z-30 border-b bg-surface/95 backdrop-blur">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 md:px-8">
+          <Logo />
+          <nav className="hidden items-center gap-1 md:flex">
+            {nav.map(({ to, label, icon: Icon }) => {
+              const active = path.startsWith(to);
+              return (
+                <Link key={to} to={to} className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+                  <Icon className="h-4 w-4" />{label}
+                </Link>
+              );
+            })}
+          </nav>
+          <StreakBadge />
+        </div>
+      </header>
+      <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8">{children}</main>
       <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t bg-surface md:hidden">
         {nav.map(({ to, label, icon: Icon }) => (
           <Link key={to} to={to} className={`flex flex-col items-center gap-1 py-2 text-[11px] ${path.startsWith(to) ? "text-primary" : "text-muted-foreground"}`}>
