@@ -45,7 +45,10 @@ export function OrderTicket({ state, sym, onSymChange, submit }: { state: SimSta
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const r = submit({ sym, side, shares, type, limit: Number(limit) });
-    if (!r.ok) return toast.error(r.error);
+    if (!r.ok) {
+      toast.error(r.error);
+      return;
+    }
     if (r.trade) {
       const verb = r.trade.side === "buy" ? "Bought" : "Sold";
       const pl = r.trade.realized != null ? ` · ${r.trade.realized >= 0 ? "+" : ""}${fmt(r.trade.realized)} realized` : "";
