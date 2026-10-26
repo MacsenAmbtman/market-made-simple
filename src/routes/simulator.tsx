@@ -4,6 +4,8 @@ import { Pause, Play, RotateCcw, StepForward } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import { Link } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
@@ -20,7 +22,8 @@ import { PriceChart, Sparkline, ValueChart } from "@/components/simulator/charts
 import { OrderTicket } from "@/components/simulator/OrderTicket";
 import { PortfolioTracker } from "@/components/simulator/PortfolioTracker";
 import { useSimulator } from "@/hooks/use-simulator";
-import { fmt, holdingsValue, priceOf, reservedCash, START_CASH, STOCKS, totalValue } from "@/lib/simulator";
+import { contributed, fmt, holdingsValue, priceOf, reservedCash, START_CASH, STOCKS, totalValue } from "@/lib/simulator";
+import type { Reward } from "@/lib/rewards";
 
 export const Route = createFileRoute("/simulator")({
   head: () => ({
@@ -34,14 +37,18 @@ export const Route = createFileRoute("/simulator")({
   component: Simulator,
 });
 
+const announceRewards = (applied: Reward[]) =>
+  applied.forEach((r) => toast.success(`+${fmt(r.amount)} bonus capital`, { description: r.label }));
+
 const pct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
 
 function Simulator() {
-  const { state, live, setLive, step, submit, cancel, reset } = useSimulator();
+  const { state, live, setLive, step, submit, cancel, reset } = useSimulator({ onRewards: announceRewards });
   const [sym, setSym] = useState(STOCKS[0]!.sym);
 
   const total = totalValue(state);
-  const change = ((total - START_CASH) / START_CASH) * 100;
+  const base = contributed(state);
+  const change = ((total - base) / base) * 100;
   const invested = holdingsValue(state);
   const reserved = reservedCash(state);
   const selected = STOCKS.find((s) => s.sym === sym)!;
@@ -51,7 +58,7 @@ function Simulator() {
 
   const tiles = [
     { label: "Portfolio value", value: fmt(total), sub: <span className={change >= 0 ? "text-primary" : "text-destructive"}>{pct(change)} all time</span> },
-    { label: "Cash", value: fmt(state.cash), sub: reserved > 0 ? `${fmt(reserved)} reserved for orders` : "Ready to invest" },
+    { label: "Cash", value: fmt(state.cash), sub: reserved > 0 ? `${fmt(reserved)} reserved for orders` : state.bonus > 0 ? `${fmt(state.bonus)} bonus earned from lessons` : "Ready to invest" },
     { label: "Invested", value: fmt(invested), sub: `${Object.keys(state.holdings).length} positions` },
     { label: "Realized gain / loss", value: <span className={state.realized >= 0 ? "text-primary" : "text-destructive"}>{state.realized >= 0 ? "+" : "−"}{fmt(Math.abs(state.realized))}</span>, sub: "From shares you've sold" },
   ];
@@ -62,7 +69,10 @@ function Simulator() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Paper Simulator</h1>
-          <p className="mt-1 text-muted-foreground">Fake money, real lessons. Prices move live — your portfolio saves automatically.</p>
+          <p className="mt-1 text-muted-foreground">
+            Fake money, real lessons. Prices move live — your portfolio saves automatically.{" "}
+            <Link to="/learn" className="text-primary hover:underline">Pass lesson quizzes to earn bonus cash →</Link>
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="flex items-center gap-2 rounded-full border px-3 py-1 text-xs text-muted-foreground" aria-live="polite">
@@ -81,8 +91,8 @@ function Simulator() {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Start over with $10,000?</AlertDialogTitle>
-                <AlertDialogDescription>This clears your holdings, open orders, trade history and price history. It can't be undone.</AlertDialogDescription>
+                <AlertDialogTitle>Start over with {fmt(START_CASH + state.bonus)}?</AlertDialogTitle>
+                <AlertDialogDescription>This clears your holdings, open orders, trade history and price history. Bonus capital you've earned from lessons is kept. It can't be undone.</AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Keep my portfolio</AlertDialogCancel>
@@ -124,9 +134,9 @@ function Simulator() {
               <div className="mt-2 flex items-baseline gap-3">
                 <p className="font-display text-2xl font-bold tabular-nums">{fmt(total)}</p>
                 <p className={`text-sm ${change >= 0 ? "text-primary" : "text-destructive"}`}>{pct(change)}</p>
-                <p className="text-sm text-muted-foreground">vs. {fmt(START_CASH)} start</p>
+                <p className="text-sm text-muted-foreground">vs. {fmt(base)} {state.bonus > 0 ? "start + bonuses" : "start"}</p>
               </div>
-              <div className="mt-4 h-72"><ValueChart data={state.valueHistory} start={START_CASH} /></div>
+              <div className="mt-4 h-72"><ValueChart data={state.valueHistory} start={base} /></div>
             </TabsContent>
           </Tabs>
         </div>

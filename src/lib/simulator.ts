@@ -1,5 +1,7 @@
 // Paper-trading engine: pure state + reducer so it can be unit-tested and persisted.
 
+import type { Reward } from "./rewards";
+
 export const START_CASH = 10000;
 export const HISTORY_LEN = 120; // price/value points kept per series
 export const TRADE_LOG_LEN = 100;
@@ -17,7 +19,7 @@ export const STOCKS: StockDef[] = [
 
 export type Side = "buy" | "sell";
 export type Holding = { shares: number; cost: number }; // cost = total cost basis
-export type Trade = { id: string; t: number; sym: string; side: Side; shares: number; price: number; realized?: number };
+export type Trade = { id: string; t: number; sym: string; side: Side; shares: number; price: number; realized?: number | undefined };
 export type LimitOrder = { id: string; t: number; sym: string; side: Side; shares: number; limit: number };
 
 export type SimState = {
@@ -30,9 +32,11 @@ export type SimState = {
   trades: Trade[]; // newest first
   orders: LimitOrder[];
   realized: number;
+  bonus: number; // total reward capital added on top of START_CASH
+  appliedRewards: string[]; // reward ids already credited
 };
 
-export type OrderResult = { ok: true; trade?: Trade; order?: LimitOrder } | { ok: false; error: string };
+export type OrderResult = { ok: true; trade?: Trade | undefined; order?: LimitOrder } | { ok: false; error: string };
 
 export const round2 = (n: number) => Math.round(n * 100) / 100;
 export const fmt = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -50,6 +54,8 @@ export function initialState(): SimState {
     trades: [],
     orders: [],
     realized: 0,
+    bonus: 0,
+    appliedRewards: [],
   };
 }
 
@@ -165,6 +171,25 @@ export function stepMarket(s: SimState, rand: () => number = Math.random): SimSt
   return { ...moved, valueHistory: keep([...moved.valueHistory, { t: tick, value: round2(totalValue(moved)) }], HISTORY_LEN) };
 }
 
+/** Starting capital plus any bonus capital — the baseline returns are measured against. */
+export const contributed = (s: SimState) => START_CASH + s.bonus;
+
+/** Credit any rewards not yet applied. Returns the newly applied ones. */
+export function applyRewards(s: SimState, rewards: Reward[]): { state: SimState; applied: Reward[] } {
+  const applied = rewards.filter((r) => !s.appliedRewards.includes(r.id));
+  if (!applied.length) return { state: s, applied };
+  const amount = applied.reduce((sum, r) => sum + r.amount, 0);
+  return {
+    applied,
+    state: {
+      ...s,
+      cash: round2(s.cash + amount),
+      bonus: round2(s.bonus + amount),
+      appliedRewards: [...s.appliedRewards, ...applied.map((r) => r.id)],
+    },
+  };
+}
+
 // ---------- persistence ----------
 
 function isState(x: unknown): x is SimState {
@@ -187,7 +212,9 @@ export function loadState(): SimState | null {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    return isState(parsed) ? parsed : null;
+    if (!isState(parsed)) return null;
+    // Saves from before rewards existed lack these fields.
+    return { ...parsed, bonus: typeof parsed.bonus === "number" ? parsed.bonus : 0, appliedRewards: Array.isArray(parsed.appliedRewards) ? parsed.appliedRewards : [] };
   } catch {
     return null;
   }
