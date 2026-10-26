@@ -31,8 +31,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             {nav.map(({ to, label, icon: Icon }) => {
               const active = path.startsWith(to);
               return (
-                <Link key={to} to={to} className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
-                  <Icon className="h-4 w-4" />{label}
+                <Link key={to} to={to} className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium transition-colors lg:px-3 ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+                  <Icon className="hidden h-4 w-4 lg:block" />{label}
                 </Link>
               );
             })}
