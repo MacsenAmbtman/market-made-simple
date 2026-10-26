@@ -68,7 +68,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
 
   return (
     <>
-      <div className="sticky top-0 z-10 -mx-4 bg-background/90 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
+      <div className="sticky top-16 z-10 -mx-4 bg-background/90 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
         <div className="flex items-center gap-3">
           <Link to="/learn" aria-label="Back to lessons" className="text-muted-foreground hover:text-foreground"><ArrowLeft className="h-5 w-5" /></Link>
           <Progress value={pct} className="h-2.5 flex-1" aria-label="Lesson progress" />
