@@ -11,6 +11,14 @@ const nav = [
   { to: "/progress", label: "My Progress", icon: Trophy },
 ] as const;
 
+export function LogoMark() {
+  return (
+    <Link to="/" aria-label="Stockify home" className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground">
+      <TrendingUp className="h-4 w-4" />
+    </Link>
+  );
+}
+
 export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold">

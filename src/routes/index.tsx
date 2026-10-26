@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/AppShell";
+import { LogoMark } from "@/components/AppShell";
 import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -15,17 +15,6 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const bandLetters = [
-  { ch: "S", color: "bg-letter-1" },
-  { ch: "T", color: "bg-letter-2" },
-  { ch: "O", color: "bg-letter-3" },
-  { ch: "C", color: "bg-letter-4" },
-  { ch: "K", color: "bg-letter-5" },
-  { ch: "I", color: "bg-letter-6" },
-  { ch: "F", color: "bg-letter-7" },
-  { ch: "Y", color: "bg-letter-8" },
-];
-
 const features = [
   { icon: Layers, title: "Bite-sized modules", text: "5-minute lessons with quick quizzes. No textbooks, no jargon." },
   { icon: Globe2, title: "Real-world examples", text: "Learn with brands you know — coffee shops, phones, and cars." },
@@ -35,22 +24,19 @@ const features = [
 function Landing() {
   return (
     <div className="min-h-screen bg-hero">
-      <div
-        role="img"
-        aria-label="Stockify"
-        className="flex w-full select-none overflow-hidden border-b border-border/60"
-      >
-        {bandLetters.map(({ ch, color }) => (
-          <span
-            key={ch}
-            className={`grid flex-1 place-items-center py-[clamp(0.5rem,2vw,1.75rem)] font-display text-[clamp(1.75rem,9vw,8.5rem)] font-bold leading-none text-letter-foreground transition-transform duration-200 hover:-translate-y-1 ${color}`}
-          >
-            {ch}
+      <div className="pt-10 md:pt-16">
+        <div
+          role="img"
+          aria-label="Stockify"
+          className="w-full select-none bg-band border-y border-border/40"
+        >
+          <span className="block py-[clamp(0.75rem,2.5vw,1.75rem)] text-center font-display text-[clamp(2.25rem,10vw,8rem)] font-bold leading-none tracking-tight text-foreground">
+            STOCKIFY
           </span>
-        ))}
+        </div>
       </div>
       <header className="mx-auto flex max-w-6xl items-center justify-between p-5">
-        <Logo />
+        <LogoMark />
         <Button asChild variant="ghost"><Link to="/learn">Dashboard</Link></Button>
       </header>
       <section className="mx-auto max-w-4xl px-5 pt-10 pb-20 text-center md:pt-16">
