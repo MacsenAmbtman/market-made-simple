@@ -1,11 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, LineChart, BookA, Trophy, TrendingUp } from "lucide-react";
+import { BookOpen, LineChart, BookA, Trophy, TrendingUp, Calculator } from "lucide-react";
 import type { ReactNode } from "react";
 import { StreakBadge } from "@/components/daily/DailyChallenge";
 
 const nav = [
   { to: "/learn", label: "Learn", icon: BookOpen },
   { to: "/simulator", label: "Paper Simulator", icon: LineChart },
+  { to: "/calculator", label: "Growth Calculator", icon: Calculator },
   { to: "/glossary", label: "Glossary", icon: BookA },
   { to: "/progress", label: "My Progress", icon: Trophy },
 ] as const;
@@ -41,10 +42,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         <header className="flex h-14 items-center justify-between border-b px-4 md:hidden"><Logo /><StreakBadge /></header>
         <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8">{children}</main>
       </div>
-      <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 border-t bg-surface md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t bg-surface md:hidden">
         {nav.map(({ to, label, icon: Icon }) => (
           <Link key={to} to={to} className={`flex flex-col items-center gap-1 py-2 text-[11px] ${path.startsWith(to) ? "text-primary" : "text-muted-foreground"}`}>
-            <Icon className="h-5 w-5" />{label.replace("Paper ", "")}
+            <Icon className="h-5 w-5" />{label.replace(/^(Paper|Growth) /, "")}
           </Link>
         ))}
       </nav>

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CalculatorRouteImport } from './routes/calculator'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as SimulatorRouteImport } from './routes/simulator'
@@ -19,6 +20,11 @@ import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalculatorRoute = CalculatorRouteImport.update({
+  id: '/calculator',
+  path: '/calculator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GlossaryRoute = GlossaryRouteImport.update({
@@ -49,6 +55,7 @@ const LearnSlugRoute = LearnSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/calculator': typeof CalculatorRoute
   '/glossary': typeof GlossaryRoute
   '/progress': typeof ProgressRoute
   '/simulator': typeof SimulatorRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/calculator': typeof CalculatorRoute
   '/glossary': typeof GlossaryRoute
   '/progress': typeof ProgressRoute
   '/simulator': typeof SimulatorRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/calculator': typeof CalculatorRoute
   '/glossary': typeof GlossaryRoute
   '/progress': typeof ProgressRoute
   '/simulator': typeof SimulatorRoute
@@ -75,12 +84,26 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/glossary' | '/progress' | '/simulator' | '/learn/$slug' | '/learn/'
+    | '/'
+    | '/calculator'
+    | '/glossary'
+    | '/progress'
+    | '/simulator'
+    | '/learn/$slug'
+    | '/learn/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/glossary' | '/progress' | '/simulator' | '/learn/$slug' | '/learn'
+  to:
+    | '/'
+    | '/calculator'
+    | '/glossary'
+    | '/progress'
+    | '/simulator'
+    | '/learn/$slug'
+    | '/learn'
   id:
     | '__root__'
     | '/'
+    | '/calculator'
     | '/glossary'
     | '/progress'
     | '/simulator'
@@ -90,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CalculatorRoute: typeof CalculatorRoute
   GlossaryRoute: typeof GlossaryRoute
   ProgressRoute: typeof ProgressRoute
   SimulatorRoute: typeof SimulatorRoute
@@ -104,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculator': {
+      id: '/calculator'
+      path: '/calculator'
+      fullPath: '/calculator'
+      preLoaderRoute: typeof CalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/glossary': {
@@ -146,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CalculatorRoute: CalculatorRoute,
   GlossaryRoute: GlossaryRoute,
   ProgressRoute: ProgressRoute,
   SimulatorRoute: SimulatorRoute,
