@@ -46,7 +46,7 @@ function Landing() {
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">Short, friendly lessons that turn "what's a stock?" into confident first steps.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button asChild size="lg" className="shadow-glow"><Link to="/learn/$slug" params={{ slug: "what-is-a-stock" }}>Start Free Lesson 1 <ArrowRight /></Link></Button>
-          <Button asChild size="lg" variant="outline"><Link to="/simulator">Try the simulator</Link></Button>
+          <Button asChild size="lg" variant="ghost"><Link to="/simulator">Try the simulator</Link></Button>
         </div>
       </section>
       <section className="mx-auto grid max-w-6xl gap-5 px-5 pb-16 md:grid-cols-3">

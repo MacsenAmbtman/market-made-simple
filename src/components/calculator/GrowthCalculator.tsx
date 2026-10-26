@@ -166,7 +166,7 @@ export function GrowthCalculator() {
             </p>
           </div>
           <div className="rounded-2xl border bg-card p-5 shadow-card">
-            <p className="text-sm font-semibold">⏳ The cost of waiting</p>
+            <p className="text-sm font-semibold">The cost of waiting</p>
             <p className="mt-1 text-sm text-muted-foreground">
               {delayed
                 ? <>Start the same plan 10 years later and you'd have <span className="font-semibold text-foreground">{usd(delayed.balance)}</span> — <span className="font-semibold text-destructive">{usd(final.balance - delayed.balance)} less</span>, even though you'd only contribute {usd(final.contributed - delayed.contributed)} less.</>
@@ -176,7 +176,10 @@ export function GrowthCalculator() {
         </section>
 
         <details className="group rounded-2xl border bg-card p-5 shadow-card">
-          <summary className="cursor-pointer select-none font-semibold marker:text-muted-foreground">Year-by-year breakdown</summary>
+          <summary className="group/sum flex cursor-pointer select-none items-center justify-between rounded-xl bg-accent px-4 py-3 font-semibold text-accent-foreground transition-colors hover:bg-accent/80">
+            Year-by-year breakdown
+            <ChevronDown className="h-4 w-4 transition-transform group-open/sum:rotate-180" />
+          </summary>
           <div className="mt-4 max-h-80 overflow-auto">
             <table className="w-full text-sm tabular-nums">
               <thead className="sticky top-0 bg-card text-xs text-muted-foreground">

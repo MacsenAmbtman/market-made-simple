@@ -84,7 +84,7 @@ export function OrderTicket({ state, sym, onSymChange, submit }: { state: SimSta
             Max {Math.max(0, maxShares)}
           </button>
         </div>
-        <Input id="qty" type="number" inputMode="numeric" min={1} step={1} value={qty} onChange={(e) => setQty(e.target.value)} />
+        <Input id="qty" type="number" inputMode="numeric" min={1} step={1} value={qty} onChange={(e) => setQty(e.target.value)} className="no-spin" />
       </div>
 
       {type === "limit" && (
