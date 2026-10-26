@@ -40,7 +40,7 @@ function Learn() {
 
   return (
     <AppShell>
-      <h1 className="text-3xl font-bold">Welcome back 👋</h1>
+      <h1 className="text-3xl font-bold">Welcome back</h1>
       <p className="mt-1 text-muted-foreground">
         {nextUp ? <>Up next: <Link to="/learn/$slug" params={{ slug: nextUp.slug }} className="text-primary hover:underline">{nextUp.title}</Link></> : "You've finished every module — nice work!"}
       </p>
@@ -66,10 +66,10 @@ function Learn() {
           return (
             <Link key={l.slug} to="/learn/$slug" params={{ slug: l.slug }} className="group flex flex-col rounded-2xl border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:border-primary/50">
               <div className="flex items-start justify-between">
-                <span className="text-3xl">{l.emoji}</span>
-                {p?.completed ? <CheckCircle2 className="h-5 w-5 text-primary" aria-label="Completed" /> : <span className="text-xs text-muted-foreground">Module {i + 1}</span>}
+                <span className="text-xs font-medium uppercase tracking-wide text-primary">Module {i + 1}</span>
+                {p?.completed ? <CheckCircle2 className="h-5 w-5 text-primary" aria-label="Completed" /> : null}
               </div>
-              <h3 className="mt-4 font-semibold group-hover:text-primary">{l.title}</h3>
+              <h3 className="mt-3 text-xl font-bold group-hover:text-primary">{l.title}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{l.blurb}</p>
               <p className="mt-2 text-xs text-muted-foreground">{status}</p>
               <div className="mt-auto flex items-center justify-between pt-4 text-xs">
@@ -85,10 +85,10 @@ function Learn() {
         {upcoming.map((l) => (
           <div key={l.title} className="flex flex-col rounded-2xl border border-dashed p-5 opacity-70">
             <div className="flex items-start justify-between">
-              <span className="text-3xl grayscale">{l.emoji}</span>
+              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Upcoming</span>
               <span className="flex items-center gap-1 text-xs text-muted-foreground"><Lock className="h-3 w-3" />Coming soon</span>
             </div>
-            <h3 className="mt-4 font-semibold">{l.title}</h3>
+            <h3 className="mt-3 text-xl font-bold">{l.title}</h3>
             <p className="mt-1 text-sm text-muted-foreground">{l.blurb}</p>
           </div>
         ))}
