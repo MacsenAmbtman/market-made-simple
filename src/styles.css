@@ -70,6 +70,16 @@
 @utility shadow-glow { box-shadow: var(--shadow-glow); }
 
 @layer base {
+  /* Hide the native number-input spinner arrows (users type + press Enter instead). */
+  input[type="number"].no-spin::-webkit-outer-spin-button,
+  input[type="number"].no-spin::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"].no-spin {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
   * { border-color: var(--color-border); }
   body {
     background-color: var(--color-background);
