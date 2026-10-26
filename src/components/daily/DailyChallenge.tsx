@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Check, Coins, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import { useDaily } from "@/hooks/use-daily";
 import { addDays, buildCtx, challengeFor, challengeReward, claimChallenge, isClaimed } from "@/lib/daily";
