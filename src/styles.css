@@ -33,6 +33,15 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-surface: var(--surface);
+  --color-letter-1: var(--letter-1);
+  --color-letter-2: var(--letter-2);
+  --color-letter-3: var(--letter-3);
+  --color-letter-4: var(--letter-4);
+  --color-letter-5: var(--letter-5);
+  --color-letter-6: var(--letter-6);
+  --color-letter-7: var(--letter-7);
+  --color-letter-8: var(--letter-8);
+  --color-letter-foreground: var(--letter-foreground);
 }
 
 :root {
@@ -58,6 +67,15 @@
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.696 0.149 162.5);
+  --letter-1: oklch(0.72 0.16 165);
+  --letter-2: oklch(0.75 0.14 200);
+  --letter-3: oklch(0.80 0.15 95);
+  --letter-4: oklch(0.72 0.19 25);
+  --letter-5: oklch(0.68 0.19 300);
+  --letter-6: oklch(0.79 0.17 130);
+  --letter-7: oklch(0.70 0.16 250);
+  --letter-8: oklch(0.73 0.18 350);
+  --letter-foreground: oklch(0.18 0.04 265);
   --gradient-hero: radial-gradient(ellipse at top, oklch(0.696 0.149 162.5 / 0.22), transparent 60%);
   --shadow-card: 0 10px 30px -12px oklch(0 0 0 / 0.5);
   --shadow-glow: 0 10px 40px -10px oklch(0.696 0.149 162.5 / 0.55);
