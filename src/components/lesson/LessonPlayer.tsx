@@ -128,7 +128,7 @@ function SlideView({ lesson, index, onPrev, onNext, onJump, onQuiz }: { lesson: 
           </div>
         )}
         {s.scenario && <ScenarioCard key={s.scenario.id} scenario={s.scenario} />}
-        {s.callout && <p className="mt-6 rounded-xl border-l-4 border-primary bg-accent/60 px-4 py-3 text-sm font-medium text-accent-foreground">{s.callout}</p>}
+        {s.callout && <p className="mt-6 rounded-xl bg-accent/60 px-4 py-3 text-sm font-medium text-accent-foreground">{s.callout}</p>}
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-3">

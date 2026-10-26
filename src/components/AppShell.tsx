@@ -23,7 +23,7 @@ export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold">
       <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground"><TrendingUp className="h-4 w-4" /></span>
-      Stockify
+      <span className="font-display font-bold uppercase leading-none tracking-tight">STOCKIFY</span>
     </Link>
   );
 }
