@@ -13,16 +13,22 @@ const nav = [
   { to: "/progress", label: "My Progress", icon: Trophy },
 ] as const;
 
+function LogoImage({ className = "h-8 w-8" }: { className?: string }) {
+  return (
+    <img
+      src={logoAsset.url}
+      alt=""
+      width={64}
+      height={64}
+      className={`${className} rounded-full object-cover`}
+    />
+  );
+}
+
 export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
   return (
     <Link to="/" aria-label="Stockify home" className="inline-block shrink-0">
-      <img
-        src={logoAsset.url}
-        alt=""
-        width={64}
-        height={64}
-        className={`${className} rounded-full object-cover`}
-      />
+      <LogoImage className={className} />
     </Link>
   );
 }
@@ -30,7 +36,7 @@ export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
 export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2.5 font-display text-lg font-bold">
-      <LogoMark className="h-8 w-8" />
+      <LogoImage className="h-8 w-8" />
       <span className="font-display font-bold uppercase leading-none tracking-tight">STOCKIFY</span>
     </Link>
   );
