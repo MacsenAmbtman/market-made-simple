@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen w-full flex-col pb-20 md:pb-0">
       <header className="sticky top-0 z-30 border-b bg-surface/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 md:px-8">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 md:px-8 lg:gap-4">
           <Logo />
           <nav className="hidden items-center gap-1 md:flex">
             {nav.map(({ to, label, icon: Icon }) => {

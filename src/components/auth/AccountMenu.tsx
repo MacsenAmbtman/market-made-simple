@@ -20,7 +20,7 @@ export function AccountMenu() {
   if (status === "signed-out") {
     return (
       <div className="flex items-center gap-1.5">
-        <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link to="/login">Sign in</Link></Button>
+        <Button asChild variant="ghost" size="sm" className="hidden lg:inline-flex"><Link to="/login">Sign in</Link></Button>
         <Button asChild size="sm"><Link to="/signup">Sign up</Link></Button>
       </div>
     );
