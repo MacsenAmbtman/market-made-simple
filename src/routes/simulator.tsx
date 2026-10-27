@@ -23,6 +23,7 @@ import { OrderTicket } from "@/components/simulator/OrderTicket";
 import { PortfolioTracker } from "@/components/simulator/PortfolioTracker";
 import { AllocationBreakdown } from "@/components/simulator/AllocationBreakdown";
 import { TradeHistoryLog } from "@/components/simulator/TradeHistoryLog";
+import { GuestModeBanner } from "@/components/simulator/GuestModeBanner";
 import { DailyChallenge } from "@/components/daily/DailyChallenge";
 import { useSimulator } from "@/hooks/use-simulator";
 import { contributed, fmt, holdingsValue, priceOf, reservedCash, START_CASH, STOCKS, totalValue } from "@/lib/simulator";
@@ -69,6 +70,7 @@ function Simulator() {
   return (
     <AppShell>
       <Toaster position="top-right" theme="dark" richColors />
+      <GuestModeBanner />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Paper Simulator</h1>
