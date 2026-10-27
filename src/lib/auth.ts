@@ -20,7 +20,7 @@ function message(e: AuthError | Error | null): string | null {
       return "Confirm your email first. Check your inbox for the link.";
     case "user_already_exists":
     case "email_exists":
-      return "An account with that email already exists. Try signing in.";
+      return "An account with that email already exists — use the Sign in page below instead.";
     case "weak_password":
       return `Choose a stronger password (at least ${MIN_PASSWORD_LENGTH} characters).`;
     case "over_request_rate_limit":
