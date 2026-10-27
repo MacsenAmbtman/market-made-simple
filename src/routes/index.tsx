@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/AppShell";
 import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { AccountMenu } from "@/components/auth/AccountMenu";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,6 +23,25 @@ const features = [
   { icon: LineChart, title: "Paper Simulator", text: "Practice with $10,000 of fake cash. Zero risk, real lessons." },
 ];
 
+function HeaderActions() {
+  const { status } = useAuth();
+  if (status === "loading") return <div className="h-9" aria-hidden />;
+  if (status === "signed-in") {
+    return (
+      <div className="flex items-center gap-2">
+        <Button asChild variant="ghost"><Link to="/dashboard">Dashboard</Link></Button>
+        <AccountMenu />
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-2">
+      <Button asChild variant="ghost"><Link to="/login">Log in</Link></Button>
+      <Button asChild><Link to="/signup">Get Started</Link></Button>
+    </div>
+  );
+}
+
 function Landing() {
   return (
     <div className="min-h-screen bg-hero">
@@ -37,7 +58,7 @@ function Landing() {
       </div>
       <header className="mx-auto flex max-w-6xl items-center justify-between p-5">
         <LogoMark />
-        <Button asChild variant="ghost"><Link to="/learn">Dashboard</Link></Button>
+        <HeaderActions />
       </header>
       <section className="mx-auto max-w-4xl px-5 pt-10 pb-20 text-center md:pt-16">
         <h1 className="text-4xl font-bold leading-tight md:text-6xl">

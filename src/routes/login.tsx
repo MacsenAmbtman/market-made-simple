@@ -19,7 +19,7 @@ function Login() {
   return (
     <AuthLayout title="Welcome back" subtitle="Sign in to pick up where you left off.">
       <SignInForm
-        onSuccess={() => void navigate({ to: "/learn" })}
+        onSuccess={() => void navigate({ to: "/dashboard" })}
         footer={
           <AuthFooter>
             <Link to="/reset-password">Forgot your password?</Link>

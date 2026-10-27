@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { getProgress, lessons, PASS_SCORE, recordQuiz, saveSlide, type Lesson, type QuizOutcome } from "@/lib/lessons";
 import { fmt } from "@/lib/simulator";
 import { ScenarioCard } from "./ScenarioCard";
+import { useAuth } from "@/hooks/use-auth";
 
 type Phase = "slides" | "quiz" | "result";
 
@@ -188,7 +189,10 @@ function QuizView({ lesson, index, picked, onPick, onNext }: { lesson: Lesson; i
 }
 
 function ResultView({ lesson, answers, outcome, onRetry, onReview }: { lesson: Lesson; answers: number[]; outcome: QuizOutcome; onRetry: () => void; onReview: () => void }) {
-  const next = lessons[lessons.findIndex((l) => l.slug === lesson.slug) + 1];
+  const index = lessons.findIndex((l) => l.slug === lesson.slug);
+  const next = lessons[index + 1];
+  const isFirst = index === 0;
+  const { status } = useAuth();
   return (
     <section className="mt-4 rounded-2xl border bg-card p-6 text-center shadow-card animate-in fade-in zoom-in-95 duration-300 sm:p-8" aria-live="polite">      <h1 className="text-3xl font-bold sm:text-4xl">{outcome.passed ? "Lesson complete!" : "Almost there"}</h1>
       <p className="mt-2 text-muted-foreground">
@@ -235,6 +239,12 @@ function ResultView({ lesson, answers, outcome, onRetry, onReview }: { lesson: L
           </>
         )}
       </div>
+      {isFirst && status === "signed-out" && (
+        <div className="mx-auto mt-8 max-w-md rounded-xl border border-primary bg-accent p-5 text-accent-foreground">
+          <p className="font-semibold">Want to save your streak and track your progress? Create your free account.</p>
+          <Button asChild className="mt-4 shadow-glow"><Link to="/signup">Create free account <ArrowRight /></Link></Button>
+        </div>
+      )}
       {outcome.passed && (
         <button type="button" onClick={onRetry} className="mt-4 text-xs text-muted-foreground hover:text-foreground hover:underline">Retake quiz</button>
       )}
