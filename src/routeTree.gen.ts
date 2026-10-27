@@ -21,6 +21,7 @@ import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as ApiCronDailyRemindersRouteImport } from './routes/api/cron/daily-reminders'
 import { Route as ApiEmailUnsubscribeRouteImport } from './routes/api/email/unsubscribe'
+import { Route as ApiPublicCronDailyRemindersRouteImport } from './routes/api/public/cron/daily-reminders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +83,12 @@ const ApiEmailUnsubscribeRoute = ApiEmailUnsubscribeRouteImport.update({
   path: '/api/email/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronDailyRemindersRoute =
+  ApiPublicCronDailyRemindersRouteImport.update({
+    id: '/api/public/cron/daily-reminders',
+    path: '/api/public/cron/daily-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/learn/': typeof LearnIndexRoute
   '/api/cron/daily-reminders': typeof ApiCronDailyRemindersRoute
   '/api/email/unsubscribe': typeof ApiEmailUnsubscribeRoute
+  '/api/public/cron/daily-reminders': typeof ApiPublicCronDailyRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/learn': typeof LearnIndexRoute
   '/api/cron/daily-reminders': typeof ApiCronDailyRemindersRoute
   '/api/email/unsubscribe': typeof ApiEmailUnsubscribeRoute
+  '/api/public/cron/daily-reminders': typeof ApiPublicCronDailyRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +134,7 @@ export interface FileRoutesById {
   '/learn/': typeof LearnIndexRoute
   '/api/cron/daily-reminders': typeof ApiCronDailyRemindersRoute
   '/api/email/unsubscribe': typeof ApiEmailUnsubscribeRoute
+  '/api/public/cron/daily-reminders': typeof ApiPublicCronDailyRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/learn/'
     | '/api/cron/daily-reminders'
     | '/api/email/unsubscribe'
+    | '/api/public/cron/daily-reminders'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/api/cron/daily-reminders'
     | '/api/email/unsubscribe'
+    | '/api/public/cron/daily-reminders'
   id:
     | '__root__'
     | '/'
@@ -169,6 +181,7 @@ export interface FileRouteTypes {
     | '/learn/'
     | '/api/cron/daily-reminders'
     | '/api/email/unsubscribe'
+    | '/api/public/cron/daily-reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +197,7 @@ export interface RootRouteChildren {
   LearnIndexRoute: typeof LearnIndexRoute
   ApiCronDailyRemindersRoute: typeof ApiCronDailyRemindersRoute
   ApiEmailUnsubscribeRoute: typeof ApiEmailUnsubscribeRoute
+  ApiPublicCronDailyRemindersRoute: typeof ApiPublicCronDailyRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -272,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/daily-reminders': {
+      id: '/api/public/cron/daily-reminders'
+      path: '/api/public/cron/daily-reminders'
+      fullPath: '/api/public/cron/daily-reminders'
+      preLoaderRoute: typeof ApiPublicCronDailyRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   LearnIndexRoute: LearnIndexRoute,
   ApiCronDailyRemindersRoute: ApiCronDailyRemindersRoute,
   ApiEmailUnsubscribeRoute: ApiEmailUnsubscribeRoute,
+  ApiPublicCronDailyRemindersRoute: ApiPublicCronDailyRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
