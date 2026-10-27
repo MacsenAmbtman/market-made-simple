@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, LineChart, BookA, Trophy, TrendingUp, Calculator } from "lucide-react";
+import { BookOpen, LineChart, BookA, Trophy, Calculator } from "lucide-react";
+import logoAsset from "@/assets/stockify-logo-round.png.asset.json";
 import type { ReactNode } from "react";
 import { StreakBadge } from "@/components/daily/DailyChallenge";
 import { AccountMenu } from "@/components/auth/AccountMenu";
@@ -12,18 +13,30 @@ const nav = [
   { to: "/progress", label: "My Progress", icon: Trophy },
 ] as const;
 
-export function LogoMark() {
+function LogoImage({ className = "h-8 w-8" }: { className?: string }) {
   return (
-    <Link to="/" aria-label="Stockify home" className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground">
-      <TrendingUp className="h-4 w-4" />
+    <img
+      src={logoAsset.url}
+      alt=""
+      width={64}
+      height={64}
+      className={`${className} rounded-full object-cover`}
+    />
+  );
+}
+
+export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
+  return (
+    <Link to="/" aria-label="Stockify home" className="inline-block shrink-0">
+      <LogoImage className={className} />
     </Link>
   );
 }
 
 export function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold">
-      <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground"><TrendingUp className="h-4 w-4" /></span>
+    <Link to="/" className="flex items-center gap-2.5 font-display text-lg font-bold">
+      <LogoImage className="h-8 w-8" />
       <span className="font-display font-bold uppercase leading-none tracking-tight">STOCKIFY</span>
     </Link>
   );
