@@ -29,24 +29,23 @@ function useSubmit<T>(action: (fields: Record<string, string>) => Promise<{ erro
 function Field({ label, ...input }: { label: string } & InputHTMLAttributes<HTMLInputElement>) {
   const id = useId();
   return (
-    <p>
-      <label htmlFor={id}>{label}</label>
-      <br />
-      <input id={id} {...input} />
-    </p>
+    <div className="space-y-1.5">
+      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+      <input id={id} {...input} className="h-11 w-full rounded-xl border border-input bg-background/60 px-4 text-sm text-foreground placeholder:text-muted-foreground transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30" />
+    </div>
   );
 }
 
-const ErrorText = ({ error }: { error: string | null }) => (error ? <p role="alert">{error}</p> : null);
+const ErrorText = ({ error }: { error: string | null }) => (error ? <p role="alert" className="rounded-lg bg-destructive/15 px-3 py-2 text-sm text-destructive">{error}</p> : null);
 
 export function SignInForm({ onSuccess, footer }: { onSuccess?: () => void; footer?: ReactNode }) {
   const { pending, error, onSubmit } = useSubmit((f) => signIn({ email: f["email"] ?? "", password: f["password"] ?? "" }), onSuccess);
   return (
-    <form onSubmit={onSubmit} aria-busy={pending}>
+    <form onSubmit={onSubmit} aria-busy={pending} className="space-y-4">
       <Field label="Email" name="email" type="email" autoComplete="email" required />
       <Field label="Password" name="password" type="password" autoComplete="current-password" required />
       <ErrorText error={error} />
-      <button type="submit" disabled={pending}>{pending ? "Signing in…" : "Sign in"}</button>
+      <button type="submit" disabled={pending} className="h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground shadow-glow transition hover:bg-primary/90 disabled:opacity-60">{pending ? "Signing in…" : "Sign in"}</button>
       {footer}
     </form>
   );
@@ -62,14 +61,14 @@ export function SignUpForm({ onSuccess, footer }: { onSuccess?: (r: { needsConfi
     },
     onSuccess,
   );
-  if (sentTo) return <p role="status">Check {sentTo} for a link to confirm your account.</p>;
+  if (sentTo) return <p role="status" className="rounded-xl bg-accent px-4 py-3 text-sm text-accent-foreground">Check {sentTo} for a link to confirm your account.</p>;
   return (
-    <form onSubmit={onSubmit} aria-busy={pending}>
+    <form onSubmit={onSubmit} aria-busy={pending} className="space-y-4">
       <Field label="Name (optional)" name="name" type="text" autoComplete="given-name" maxLength={80} />
       <Field label="Email" name="email" type="email" autoComplete="email" required />
       <Field label={`Password (at least ${MIN_PASSWORD_LENGTH} characters)`} name="password" type="password" autoComplete="new-password" minLength={MIN_PASSWORD_LENGTH} required />
       <ErrorText error={error} />
-      <button type="submit" disabled={pending}>{pending ? "Creating account…" : "Create account"}</button>
+      <button type="submit" disabled={pending} className="h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground shadow-glow transition hover:bg-primary/90 disabled:opacity-60">{pending ? "Creating account…" : "Create account"}</button>
       {footer}
     </form>
   );
@@ -78,12 +77,12 @@ export function SignUpForm({ onSuccess, footer }: { onSuccess?: (r: { needsConfi
 export function ForgotPasswordForm({ footer }: { footer?: ReactNode }) {
   const [sent, setSent] = useState(false);
   const { pending, error, onSubmit } = useSubmit((f) => requestPasswordReset(f["email"] ?? ""), () => setSent(true));
-  if (sent) return <p role="status">If an account exists for that email, a reset link is on its way.</p>;
+  if (sent) return <p role="status" className="rounded-xl bg-accent px-4 py-3 text-sm text-accent-foreground">If an account exists for that email, a reset link is on its way.</p>;
   return (
-    <form onSubmit={onSubmit} aria-busy={pending}>
+    <form onSubmit={onSubmit} aria-busy={pending} className="space-y-4">
       <Field label="Email" name="email" type="email" autoComplete="email" required />
       <ErrorText error={error} />
-      <button type="submit" disabled={pending}>{pending ? "Sending…" : "Email me a reset link"}</button>
+      <button type="submit" disabled={pending} className="h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground shadow-glow transition hover:bg-primary/90 disabled:opacity-60">{pending ? "Sending…" : "Email me a reset link"}</button>
       {footer}
     </form>
   );
@@ -96,11 +95,11 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
     return updatePassword(f["password"] ?? "");
   }, onSuccess);
   return (
-    <form onSubmit={onSubmit} aria-busy={pending}>
+    <form onSubmit={onSubmit} aria-busy={pending} className="space-y-4">
       <Field label="New password" name="password" type="password" autoComplete="new-password" minLength={MIN_PASSWORD_LENGTH} required />
       <Field label="Confirm new password" name="confirm" type="password" autoComplete="new-password" minLength={MIN_PASSWORD_LENGTH} required />
       <ErrorText error={error} />
-      <button type="submit" disabled={pending}>{pending ? "Saving…" : "Set new password"}</button>
+      <button type="submit" disabled={pending} className="h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground shadow-glow transition hover:bg-primary/90 disabled:opacity-60">{pending ? "Saving…" : "Set new password"}</button>
     </form>
   );
 }
