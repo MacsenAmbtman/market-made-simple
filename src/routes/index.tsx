@@ -4,6 +4,7 @@ import { LogoMark } from "@/components/AppShell";
 import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -96,6 +97,7 @@ function Landing() {
           </div>
         </div>
       </section>
+      <SiteFooter />
     </div>
   );
 }
