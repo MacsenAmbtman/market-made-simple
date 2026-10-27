@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { BookOpen, LineChart, BookA, Trophy, TrendingUp, Calculator } from "lucide-react";
 import type { ReactNode } from "react";
 import { StreakBadge } from "@/components/daily/DailyChallenge";
+import { AccountMenu } from "@/components/auth/AccountMenu";
 
 const nav = [
   { to: "/learn", label: "Learn", icon: BookOpen },
@@ -45,7 +46,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
-          <StreakBadge />
+          <div className="flex items-center gap-2"><StreakBadge /><AccountMenu /></div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8">{children}</main>

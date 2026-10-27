@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Flame, LineChart, LogOut, Trophy, UserRound } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useDaily } from "@/hooks/use-daily";
+import { currentStreak } from "@/lib/daily";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -61,7 +62,7 @@ export function AccountMenu() {
 
 function StreakRow() {
   const { daily } = useDaily();
-  const days = daily?.streak ?? 0;
+  const days = daily ? currentStreak(daily) : 0;
   return (
     <div className="flex items-center gap-2 px-2 py-1.5 text-sm">
       <Flame className="h-4 w-4 text-primary" />
