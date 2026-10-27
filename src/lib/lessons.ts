@@ -1,6 +1,7 @@
 // Lesson manager: module content, quiz scoring, and progress saved to localStorage.
 // Passing a quiz grants one-time bonus capital through the rewards ledger.
 
+import { notifyLocalWrite } from "./local-store";
 import { grantReward, hasReward } from "./rewards";
 import type { Scenario } from "./scenarios";
 
@@ -293,7 +294,7 @@ export type LessonProgress = {
   completedAt?: number | undefined;
 };
 
-const KEY = "stockify:lessons";
+export const LESSONS_KEY = "stockify:lessons";
 const LEGACY_KEY = "stockify-completed"; // pre-quiz completions: string[] of slugs
 
 const blank = (): LessonProgress => ({ slide: 0, completed: false, bestScore: 0, attempts: 0 });
@@ -301,7 +302,7 @@ const blank = (): LessonProgress => ({ slide: 0, completed: false, bestScore: 0,
 function readAll(): Record<string, LessonProgress> {
   if (typeof window === "undefined") return {};
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(LESSONS_KEY);
     if (raw) {
       const parsed: unknown = JSON.parse(raw);
       return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? (parsed as Record<string, LessonProgress>) : {};
@@ -317,10 +318,11 @@ function readAll(): Record<string, LessonProgress> {
 
 function writeAll(all: Record<string, LessonProgress>) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(all));
+    localStorage.setItem(LESSONS_KEY, JSON.stringify(all));
   } catch {
     // Storage blocked — progress just won't persist.
   }
+  notifyLocalWrite(LESSONS_KEY);
 }
 
 export function getProgress(slug: string): LessonProgress {

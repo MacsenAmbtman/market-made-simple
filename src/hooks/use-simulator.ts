@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ACCOUNT_SYNCED_EVENT } from "@/lib/local-store";
 import { getRewards, REWARDS_EVENT, REWARDS_KEY, type Reward } from "@/lib/rewards";
 import {
   applyRewards,
@@ -45,6 +46,16 @@ export function useSimulator({ onRewards }: { onRewards?: (applied: Reward[]) =>
     if (saved) commit(saved);
     syncRewards();
     setHydrated(true);
+  }, [commit, syncRewards]);
+
+  // After signing in (or out), the saved portfolio may have been replaced by the account's copy.
+  useEffect(() => {
+    const reload = () => {
+      commit(loadState() ?? initialState());
+      syncRewards();
+    };
+    window.addEventListener(ACCOUNT_SYNCED_EVENT, reload);
+    return () => window.removeEventListener(ACCOUNT_SYNCED_EVENT, reload);
   }, [commit, syncRewards]);
 
   // Pick up rewards earned in this tab or another one while the simulator is open.

@@ -12,10 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalculatorRouteImport } from './routes/calculator'
 import { Route as GlossaryRouteImport } from './routes/glossary'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProgressRouteImport } from './routes/progress'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SimulatorRouteImport } from './routes/simulator'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
+import { Route as ApiCronDailyRemindersRouteImport } from './routes/api/cron/daily-reminders'
+import { Route as ApiEmailUnsubscribeRouteImport } from './routes/api/email/unsubscribe'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -32,9 +37,24 @@ const GlossaryRoute = GlossaryRouteImport.update({
   path: '/glossary',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProgressRoute = ProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SimulatorRoute = SimulatorRouteImport.update({
@@ -52,34 +72,59 @@ const LearnSlugRoute = LearnSlugRouteImport.update({
   path: '/learn/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronDailyRemindersRoute = ApiCronDailyRemindersRouteImport.update({
+  id: '/api/cron/daily-reminders',
+  path: '/api/cron/daily-reminders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiEmailUnsubscribeRoute = ApiEmailUnsubscribeRouteImport.update({
+  id: '/api/email/unsubscribe',
+  path: '/api/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/calculator': typeof CalculatorRoute
   '/glossary': typeof GlossaryRoute
+  '/login': typeof LoginRoute
   '/progress': typeof ProgressRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
   '/simulator': typeof SimulatorRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/learn/': typeof LearnIndexRoute
+  '/api/cron/daily-reminders': typeof ApiCronDailyRemindersRoute
+  '/api/email/unsubscribe': typeof ApiEmailUnsubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/calculator': typeof CalculatorRoute
   '/glossary': typeof GlossaryRoute
+  '/login': typeof LoginRoute
   '/progress': typeof ProgressRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
   '/simulator': typeof SimulatorRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/learn': typeof LearnIndexRoute
+  '/api/cron/daily-reminders': typeof ApiCronDailyRemindersRoute
+  '/api/email/unsubscribe': typeof ApiEmailUnsubscribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/calculator': typeof CalculatorRoute
   '/glossary': typeof GlossaryRoute
+  '/login': typeof LoginRoute
   '/progress': typeof ProgressRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
   '/simulator': typeof SimulatorRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/learn/': typeof LearnIndexRoute
+  '/api/cron/daily-reminders': typeof ApiCronDailyRemindersRoute
+  '/api/email/unsubscribe': typeof ApiEmailUnsubscribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,38 +132,58 @@ export interface FileRouteTypes {
     | '/'
     | '/calculator'
     | '/glossary'
+    | '/login'
     | '/progress'
+    | '/reset-password'
+    | '/signup'
     | '/simulator'
     | '/learn/$slug'
     | '/learn/'
+    | '/api/cron/daily-reminders'
+    | '/api/email/unsubscribe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/calculator'
     | '/glossary'
+    | '/login'
     | '/progress'
+    | '/reset-password'
+    | '/signup'
     | '/simulator'
     | '/learn/$slug'
     | '/learn'
+    | '/api/cron/daily-reminders'
+    | '/api/email/unsubscribe'
   id:
     | '__root__'
     | '/'
     | '/calculator'
     | '/glossary'
+    | '/login'
     | '/progress'
+    | '/reset-password'
+    | '/signup'
     | '/simulator'
     | '/learn/$slug'
     | '/learn/'
+    | '/api/cron/daily-reminders'
+    | '/api/email/unsubscribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalculatorRoute: typeof CalculatorRoute
   GlossaryRoute: typeof GlossaryRoute
+  LoginRoute: typeof LoginRoute
   ProgressRoute: typeof ProgressRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SignupRoute: typeof SignupRoute
   SimulatorRoute: typeof SimulatorRoute
   LearnSlugRoute: typeof LearnSlugRoute
   LearnIndexRoute: typeof LearnIndexRoute
+  ApiCronDailyRemindersRoute: typeof ApiCronDailyRemindersRoute
+  ApiEmailUnsubscribeRoute: typeof ApiEmailUnsubscribeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -144,11 +209,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GlossaryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/progress': {
       id: '/progress'
       path: '/progress'
       fullPath: '/progress'
       preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/simulator': {
@@ -172,6 +258,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/daily-reminders': {
+      id: '/api/cron/daily-reminders'
+      path: '/api/cron/daily-reminders'
+      fullPath: '/api/cron/daily-reminders'
+      preLoaderRoute: typeof ApiCronDailyRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/email/unsubscribe': {
+      id: '/api/email/unsubscribe'
+      path: '/api/email/unsubscribe'
+      fullPath: '/api/email/unsubscribe'
+      preLoaderRoute: typeof ApiEmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -179,10 +279,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalculatorRoute: CalculatorRoute,
   GlossaryRoute: GlossaryRoute,
+  LoginRoute: LoginRoute,
   ProgressRoute: ProgressRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SignupRoute: SignupRoute,
   SimulatorRoute: SimulatorRoute,
   LearnSlugRoute: LearnSlugRoute,
   LearnIndexRoute: LearnIndexRoute,
+  ApiCronDailyRemindersRoute: ApiCronDailyRemindersRoute,
+  ApiEmailUnsubscribeRoute: ApiEmailUnsubscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -2,12 +2,13 @@
 // Days are the user's local calendar dates ("YYYY-MM-DD").
 
 import { getAllProgress, PASS_SCORE, type LessonProgress } from "./lessons";
+import { notifyLocalWrite } from "./local-store";
 import { grantReward, hasReward } from "./rewards";
 import { holdingsValue, totalValue, type SimState } from "./simulator";
 
 export type DailyState = { last: string | null; streak: number; best: number };
 
-const KEY = "stockify:daily";
+export const DAILY_KEY = "stockify:daily";
 export const DAILY_EVENT = "stockify:daily-changed";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -17,20 +18,23 @@ export function addDays(key: string, n: number) {
   return dayKey(new Date(y!, m! - 1, d! + n));
 }
 
+/** Read a streak from untrusted JSON (localStorage or the user's account). */
+export function parseDaily(p: unknown): DailyState {
+  if (!p || typeof p !== "object") return { last: null, streak: 0, best: 0 };
+  const s = p as Partial<DailyState>;
+  return {
+    last: typeof s.last === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s.last) ? s.last : null,
+    streak: typeof s.streak === "number" && s.streak > 0 ? Math.floor(s.streak) : 0,
+    best: typeof s.best === "number" && s.best > 0 ? Math.floor(s.best) : 0,
+  };
+}
+
 export function getDaily(): DailyState {
-  const blank: DailyState = { last: null, streak: 0, best: 0 };
-  if (typeof window === "undefined") return blank;
+  if (typeof window === "undefined") return parseDaily(null);
   try {
-    const p: unknown = JSON.parse(localStorage.getItem(KEY) || "null");
-    if (!p || typeof p !== "object") return blank;
-    const s = p as Partial<DailyState>;
-    return {
-      last: typeof s.last === "string" ? s.last : null,
-      streak: typeof s.streak === "number" ? s.streak : 0,
-      best: typeof s.best === "number" ? s.best : 0,
-    };
+    return parseDaily(JSON.parse(localStorage.getItem(DAILY_KEY) || "null"));
   } catch {
-    return blank;
+    return parseDaily(null);
   }
 }
 
@@ -49,10 +53,11 @@ export function nextCheckIn(s: DailyState, today: string): DailyState {
 export function checkIn(today = dayKey()): DailyState {
   const next = nextCheckIn(getDaily(), today);
   try {
-    localStorage.setItem(KEY, JSON.stringify(next));
+    localStorage.setItem(DAILY_KEY, JSON.stringify(next));
   } catch {
     /* storage blocked */
   }
+  notifyLocalWrite(DAILY_KEY);
   window.dispatchEvent(new Event(DAILY_EVENT));
   return next;
 }

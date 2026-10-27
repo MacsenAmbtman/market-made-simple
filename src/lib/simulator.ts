@@ -1,11 +1,13 @@
 // Paper-trading engine: pure state + reducer so it can be unit-tested and persisted.
 
+import { notifyLocalWrite } from "./local-store";
 import type { Reward } from "./rewards";
 
 export const START_CASH = 10000;
 export const HISTORY_LEN = 120; // price/value points kept per series
 export const TRADE_LOG_LEN = 100;
-const STORAGE_KEY = "stockify:simulator";
+export const SIM_KEY = "stockify:simulator";
+const STORAGE_KEY = SIM_KEY;
 const STORAGE_VERSION = 1;
 
 export type StockDef = { sym: string; name: string; price: number; vol: number };
@@ -224,14 +226,17 @@ export function loadState(): SimState | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!isState(parsed)) return null;
-    // Saves from before rewards existed lack these fields.
-    return { ...parsed, bonus: typeof parsed.bonus === "number" ? parsed.bonus : 0, appliedRewards: Array.isArray(parsed.appliedRewards) ? parsed.appliedRewards : [] };
+    return raw ? parseState(JSON.parse(raw)) : null;
   } catch {
     return null;
   }
+}
+
+/** Validate a saved portfolio from untrusted JSON (localStorage or the user's account). */
+export function parseState(parsed: unknown): SimState | null {
+  if (!isState(parsed)) return null;
+  // Saves from before rewards existed lack these fields.
+  return { ...parsed, bonus: typeof parsed.bonus === "number" ? parsed.bonus : 0, appliedRewards: Array.isArray(parsed.appliedRewards) ? parsed.appliedRewards : [] };
 }
 
 export function saveState(s: SimState) {
@@ -241,9 +246,11 @@ export function saveState(s: SimState) {
   } catch {
     // Storage full or blocked (private mode) — the simulator still works in memory.
   }
+  notifyLocalWrite(STORAGE_KEY);
 }
 
 export function clearState() {
   if (typeof window === "undefined") return;
   try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
+  notifyLocalWrite(STORAGE_KEY);
 }
