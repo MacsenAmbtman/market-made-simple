@@ -14,7 +14,95 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string
+          email_reminders: boolean
+          id: string
+          last_password_reset_at: string | null
+          last_reminder_on: string | null
+          timezone: string
+          unsubscribe_token: string
+          updated_at: string
+          welcome_email_sent_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email: string
+          email_reminders?: boolean
+          id: string
+          last_password_reset_at?: string | null
+          last_reminder_on?: string | null
+          timezone?: string
+          unsubscribe_token?: string
+          updated_at?: string
+          welcome_email_sent_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          email_reminders?: boolean
+          id?: string
+          last_password_reset_at?: string | null
+          last_reminder_on?: string | null
+          timezone?: string
+          unsubscribe_token?: string
+          updated_at?: string
+          welcome_email_sent_at?: string | null
+        }
+        Relationships: []
+      }
+      user_progress: {
+        Row: {
+          best_streak: number
+          completed_lessons: string[]
+          last_check_in: string | null
+          lessons: Json
+          rewards: Json
+          simulator: Json | null
+          simulator_updated_at: string | null
+          streak: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          best_streak?: number
+          completed_lessons?: string[]
+          last_check_in?: string | null
+          lessons?: Json
+          rewards?: Json
+          simulator?: Json | null
+          simulator_updated_at?: string | null
+          streak?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          best_streak?: number
+          completed_lessons?: string[]
+          last_check_in?: string | null
+          lessons?: Json
+          rewards?: Json
+          simulator?: Json | null
+          simulator_updated_at?: string | null
+          streak?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
