@@ -36,8 +36,8 @@ function HeaderActions() {
   }
   return (
     <div className="flex items-center gap-2">
-      <Button asChild variant="ghost"><Link to="/login">Log in</Link></Button>
-      <Button asChild><Link to="/signup">Get Started</Link></Button>
+      <Button asChild variant="ghost"><Link to="/login">Sign in</Link></Button>
+      <Button asChild><Link to="/signup">Sign up</Link></Button>
     </div>
   );
 }
