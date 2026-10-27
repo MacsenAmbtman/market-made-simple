@@ -14,10 +14,12 @@ import { Route as CalculatorRouteImport } from './routes/calculator'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SimulatorRouteImport } from './routes/simulator'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as ApiCronDailyRemindersRouteImport } from './routes/api/cron/daily-reminders'
@@ -49,6 +51,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProgressRoute = ProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
@@ -67,6 +74,11 @@ const SignupRoute = SignupRouteImport.update({
 const SimulatorRoute = SimulatorRouteImport.update({
   id: '/simulator',
   path: '/simulator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LearnIndexRoute = LearnIndexRouteImport.update({
@@ -102,10 +114,12 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/glossary': typeof GlossaryRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/progress': typeof ProgressRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/simulator': typeof SimulatorRoute
+  '/terms': typeof TermsRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/learn/': typeof LearnIndexRoute
   '/api/cron/daily-reminders': typeof ApiCronDailyRemindersRoute
@@ -118,10 +132,12 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/glossary': typeof GlossaryRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/progress': typeof ProgressRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/simulator': typeof SimulatorRoute
+  '/terms': typeof TermsRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/learn': typeof LearnIndexRoute
   '/api/cron/daily-reminders': typeof ApiCronDailyRemindersRoute
@@ -135,10 +151,12 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/glossary': typeof GlossaryRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/progress': typeof ProgressRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/simulator': typeof SimulatorRoute
+  '/terms': typeof TermsRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/learn/': typeof LearnIndexRoute
   '/api/cron/daily-reminders': typeof ApiCronDailyRemindersRoute
@@ -153,10 +171,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/glossary'
     | '/login'
+    | '/privacy'
     | '/progress'
     | '/reset-password'
     | '/signup'
     | '/simulator'
+    | '/terms'
     | '/learn/$slug'
     | '/learn/'
     | '/api/cron/daily-reminders'
@@ -169,10 +189,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/glossary'
     | '/login'
+    | '/privacy'
     | '/progress'
     | '/reset-password'
     | '/signup'
     | '/simulator'
+    | '/terms'
     | '/learn/$slug'
     | '/learn'
     | '/api/cron/daily-reminders'
@@ -185,10 +207,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/glossary'
     | '/login'
+    | '/privacy'
     | '/progress'
     | '/reset-password'
     | '/signup'
     | '/simulator'
+    | '/terms'
     | '/learn/$slug'
     | '/learn/'
     | '/api/cron/daily-reminders'
@@ -202,10 +226,12 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   GlossaryRoute: typeof GlossaryRoute
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProgressRoute: typeof ProgressRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   SimulatorRoute: typeof SimulatorRoute
+  TermsRoute: typeof TermsRoute
   LearnSlugRoute: typeof LearnSlugRoute
   LearnIndexRoute: typeof LearnIndexRoute
   ApiCronDailyRemindersRoute: typeof ApiCronDailyRemindersRoute
@@ -250,6 +276,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/progress': {
       id: '/progress'
       path: '/progress'
@@ -276,6 +309,13 @@ declare module '@tanstack/react-router' {
       path: '/simulator'
       fullPath: '/simulator'
       preLoaderRoute: typeof SimulatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/learn/': {
@@ -322,10 +362,12 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   GlossaryRoute: GlossaryRoute,
   LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
   ProgressRoute: ProgressRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   SimulatorRoute: SimulatorRoute,
+  TermsRoute: TermsRoute,
   LearnSlugRoute: LearnSlugRoute,
   LearnIndexRoute: LearnIndexRoute,
   ApiCronDailyRemindersRoute: ApiCronDailyRemindersRoute,
