@@ -19,7 +19,7 @@ function Signup() {
   return (
     <AuthLayout title="Create your account" subtitle="Save your lessons, streaks and practice portfolio.">
       <SignUpForm
-        onSuccess={({ needsConfirmation }) => { if (!needsConfirmation) void navigate({ to: "/learn" }); }}
+        onSuccess={({ needsConfirmation }) => { if (!needsConfirmation) void navigate({ to: "/dashboard" }); }}
         footer={<AuthFooter>Already have an account? <Link to="/login">Sign in</Link></AuthFooter>}
       />
     </AuthLayout>
