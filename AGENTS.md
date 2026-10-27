@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Scheduled callbacks
+
+- HTTP callbacks invoked by the platform scheduler live under `src/routes/api/public/` and verify the request with `authenticateCronRequest` from `src/integrations/supabase/cron-auth.ts`: only the `/api/public/` prefix bypasses published-site auth, so a scheduler call to any other path is blocked before it reaches the handler.
