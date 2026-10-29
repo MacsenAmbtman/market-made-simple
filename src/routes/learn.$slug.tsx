@@ -11,9 +11,9 @@ export const Route = createFileRoute("/learn/$slug")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData?.title ?? "Lesson"} — Stockify` },
+      { title: `${loaderData?.title ?? "Lesson"} — Stockify Learn` },
       { name: "description", content: loaderData?.blurb ?? "A Stockify lesson." },
-      { property: "og:title", content: `${loaderData?.title ?? "Lesson"} — Stockify` },
+      { property: "og:title", content: `${loaderData?.title ?? "Lesson"} — Stockify Learn` },
       { property: "og:description", content: loaderData?.blurb ?? "A Stockify lesson." },
     ],
   }),

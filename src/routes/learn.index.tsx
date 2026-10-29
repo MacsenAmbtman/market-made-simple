@@ -11,9 +11,9 @@ import { CheckCircle2, Clock, Coins, Lock } from "lucide-react";
 export const Route = createFileRoute("/learn/")({
   head: () => ({
     meta: [
-      { title: "Learn — Stockify" },
+      { title: "Learn — Stockify Learn" },
       { name: "description", content: "Your beginner investing lesson modules and progress." },
-      { property: "og:title", content: "Learn — Stockify" },
+      { property: "og:title", content: "Learn — Stockify Learn" },
       { property: "og:description", content: "Bite-sized investing lessons." },
     ],
   }),

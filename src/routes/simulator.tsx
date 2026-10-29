@@ -32,9 +32,9 @@ import type { Reward } from "@/lib/rewards";
 export const Route = createFileRoute("/simulator")({
   head: () => ({
     meta: [
-      { title: "Paper Simulator — Stockify" },
+      { title: "Paper Simulator — Stockify Learn" },
       { name: "description", content: "Practice trading with $10,000 of virtual cash." },
-      { property: "og:title", content: "Paper Simulator — Stockify" },
+      { property: "og:title", content: "Paper Simulator — Stockify Learn" },
       { property: "og:description", content: "Risk-free mock trading for beginners." },
     ],
   }),

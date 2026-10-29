@@ -4,9 +4,9 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — Stockify" },
+      { title: "Privacy Policy — Stockify Learn" },
       { name: "description", content: "How Stockify collects, uses and protects your information." },
-      { property: "og:title", content: "Privacy Policy — Stockify" },
+      { property: "og:title", content: "Privacy Policy — Stockify Learn" },
       { property: "og:description", content: "How Stockify handles your data." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

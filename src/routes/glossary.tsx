@@ -4,9 +4,9 @@ import { AppShell } from "@/components/AppShell";
 export const Route = createFileRoute("/glossary")({
   head: () => ({
     meta: [
-      { title: "Glossary — Stockify" },
+      { title: "Glossary — Stockify Learn" },
       { name: "description", content: "Investing terms explained in plain English." },
-      { property: "og:title", content: "Glossary — Stockify" },
+      { property: "og:title", content: "Glossary — Stockify Learn" },
       { property: "og:description", content: "Investing jargon, decoded." },
     ],
   }),

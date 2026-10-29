@@ -5,9 +5,9 @@ import { GrowthCalculator } from "@/components/calculator/GrowthCalculator";
 export const Route = createFileRoute("/calculator")({
   head: () => ({
     meta: [
-      { title: "Growth Calculator — Stockify" },
+      { title: "Growth Calculator — Stockify Learn" },
       { name: "description", content: "See how compound interest grows your money over time." },
-      { property: "og:title", content: "Growth Calculator — Stockify" },
+      { property: "og:title", content: "Growth Calculator — Stockify Learn" },
       { property: "og:description", content: "An interactive compound interest and wealth growth calculator." },
     ],
   }),

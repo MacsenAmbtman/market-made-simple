@@ -10,9 +10,9 @@ import { CheckCircle2, Circle, Coins } from "lucide-react";
 export const Route = createFileRoute("/progress")({
   head: () => ({
     meta: [
-      { title: "My Progress — Stockify" },
+      { title: "My Progress — Stockify Learn" },
       { name: "description", content: "Track the investing lessons you've completed." },
-      { property: "og:title", content: "My Progress — Stockify" },
+      { property: "og:title", content: "My Progress — Stockify Learn" },
       { property: "og:description", content: "Your Stockify learning progress." },
     ],
   }),
