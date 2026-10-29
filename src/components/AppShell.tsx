@@ -6,11 +6,11 @@ import { StreakBadge } from "@/components/daily/DailyChallenge";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 
 const nav = [
-  { to: "/learn", label: "Learn", icon: BookOpen },
-  { to: "/simulator", label: "Paper Simulator", icon: LineChart },
-  { to: "/calculator", label: "Growth Calculator", icon: Calculator },
-  { to: "/glossary", label: "Glossary", icon: BookA },
-  { to: "/progress", label: "My Progress", icon: Trophy },
+  { to: "/learn", label: "Learn", short: "Learn", icon: BookOpen },
+  { to: "/simulator", label: "Paper Simulator", short: "Paper Sim", icon: LineChart },
+  { to: "/calculator", label: "Growth Calculator", short: "Growth Calc", icon: Calculator },
+  { to: "/glossary", label: "Glossary", short: "Glossary", icon: BookA },
+  { to: "/progress", label: "My Progress", short: "Progress", icon: Trophy },
 ] as const;
 
 function LogoImage({ className = "h-8 w-8" }: { className?: string }) {
@@ -27,7 +27,7 @@ function LogoImage({ className = "h-8 w-8" }: { className?: string }) {
 
 export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
   return (
-    <Link to="/" aria-label="Stockify home" className="inline-block shrink-0">
+    <Link to="/" aria-label="Stockify Learn home" className="inline-block shrink-0">
       <LogoImage className={className} />
     </Link>
   );
@@ -37,7 +37,7 @@ export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2.5 font-display text-lg font-bold">
       <LogoImage className="h-8 w-8" />
-      <span className="font-display font-bold uppercase leading-none tracking-tight">STOCKIFY</span>
+      <span className="whitespace-nowrap font-display font-bold uppercase leading-none tracking-tight">STOCKIFY LEARN</span>
     </Link>
   );
 }
@@ -50,11 +50,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 md:px-8 lg:gap-4">
           <Logo />
           <nav className="hidden items-center gap-1 md:flex">
-            {nav.map(({ to, label, icon: Icon }) => {
+            {nav.map(({ to, label, short, icon: Icon }) => {
               const active = path.startsWith(to);
               return (
-                <Link key={to} to={to} className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium transition-colors lg:px-3 ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
-                  <Icon className="hidden h-4 w-4 lg:block" />{label}
+                <Link key={to} to={to} className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-2 py-2 text-sm font-medium transition-colors xl:px-3 ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+                  <Icon className="hidden h-4 w-4 xl:block" />
+                  <span className="xl:hidden">{short}</span>
+                  <span className="hidden xl:inline">{label}</span>
                 </Link>
               );
             })}

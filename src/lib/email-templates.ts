@@ -1,7 +1,7 @@
 // Transactional email content. Plain functions returning subject + HTML + text, so they're testable
 // and Lovable/designers can restyle the HTML without touching delivery code.
 
-export const APP_NAME = "Stockify";
+export const APP_NAME = "Stockify Learn";
 export const TAGLINE = "The stock market, finally in plain English.";
 
 export type EmailContent = { subject: string; html: string; text: string };

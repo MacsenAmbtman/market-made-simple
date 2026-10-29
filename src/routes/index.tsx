@@ -49,11 +49,11 @@ function Landing() {
       <div className="pt-10 md:pt-16">
         <div
           role="img"
-          aria-label="Stockify"
+          aria-label="Stockify Learn"
           className="w-full select-none bg-band border-y border-border/40"
         >
-          <span className="block py-[clamp(0.75rem,2.5vw,1.75rem)] text-center font-display text-[clamp(2.25rem,10vw,8rem)] font-bold leading-none tracking-tight text-foreground">
-            STOCKIFY
+          <span className="block py-[clamp(0.75rem,2.5vw,1.75rem)] text-center font-display text-[clamp(2.4rem,9vw,7.25rem)] font-bold leading-none tracking-tight text-foreground">
+            STOCKIFY LEARN
           </span>
         </div>
       </div>
