@@ -4,9 +4,9 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Service — Stockify" },
+      { title: "Terms of Service — Stockify Learn" },
       { name: "description", content: "The terms for using Stockify's lessons and paper trading simulator." },
-      { property: "og:title", content: "Terms of Service — Stockify" },
+      { property: "og:title", content: "Terms of Service — Stockify Learn" },
       { property: "og:description", content: "The rules for using Stockify." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

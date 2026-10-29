@@ -5,9 +5,9 @@ import { AuthFooter, AuthLayout } from "@/components/auth/AuthLayout";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Sign in — Stockify" },
+      { title: "Sign in — Stockify Learn" },
       { name: "description", content: "Sign in to Stockify to pick up your lessons and practice portfolio." },
-      { property: "og:title", content: "Sign in — Stockify" },
+      { property: "og:title", content: "Sign in — Stockify Learn" },
       { property: "og:description", content: "Pick up your lessons and practice portfolio where you left off." },
     ],
   }),

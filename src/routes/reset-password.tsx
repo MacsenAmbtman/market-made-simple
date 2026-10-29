@@ -3,7 +3,7 @@ import { ForgotPasswordForm, ResetPasswordForm } from "@/components/auth/AuthFor
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Reset password — Stockify" }] }),
+  head: () => ({ meta: [{ title: "Reset password — Stockify Learn" }] }),
   component: ResetPassword,
 });
 

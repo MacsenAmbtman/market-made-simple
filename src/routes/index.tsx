@@ -9,9 +9,9 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Stockify — The stock market, finally in plain English" },
+      { title: "Stockify Learn — The stock market, finally in plain English" },
       { name: "description", content: "Bite-sized stock market lessons for complete beginners, plus a risk-free paper trading simulator." },
-      { property: "og:title", content: "Stockify — The stock market, finally in plain English" },
+      { property: "og:title", content: "Stockify Learn — The stock market, finally in plain English" },
       { property: "og:description", content: "Bite-sized investing lessons and a $10,000 paper simulator." },
     ],
   }),
