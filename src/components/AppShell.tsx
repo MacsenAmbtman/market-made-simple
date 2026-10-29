@@ -37,7 +37,7 @@ export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2.5 font-display text-lg font-bold">
       <LogoImage className="h-8 w-8" />
-      <span className="font-display font-bold uppercase leading-none tracking-tight">STOCKIFY LEARN</span>
+      <span className="whitespace-nowrap font-display font-bold uppercase leading-none tracking-tight">STOCKIFY LEARN</span>
     </Link>
   );
 }
@@ -53,10 +53,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             {nav.map(({ to, label, short, icon: Icon }) => {
               const active = path.startsWith(to);
               return (
-                <Link key={to} to={to} className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-2 py-2 text-sm font-medium transition-colors lg:px-3 ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
-                  <Icon className="hidden h-4 w-4 lg:block" />
-                  <span className="lg:hidden">{short}</span>
-                  <span className="hidden lg:inline">{label}</span>
+                <Link key={to} to={to} className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-2 py-2 text-sm font-medium transition-colors xl:px-3 ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+                  <Icon className="hidden h-4 w-4 xl:block" />
+                  <span className="xl:hidden">{short}</span>
+                  <span className="hidden xl:inline">{label}</span>
                 </Link>
               );
             })}
