@@ -17,9 +17,19 @@ function TikTokIcon() {
   );
 }
 
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <rect x="2" y="2" width="20" height="20" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
 const socials = [
   { href: "https://www.tiktok.com/@stockifylearn", label: "TikTok @stockifylearn", Icon: TikTokIcon },
+  { href: "https://www.instagram.com/stockifylearn", label: "Instagram @stockifylearn", Icon: InstagramIcon },
 ];
 
 export function SiteFooter() {
@@ -38,7 +48,7 @@ export function SiteFooter() {
               </a>
             ))}
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Stockify on TikTok — @stockifylearn</p>
+          <p className="mt-2 text-xs text-muted-foreground">Follow Stockify — @stockifylearn</p>
         </div>
         <div>
           <h3 className="text-sm font-semibold">Explore</h3>
