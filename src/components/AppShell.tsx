@@ -27,7 +27,7 @@ function LogoImage({ className = "h-8 w-8" }: { className?: string }) {
 
 export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
   return (
-    <Link to="/" aria-label="Stockify home" className="inline-block shrink-0">
+    <Link to="/" aria-label="Stockify Learn home" className="inline-block shrink-0">
       <LogoImage className={className} />
     </Link>
   );
@@ -37,7 +37,7 @@ export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2.5 font-display text-lg font-bold">
       <LogoImage className="h-8 w-8" />
-      <span className="font-display font-bold uppercase leading-none tracking-tight">STOCKIFY</span>
+      <span className="font-display font-bold uppercase leading-none tracking-tight">STOCKIFY LEARN</span>
     </Link>
   );
 }

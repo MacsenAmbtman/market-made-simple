@@ -68,11 +68,11 @@ export function SiteFooter() {
         <div className="flex gap-3 rounded-2xl border border-border bg-card p-5">
           <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <p className="text-sm text-muted-foreground">
-            Stockify is strictly an educational platform and paper trading simulator. Content is for informational and learning purposes only and does not constitute financial, investment, or trading advice.
+            Stockify Learn is strictly an educational platform and paper trading simulator. Content is for informational and learning purposes only and does not constitute financial, investment, or trading advice.
           </p>
         </div>
       </div>
-      <div className="mx-auto max-w-6xl px-5 py-6 text-xs text-muted-foreground">© 2026 Stockify. All rights reserved.</div>
+      <div className="mx-auto max-w-6xl px-5 py-6 text-xs text-muted-foreground">© 2026 Stockify Learn. All rights reserved.</div>
     </footer>
   );
 }
