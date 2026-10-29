@@ -13,7 +13,7 @@ export const Route = createFileRoute("/progress")({
       { title: "My Progress — Stockify Learn" },
       { name: "description", content: "Track the investing lessons you've completed." },
       { property: "og:title", content: "My Progress — Stockify Learn" },
-      { property: "og:description", content: "Your progress with Stockify Learn." },
+      { property: "og:description", content: "Your Stockify learning progress." },
     ],
   }),
   component: MyProgress,

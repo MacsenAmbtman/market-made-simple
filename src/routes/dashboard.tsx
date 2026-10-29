@@ -14,7 +14,7 @@ export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — Stockify Learn" },
-      { name: "description", content: "Your Stockify Learn home: lessons, practice portfolio and progress." },
+      { name: "description", content: "Your Stockify home: lessons, practice portfolio and progress." },
       { property: "og:title", content: "Dashboard — Stockify Learn" },
       { property: "og:description", content: "Your lessons, practice portfolio and progress in one place." },
     ],
