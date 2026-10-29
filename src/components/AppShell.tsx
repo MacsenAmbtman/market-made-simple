@@ -6,11 +6,11 @@ import { StreakBadge } from "@/components/daily/DailyChallenge";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 
 const nav = [
-  { to: "/learn", label: "Learn", icon: BookOpen },
-  { to: "/simulator", label: "Paper Simulator", icon: LineChart },
-  { to: "/calculator", label: "Growth Calculator", icon: Calculator },
-  { to: "/glossary", label: "Glossary", icon: BookA },
-  { to: "/progress", label: "My Progress", icon: Trophy },
+  { to: "/learn", label: "Learn", short: "Learn", icon: BookOpen },
+  { to: "/simulator", label: "Paper Simulator", short: "Paper Sim", icon: LineChart },
+  { to: "/calculator", label: "Growth Calculator", short: "Growth Calc", icon: Calculator },
+  { to: "/glossary", label: "Glossary", short: "Glossary", icon: BookA },
+  { to: "/progress", label: "My Progress", short: "Progress", icon: Trophy },
 ] as const;
 
 function LogoImage({ className = "h-8 w-8" }: { className?: string }) {
@@ -50,11 +50,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 md:px-8 lg:gap-4">
           <Logo />
           <nav className="hidden items-center gap-1 md:flex">
-            {nav.map(({ to, label, icon: Icon }) => {
+            {nav.map(({ to, label, short, icon: Icon }) => {
               const active = path.startsWith(to);
               return (
-                <Link key={to} to={to} className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium transition-colors lg:px-3 ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
-                  <Icon className="hidden h-4 w-4 lg:block" />{label}
+                <Link key={to} to={to} className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-2 py-2 text-sm font-medium transition-colors lg:px-3 ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+                  <Icon className="hidden h-4 w-4 lg:block" />
+                  <span className="lg:hidden">{short}</span>
+                  <span className="hidden lg:inline">{label}</span>
                 </Link>
               );
             })}
