@@ -5,9 +5,9 @@ export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
       { title: "Privacy Policy — Stockify Learn" },
-      { name: "description", content: "How Stockify collects, uses and protects your information." },
+      { name: "description", content: "How Stockify Learn collects, uses and protects your information." },
       { property: "og:title", content: "Privacy Policy — Stockify Learn" },
-      { property: "og:description", content: "How Stockify handles your data." },
+      { property: "og:description", content: "How Stockify Learn handles your data." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/privacy")({
 function Privacy() {
   return (
     <LegalPage title="Privacy Policy" updated="October 2026">
-      <p>This policy explains what information Stockify collects, how we use it, and the choices you have.</p>
+      <p>This policy explains what information Stockify Learn collects, how we use it, and the choices you have.</p>
       <h2>Information we collect</h2>
       <p>When you create an account we store your email address and display name. We also store your lesson progress, streaks, quiz results and paper trading activity so you can pick up where you left off. As a guest, this data stays in your browser.</p>
       <h2>How we use it</h2>
