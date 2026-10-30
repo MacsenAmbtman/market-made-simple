@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 // The write is stubbed so the test only judges what the form asks for and what it sends.
-const submit = vi.hoisted(() => vi.fn(async () => ({ ok: true })));
+const submit = vi.hoisted(() => vi.fn(async (_arg: unknown) => ({ ok: true })));
 vi.mock("@/lib/feedback.functions", () => ({ submitFeedback: (arg: unknown) => submit(arg) }));
 
 const { FeedbackFab } = await import("@/components/FeedbackFab");
