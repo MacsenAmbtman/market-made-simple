@@ -5,11 +5,11 @@ import { describe, expect, it, vi } from "vitest";
 const submit = vi.hoisted(() => vi.fn(async (_arg: unknown) => ({ ok: true })));
 vi.mock("@/lib/feedback.functions", () => ({ submitFeedback: (arg: unknown) => submit(arg) }));
 
-const { FeedbackFab } = await import("@/components/FeedbackFab");
+const { FeedbackButton } = await import("@/components/FeedbackButton");
 
 describe("floating feedback button", () => {
   it("opens a two-question form and sends both answers with the page it came from", async () => {
-    render(<FeedbackFab />);
+    render(<FeedbackButton />);
     fireEvent.click(screen.getByRole("button", { name: "Send feedback or report an issue" }));
 
     const liked = screen.getByLabelText("What did you like or dislike?");
@@ -31,7 +31,7 @@ describe("floating feedback button", () => {
 
   it("refuses to send until the first question is answered", async () => {
     submit.mockClear();
-    render(<FeedbackFab />);
+    render(<FeedbackButton />);
     fireEvent.click(screen.getByRole("button", { name: "Send feedback or report an issue" }));
     fireEvent.click(screen.getByRole("button", { name: "Send feedback" }));
 
