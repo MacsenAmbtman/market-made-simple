@@ -4,6 +4,7 @@ import logoAsset from "@/assets/stockify-logo-round.png.asset.json";
 import type { ReactNode } from "react";
 import { StreakBadge } from "@/components/daily/DailyChallenge";
 import { AccountMenu } from "@/components/auth/AccountMenu";
+import { FeedbackButton } from "@/components/FeedbackButton";
 
 const nav = [
   { to: "/learn", label: "Learn", icon: BookOpen },
