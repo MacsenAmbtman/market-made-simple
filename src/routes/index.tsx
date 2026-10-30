@@ -5,6 +5,7 @@ import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
+import { FeedbackButton } from "@/components/FeedbackButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
