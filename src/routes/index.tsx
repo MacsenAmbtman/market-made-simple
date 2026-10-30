@@ -52,7 +52,7 @@ function Landing() {
           aria-label="Stockify"
           className="w-full select-none bg-band border-y border-border/40"
         >
-          <span className="block py-[clamp(0.75rem,2.5vw,1.75rem)] text-center font-display text-[clamp(2.25rem,10vw,8rem)] font-bold leading-none tracking-tight text-foreground">
+          <span className="block py-[clamp(0.75rem,2.5vw,1.75rem)] text-center font-display text-[clamp(2.25rem,10vw,8rem)] max-sm:text-[clamp(2.75rem,13.5vw,8rem)] font-bold leading-none tracking-tight text-foreground">
             STOCKIFY
           </span>
         </div>
