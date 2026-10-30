@@ -14,8 +14,9 @@ import { FEEDBACK_MAX, validateFeedback } from "@/lib/feedback-validate";
 import { submitFeedback } from "@/lib/feedback.functions";
 
 /**
- * Floating feedback control in the bottom-right corner. Sits above the mobile bottom
- * navigation bar so neither one covers the other.
+ * Floating feedback control in the bottom-right corner. On phones it sits just above the
+ * bottom navigation bar (68px up, 12px in from the edge); from the tablet width up it moves
+ * to 24px from the corner, where it has no bar to clear.
  */
 export function FeedbackFab() {
   const [open, setOpen] = useState(false);
