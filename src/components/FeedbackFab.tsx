@@ -85,7 +85,7 @@ export function FeedbackFab() {
                 </DialogDescription>
               </DialogHeader>
               <Button onClick={close} className="w-full">
-                Close
+                Done
               </Button>
             </>
           ) : (
