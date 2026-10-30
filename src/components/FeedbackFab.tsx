@@ -18,6 +18,10 @@ import { submitFeedback } from "@/lib/feedback.functions";
  * corner (12px up, 12px in); the only exception is pages that carry the bottom navigation
  * bar, where styles.css lifts it to 68px so it never covers a menu item. From the tablet
  * width up it is 24px from the corner on every page.
+ *
+ * The card itself stays deliberately spare: one title, two open boxes, one button. No
+ * helper copy and no character counters — the 2000-character cap is still enforced, just
+ * silently. Every control is sized for a thumb (48px tall on phones).
  */
 export function FeedbackFab() {
   const [open, setOpen] = useState(false);
@@ -74,79 +78,81 @@ export function FeedbackFab() {
       </button>
 
       <Dialog open={open} onOpenChange={(next) => (next ? setOpen(true) : close())}>
-        <DialogContent className="max-w-md rounded-2xl border-border bg-card sm:rounded-2xl">
+        <DialogContent className="max-w-md gap-5 rounded-2xl border-border bg-card p-5 sm:rounded-2xl sm:p-6">
           {sent ? (
             <>
-              <DialogHeader>
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-accent text-primary">
-                  <Check className="h-5 w-5" />
+              <DialogHeader className="space-y-3 text-center">
+                <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-accent text-primary">
+                  <Check className="h-6 w-6" />
                 </span>
-                <DialogTitle className="mt-3">Thanks — that's logged</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="text-2xl font-bold sm:text-3xl">
+                  Thanks — that's logged
+                </DialogTitle>
+                <DialogDescription className="text-sm sm:text-base">
                   Every answer lands in the same list we read before deciding what to build next.
                 </DialogDescription>
               </DialogHeader>
-              <Button onClick={close} className="w-full">
+              <Button
+                onClick={close}
+                className="h-12 w-full rounded-xl text-base sm:h-11"
+              >
                 Done
               </Button>
             </>
           ) : (
             <>
-              <DialogHeader>
-                <DialogTitle>Feedback</DialogTitle>
-                <DialogDescription>
-                  Two questions, about thirty seconds. It also covers anything that looked broken.
-                </DialogDescription>
+              <DialogHeader className="text-center">
+                <DialogTitle className="text-2xl font-bold tracking-tight sm:text-3xl">
+                  Feedback
+                </DialogTitle>
               </DialogHeader>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <Label htmlFor="feedback-liked" className="text-sm font-semibold">
+                  <Label htmlFor="feedback-liked" className="text-base font-semibold">
                     What did you like or dislike?
                   </Label>
                   <Textarea
                     id="feedback-liked"
                     value={liked}
                     onChange={(event) => setLiked(event.target.value)}
-                    rows={3}
+                    rows={4}
                     maxLength={FEEDBACK_MAX}
                     placeholder="The lessons were clear, but the simulator felt slow."
-                    className="mt-2 resize-none rounded-xl bg-background"
+                    className="mt-2 min-h-28 resize-none rounded-xl bg-background p-3 text-base"
                   />
-                  <p className="mt-1 text-right text-xs text-muted-foreground">
-                    {liked.length}/{FEEDBACK_MAX}
-                  </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="feedback-wanted" className="text-sm font-semibold">
+                  <Label htmlFor="feedback-wanted" className="text-base font-semibold">
                     What features should we add next?
                   </Label>
                   <Textarea
                     id="feedback-wanted"
                     value={wanted}
                     onChange={(event) => setWanted(event.target.value)}
-                    rows={3}
+                    rows={4}
                     maxLength={FEEDBACK_MAX}
                     placeholder="More real companies, or a way to compare two stocks."
-                    className="mt-2 resize-none rounded-xl bg-background"
+                    className="mt-2 min-h-28 resize-none rounded-xl bg-background p-3 text-base"
                   />
-                  <p className="mt-1 text-right text-xs text-muted-foreground">
-                    {wanted.length}/{FEEDBACK_MAX}
-                  </p>
                 </div>
 
-                {error && <p className="text-sm text-destructive">{error}</p>}
+                {error && <p className="text-sm font-medium text-destructive">{error}</p>}
 
-                <Button onClick={send} disabled={sending} className="w-full shadow-glow">
+                <Button
+                  onClick={send}
+                  disabled={sending}
+                  className="h-12 w-full rounded-xl text-base shadow-glow sm:h-11"
+                >
                   {sending ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-5 w-5 animate-spin" />
                       Sending
                     </>
                   ) : (
                     <>
-                      <Send className="h-4 w-4" />
+                      <Send className="h-5 w-5" />
                       Send feedback
                     </>
                   )}
