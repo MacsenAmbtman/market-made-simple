@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../hooks/use-auth";
+import { FeedbackInvite } from "../components/FeedbackInvite";
 
 function NotFoundComponent() {
   return (
@@ -122,6 +123,8 @@ function RootComponent() {
       <AuthProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        {/* Asks engaged visitors the two feedback questions; there is no feedback button. */}
+        <FeedbackInvite />
       </AuthProvider>
     </QueryClientProvider>
   );
