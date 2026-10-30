@@ -6,7 +6,7 @@ const submit = vi.hoisted(() => vi.fn(async (_arg: unknown) => ({ ok: true })));
 vi.mock("@/lib/feedback.functions", () => ({ submitFeedback: (arg: unknown) => submit(arg) }));
 
 // Engagement (active seconds + screens opened) is driven by the test, not a live timer.
-const engagement = vi.hoisted({ seconds: 0, screens: 1, path: "/" });
+const engagement = vi.hoisted(() => ({ seconds: 0, screens: 1, path: "/" }));
 vi.mock("@/hooks/use-engagement", () => ({
   useEngagement: () => ({ ...engagement }),
 }));
