@@ -63,7 +63,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8">{children}</main>
-      <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t bg-surface md:hidden">
+      <nav className="app-bottom-bar fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t bg-surface md:hidden">
         {nav.map(({ to, label, icon: Icon }) => (
           <Link key={to} to={to} className={`flex flex-col items-center gap-1 py-2 text-[11px] ${path.startsWith(to) ? "text-primary" : "text-muted-foreground"}`}>
             <Icon className="h-5 w-5" />{label.replace(/^(Paper|Growth) /, "")}

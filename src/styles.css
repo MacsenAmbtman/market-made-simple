@@ -88,3 +88,14 @@
   }
   h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
 }
+
+/*
+ * The floating Feedback button sits in the bottom-right corner on phones, but on pages
+ * that carry the bottom navigation bar it must lift above it. Unlayered so it wins over
+ * the button's own bottom-* utility; the width matches Tailwind's md breakpoint.
+ */
+@media (width < 48rem) {
+  body:has(.app-bottom-bar) .feedback-fab {
+    bottom: 4.25rem;
+  }
+}

@@ -14,9 +14,10 @@ import { FEEDBACK_MAX, validateFeedback } from "@/lib/feedback-validate";
 import { submitFeedback } from "@/lib/feedback.functions";
 
 /**
- * Floating feedback control in the bottom-right corner. On phones it sits just above the
- * bottom navigation bar (68px up, 12px in from the edge); from the tablet width up it moves
- * to 24px from the corner, where it has no bar to clear.
+ * Floating feedback control in the bottom-right corner. On phones it sits right in the
+ * corner (12px up, 12px in); the only exception is pages that carry the bottom navigation
+ * bar, where styles.css lifts it to 68px so it never covers a menu item. From the tablet
+ * width up it is 24px from the corner on every page.
  */
 export function FeedbackFab() {
   const [open, setOpen] = useState(false);
@@ -66,7 +67,7 @@ export function FeedbackFab() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Send feedback or report an issue"
-        className="fixed bottom-[4.25rem] right-3 z-40 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-glow transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:bottom-6 md:right-6"
+        className="feedback-fab fixed bottom-3 right-3 z-40 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-glow transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:bottom-6 md:right-6"
       >
         <MessageCircle className="h-4 w-4" />
         Feedback
