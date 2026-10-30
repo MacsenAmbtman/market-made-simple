@@ -5,6 +5,7 @@ import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
+import { FeedbackButton } from "@/components/FeedbackButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -59,7 +60,10 @@ function Landing() {
       </div>
       <header className="mx-auto flex max-w-6xl items-center justify-between p-5">
         <LogoMark />
-        <HeaderActions />
+        <div className="flex items-center gap-2">
+          <FeedbackButton />
+          <HeaderActions />
+        </div>
       </header>
       <section className="mx-auto max-w-4xl px-5 pt-10 pb-20 text-center md:pt-16">
         <h1 className="text-4xl font-bold leading-tight md:text-6xl">

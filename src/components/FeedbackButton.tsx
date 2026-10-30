@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Loader2, MessageCircle, Send } from "lucide-react";
+import { Check, Loader2, MessageSquare, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,16 +14,13 @@ import { FEEDBACK_MAX, validateFeedback } from "@/lib/feedback-validate";
 import { submitFeedback } from "@/lib/feedback.functions";
 
 /**
- * Floating feedback control in the bottom-right corner. On phones it sits right in the
- * corner (12px up, 12px in); the only exception is pages that carry the bottom navigation
- * bar, where styles.css lifts it to 68px so it never covers a menu item. From the tablet
- * width up it is 24px from the corner on every page.
- *
- * The card itself stays deliberately spare: one title, two open boxes, one button. No
- * helper copy and no character counters — the 2000-character cap is still enforced, just
- * silently. Every control is sized for a thumb (48px tall on phones).
+ * Small round comment-box button for the top of the page, sized to sit beside the streak
+ * flame in the header (and beside the sign-in buttons on the home page). It opens the
+ * same feedback card as before — one title, two open boxes, one button, no helper copy
+ * and no character counters (the 2000-character cap is still enforced, just silently).
+ * Every control inside is sized for a thumb (48px tall on phones).
  */
-export function FeedbackFab() {
+export function FeedbackButton({ className = "" }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const [liked, setLiked] = useState("");
   const [wanted, setWanted] = useState("");
@@ -71,10 +68,9 @@ export function FeedbackFab() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Send feedback or report an issue"
-        className="feedback-fab fixed bottom-3 right-3 z-40 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-glow transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:bottom-6 md:right-6"
+        className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${className}`}
       >
-        <MessageCircle className="h-4 w-4" />
-        Feedback
+        <MessageSquare className="h-4 w-4" aria-hidden />
       </button>
 
       <Dialog open={open} onOpenChange={(next) => (next ? setOpen(true) : close())}>
@@ -92,10 +88,7 @@ export function FeedbackFab() {
                   Every answer lands in the same list we read before deciding what to build next.
                 </DialogDescription>
               </DialogHeader>
-              <Button
-                onClick={close}
-                className="h-12 w-full rounded-xl text-base sm:h-11"
-              >
+              <Button onClick={close} className="h-12 w-full rounded-xl text-base sm:h-11">
                 Done
               </Button>
             </>
