@@ -12,3 +12,9 @@
 ## Scheduled callbacks
 
 - HTTP callbacks invoked by the platform scheduler live under `src/routes/api/public/` and verify the request with `authenticateCronRequest` from `src/integrations/supabase/cron-auth.ts`: only the `/api/public/` prefix bypasses published-site auth, so a scheduler call to any other path is blocked before it reaches the handler.
+
+## Feedback
+
+- `public.feedback` is write-only from the app (an INSERT policy and no SELECT policy, by
+  design): visitors must never be able to read other people's responses through the site, so
+  read them back with a service-role query instead of adding a read policy.
