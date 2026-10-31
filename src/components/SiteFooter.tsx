@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ShieldAlert } from "lucide-react";
+import { Mail, ShieldAlert } from "lucide-react";
 import { Logo } from "@/components/AppShell";
 
 const nav = [
@@ -40,15 +40,19 @@ export function SiteFooter() {
         <div>
           <Logo />
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">The stock market, finally in plain English.</p>
-          <div className="mt-5 flex gap-2">
+          <div className="mt-5 flex flex-wrap items-center gap-2">
             {socials.map(({ href, label, Icon }) => (
               <a key={href} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} title={label}
                 className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-primary hover:text-primary">
                 <Icon />
               </a>
             ))}
+            <a href="mailto:stockifylearn@gmail.com" aria-label="Email stockifylearn@gmail.com"
+              className="flex h-9 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+              <Mail className="h-4 w-4" /> stockifylearn@gmail.com
+            </a>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Follow Stockify — @stockifylearn</p>
+          <p className="mt-2 text-xs text-muted-foreground">Follow Stockify Learn — @stockifylearn</p>
         </div>
         <div>
           <h3 className="text-sm font-semibold">Explore</h3>
