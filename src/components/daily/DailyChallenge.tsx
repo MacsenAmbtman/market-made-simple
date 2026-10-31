@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import { useDaily } from "@/hooks/use-daily";
+import { useAuth } from "@/hooks/use-auth";
 import { addDays, buildCtx, challengeFor, challengeReward, claimChallenge, isClaimed } from "@/lib/daily";
 import { fmt, initialState, loadState, type SimState } from "@/lib/simulator";
 
@@ -20,6 +21,7 @@ function untilMidnight() {
 /** Daily check-in streak + today's challenge. Pass `sim` for live progress; otherwise reads the saved simulator. */
 export function DailyChallenge({ sim }: { sim?: SimState }) {
   const { daily, today, streak, checkedInToday, checkIn, rewardsVersion } = useDaily();
+  const signedIn = useAuth().status === "signed-in";
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [saved, setSaved] = useState<SimState | null>(null);
   const [justEarned, setJustEarned] = useState(0);
@@ -74,11 +76,15 @@ export function DailyChallenge({ sim }: { sim?: SimState }) {
         </div>
       </div>
 
-      {!checkedInToday && (
+      {!checkedInToday && (signedIn ? (
         <Button size="sm" variant="secondary" className="mt-4" onClick={checkIn}>
           <Flame /> Check in for today
         </Button>
-      )}
+      ) : (
+        <Button size="sm" variant="secondary" className="mt-4" asChild>
+          <Link to="/login"><Flame /> Sign in to keep a daily streak</Link>
+        </Button>
+      ))}
 
       <div className="mt-5 rounded-xl border bg-background/40 p-4">
         <div className="flex items-start justify-between gap-3">
@@ -103,6 +109,8 @@ export function DailyChallenge({ sim }: { sim?: SimState }) {
               <Check className="h-4 w-4" />
               {justEarned ? `+${fmt(justEarned)} added to your Paper Simulator!` : "Done for today."}
             </p>
+          ) : complete && !signedIn ? (
+            <Button size="sm" asChild><Link to="/login">Sign in to claim {fmt(reward)}</Link></Button>
           ) : complete ? (
             <Button size="sm" onClick={claim} className="shadow-glow"><Coins /> Claim {fmt(reward)}</Button>
           ) : (
@@ -122,7 +130,8 @@ export function DailyChallenge({ sim }: { sim?: SimState }) {
 /** Round streak button for navigation; opens a panel with the streak count. */
 export function StreakBadge({ className = "" }: { className?: string }) {
   const { daily, streak, checkedInToday, checkIn } = useDaily();
-  if (!daily) return <div className={`h-9 w-9 shrink-0 rounded-full ${className}`} aria-hidden />;
+  const { status } = useAuth();
+  if (!daily || status === "loading") return <div className={`h-9 w-9 shrink-0 rounded-full ${className}`} aria-hidden />;
   return (
     <Popover>
       <PopoverTrigger
@@ -141,7 +150,13 @@ export function StreakBadge({ className = "" }: { className?: string }) {
           {checkedInToday ? "You're checked in today — come back tomorrow to keep it going." : "Check in today to keep your streak alive!"}
           {daily.best > 0 && ` Best: ${daily.best} days.`}
         </p>
-        {!checkedInToday && (
+        {status !== "signed-in" ? (
+          <div className="mt-3 grid gap-2">
+            <p className="text-xs text-muted-foreground">Sign in so your streak is saved to your account.</p>
+            <Button size="sm" className="w-full" asChild><Link to="/login">Sign in</Link></Button>
+            <Button size="sm" variant="secondary" className="w-full" asChild><Link to="/signup">Create free account</Link></Button>
+          </div>
+        ) : !checkedInToday && (
           <Button size="sm" variant="secondary" className="mt-3 w-full" onClick={checkIn}>
             <Flame /> Check in for today
           </Button>
