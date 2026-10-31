@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { trackEvent } from "@/lib/analytics";
 import { fmt, priceOf, reservedCash, reservedShares, STOCKS, type OrderResult, type Side, type SimState } from "@/lib/simulator";
 
 type Submit = (o: { sym: string; side: Side; shares: number; type: "market" | "limit"; limit?: number }) => OrderResult;
@@ -16,7 +17,7 @@ function Segmented<T extends string>({ value, options, onChange }: { value: T; o
           type="button"
           aria-pressed={value === o.value}
           onClick={() => onChange(o.value)}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${value === o.value ? (o.active ?? "bg-card text-foreground shadow-sm") : "text-muted-foreground hover:text-foreground"}`}
+          className={`rounded-md min-h-11 px-3 py-2 text-sm font-medium transition-colors ${value === o.value ? (o.active ?? "bg-card text-foreground shadow-sm") : "text-muted-foreground hover:text-foreground"}`}
         >
           {o.label}
         </button>
@@ -44,7 +45,9 @@ export function OrderTicket({ state, sym, onSymChange, submit }: { state: SimSta
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
+    trackEvent(side === "buy" ? "buy_click" : "sell_click", { symbol: sym, order_type: type, shares });
     const r = submit({ sym, side, shares, type, limit: Number(limit) });
+    if (r.ok) trackEvent("place_trade", { symbol: sym, side, order_type: type, shares, filled: !!r.trade, value: r.trade ? r.trade.shares * r.trade.price : undefined });
     if (!r.ok) {
       toast.error(r.error);
       return;
@@ -65,13 +68,13 @@ export function OrderTicket({ state, sym, onSymChange, submit }: { state: SimSta
 
       <div className="grid grid-cols-4 gap-1">
         {STOCKS.map((s) => (
-          <button key={s.sym} type="button" onClick={() => onSymChange(s.sym)} aria-pressed={sym === s.sym} className={`rounded-md border px-2 py-1.5 text-xs font-semibold transition-colors ${sym === s.sym ? "border-primary bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+          <button key={s.sym} type="button" onClick={() => { onSymChange(s.sym); trackEvent("select_stock", { symbol: s.sym, source: "order_ticket" }); }} aria-pressed={sym === s.sym} className={`min-h-11 rounded-md border px-2 py-2 text-xs font-semibold transition-colors ${sym === s.sym ? "border-primary bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"}`}>
             {s.sym}
           </button>
         ))}
       </div>
 
-      <Segmented value={side} onChange={setSide} options={[
+      <Segmented value={side} onChange={(v) => { setSide(v); trackEvent("toggle_side", { side: v }); }} options={[
         { value: "buy", label: "Buy", active: "bg-primary text-primary-foreground" },
         { value: "sell", label: "Sell", active: "bg-destructive text-destructive-foreground" },
       ]} />

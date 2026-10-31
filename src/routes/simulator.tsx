@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { trackChartInteraction, trackEvent } from "@/lib/analytics";
 import { PriceChart, Sparkline, ValueChart } from "@/components/simulator/charts";
 import { OrderTicket } from "@/components/simulator/OrderTicket";
 import { PortfolioTracker } from "@/components/simulator/PortfolioTracker";
@@ -84,7 +85,7 @@ function Simulator() {
             <span className={`h-2 w-2 rounded-full ${live ? "animate-pulse bg-primary" : "bg-muted-foreground"}`} />
             {live ? "Market open" : "Paused"} · tick {state.tick}
           </span>
-          <Button size="sm" variant="secondary" onClick={() => setLive(!live)}>
+          <Button size="sm" variant="secondary" onClick={() => { trackEvent("sim_live_toggle", { live: !live }); setLive(!live); }}>
             {live ? <><Pause /> Pause</> : <><Play /> Resume</>}
           </Button>
           <Button size="sm" variant="secondary" onClick={step} disabled={live}>
@@ -101,7 +102,7 @@ function Simulator() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Keep my portfolio</AlertDialogCancel>
-                <AlertDialogAction onClick={reset}>Reset simulator</AlertDialogAction>
+                <AlertDialogAction onClick={() => { trackEvent("sim_reset"); reset(); }}>Reset simulator</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -133,7 +134,7 @@ function Simulator() {
                 <p className={`text-sm ${symChange >= 0 ? "text-primary" : "text-destructive"}`}>{pct(symChange)}</p>
                 <p className="text-sm text-muted-foreground">{selected.name} · last {series.length} ticks</p>
               </div>
-              <div className="mt-4 h-72"><PriceChart data={series} tick={state.tick} /></div>
+              <div className="mt-4 h-72" onPointerDown={() => trackChartInteraction("price")} onMouseEnter={() => trackChartInteraction("price")}><PriceChart data={series} tick={state.tick} /></div>
             </TabsContent>
             <TabsContent value="portfolio">
               <div className="mt-2 flex items-baseline gap-3">
@@ -141,7 +142,7 @@ function Simulator() {
                 <p className={`text-sm ${change >= 0 ? "text-primary" : "text-destructive"}`}>{pct(change)}</p>
                 <p className="text-sm text-muted-foreground">vs. {fmt(base)} {state.bonus > 0 ? "start + bonuses" : "start"}</p>
               </div>
-              <div className="mt-4 h-72"><ValueChart data={state.valueHistory} start={base} /></div>
+              <div className="mt-4 h-72" onPointerDown={() => trackChartInteraction("portfolio_value")} onMouseEnter={() => trackChartInteraction("portfolio_value")}><ValueChart data={state.valueHistory} start={base} /></div>
             </TabsContent>
           </Tabs>
         </div>
