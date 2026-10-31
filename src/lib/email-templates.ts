@@ -77,3 +77,33 @@ ${button(`${siteUrl}/learn`, "Pick up where I left off")}`, footer),
     text: `${greeting(name)}\n\n${what} is waiting for you: ${siteUrl}/learn${footerText}`,
   };
 }
+
+export function feedbackNotificationEmail({
+  liked,
+  wanted,
+  page,
+  signedIn,
+  when,
+}: {
+  liked: string;
+  wanted: string;
+  page: string;
+  signedIn: boolean;
+  when: string;
+}): EmailContent {
+  const who = signedIn ? "a signed-in member" : "a guest";
+  const where = page || "/";
+  const wantedBlock = wanted
+    ? `<p><strong>What features should we add next?</strong></p>
+<p style="background:#f4f4f5;padding:12px 14px;border-radius:8px">${escape(wanted)}</p>`
+    : "";
+  return {
+    subject: `New feedback on ${APP_NAME}`,
+    html: layout(`<h1 style="font-size:22px">New feedback just came in</h1>
+<p>Sent by ${who} from ${escape(where)} at ${escape(when)}.</p>
+<p><strong>What did you like or dislike?</strong></p>
+<p style="background:#f4f4f5;padding:12px 14px;border-radius:8px">${escape(liked)}</p>
+${wantedBlock}`),
+    text: `New feedback on ${APP_NAME}\n\nSent by ${who} from ${where} at ${when}.\n\nWhat did you like or dislike?\n${liked}\n${wanted ? `\nWhat features should we add next?\n${wanted}\n` : ""}`,
+  };
+}

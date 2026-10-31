@@ -51,5 +51,14 @@ export const submitFeedback = createServerFn({ method: "POST" })
       console.error("[feedback]", error.message);
       throw new Error("We couldn't save that. Try again in a moment.");
     }
+
+    // Tell the owner. Best-effort: a failed email must never fail the visitor's submission.
+    try {
+      const { notifyOwnerOfFeedback } = await import("./feedback-notify.server");
+      const notice = await notifyOwnerOfFeedback({ liked: data.liked, wanted: data.wanted, page: data.page, signedIn: userId !== null });
+      console.log("[feedback-notify]", notice.sent ? "sent" : notice.reason);
+    } catch (e) {
+      console.error("[feedback-notify]", e instanceof Error ? e.message : e);
+    }
     return { ok: true as const };
   });
