@@ -3,7 +3,7 @@
 // which is exactly where these go (Gmail forwards them on to the Stockify inbox).
 
 import { sendEmail } from "./email.server";
-import { feedbackNotificationEmail } from "./email-templates";
+import { feedbackNotificationEmail, signupNotificationEmail } from "./email-templates";
 
 // Where feedback notifications go. Change this one address to redirect them.
 export const FEEDBACK_NOTIFY_EMAIL = "macsenambtman@gmail.com";
@@ -19,6 +19,16 @@ export async function notifyOwnerOfFeedback(input: { liked: string; wanted: stri
   lastSentAt = now;
   await sendEmail(FEEDBACK_NOTIFY_EMAIL, feedbackNotificationEmail({ ...input, when: new Date(now).toUTCString() }), {
     idempotencyKey: `feedback-notify/${now}`,
+    from: NOTIFY_FROM,
+  });
+  return { sent: true } as const;
+}
+
+/** Emails the owner when a new account is created (called once per account). */
+export async function notifyOwnerOfSignup(input: { email: string; name: string | null }) {
+  const when = new Date().toUTCString();
+  await sendEmail(FEEDBACK_NOTIFY_EMAIL, signupNotificationEmail({ ...input, when }), {
+    idempotencyKey: `signup-notify/${input.email}`,
     from: NOTIFY_FROM,
   });
   return { sent: true } as const;

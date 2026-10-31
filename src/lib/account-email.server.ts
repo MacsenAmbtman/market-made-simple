@@ -4,9 +4,10 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { authenticateCronRequest } from "@/integrations/supabase/cron-auth";
 import { accountDb } from "./account-db";
-import { emailConfigured, sendEmail, siteUrl } from "./email.server";
+import { canEmailUsers, emailConfigured, sendEmail, siteUrl } from "./email.server";
 import { passwordResetEmail, reminderEmail, welcomeEmail } from "./email-templates";
 import { pickReminder } from "./reminders";
+import { notifyOwnerOfSignup } from "./feedback-notify.server";
 
 const db = () => accountDb(supabaseAdmin);
 
@@ -30,6 +31,9 @@ export async function sendWelcome(userId: string, request: Request | undefined) 
     .maybeSingle();
   if (error) throw error;
   if (!profile) return { sent: false, reason: "already-sent" } as const;
+  // First sign-in of a new account: tell the owner. Never let this block the user's own email.
+  await notifyOwnerOfSignup({ email: profile.email, name: profile.display_name }).catch((e) => console.error("[signup-alert]", e));
+  if (!canEmailUsers()) return { sent: false, reason: "no-verified-sender" } as const;
   try {
     await sendEmail(profile.email, welcomeEmail({ name: profile.display_name, siteUrl: siteUrl(request) }), { idempotencyKey: `welcome/${userId}` });
     return { sent: true } as const;
@@ -56,8 +60,8 @@ export async function sendPasswordReset(email: string, request: Request | undefi
   if (!claimed?.length) return;
 
   const redirectTo = `${siteUrl(request)}/reset-password`;
-  if (!emailConfigured()) {
-    // No Resend key yet: fall back to Lovable Cloud's built-in auth email.
+  if (!canEmailUsers()) {
+    // No verified sender yet: fall back to Lovable Cloud's built-in auth email.
     const { error: sendError } = await supabaseAdmin.auth.resetPasswordForEmail(email, { redirectTo });
     if (sendError) throw sendError;
     return;
@@ -71,7 +75,7 @@ export async function sendPasswordReset(email: string, request: Request | undefi
 export async function runDailyReminders(request: Request): Promise<Response> {
   const denied = await authenticateCronRequest(request);
   if (denied) return denied;
-  if (!emailConfigured()) return Response.json({ skipped: "RESEND_API_KEY is not set" });
+  if (!canEmailUsers()) return Response.json({ skipped: "no verified sender address yet" });
 
   const base = siteUrl(request);
   const now = new Date();
