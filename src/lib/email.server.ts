@@ -5,6 +5,12 @@ import { APP_NAME, type EmailContent } from "./email-templates";
 
 export const emailConfigured = () => !!process.env["RESEND_API_KEY"];
 
+/** True only when a real verified sender is set, so emails to users (not just the owner) can be delivered. */
+export const canEmailUsers = () => {
+  const from = process.env["RESEND_FROM_EMAIL"] ?? "";
+  return emailConfigured() && !!from && !/yourdomain\.com|resend\.dev/i.test(from);
+};
+
 /** Sender address. Resend's shared test sender only delivers to the Resend account owner, so set RESEND_FROM_EMAIL to a verified domain for real users. */
 const fromAddress = () => process.env["RESEND_FROM_EMAIL"] || `${APP_NAME} <onboarding@resend.dev>`;
 

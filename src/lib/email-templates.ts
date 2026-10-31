@@ -107,3 +107,13 @@ ${wantedBlock}`),
     text: `New feedback on ${APP_NAME}\n\nSent by ${who} from ${where} at ${when}.\n\nWhat did you like or dislike?\n${liked}\n${wanted ? `\nWhat features should we add next?\n${wanted}\n` : ""}`,
   };
 }
+
+export function signupNotificationEmail({ email, name, when }: { email: string; name: string | null; when: string }): EmailContent {
+  const who = name ? `${name} (${email})` : email;
+  return {
+    subject: `New sign-up on ${APP_NAME}`,
+    html: layout(`<h1 style="font-size:22px">Someone just created an account</h1>
+<p><strong>${escape(who)}</strong> signed up at ${escape(when)}.</p>`),
+    text: `New sign-up on ${APP_NAME}\n\n${who} signed up at ${when}.`,
+  };
+}
