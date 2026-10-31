@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, LineChart, BookA, Trophy, Calculator } from "lucide-react";
+import { BookOpen, LineChart, BookA, Trophy, Calculator, ChevronDown, MoreHorizontal } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import logoAsset from "@/assets/stockify-logo-round.png.asset.json";
 import type { ReactNode } from "react";
 import { StreakBadge } from "@/components/daily/DailyChallenge";
@@ -9,9 +10,35 @@ const nav = [
   { to: "/learn", label: "Learn", icon: BookOpen },
   { to: "/simulator", label: "Paper Simulator", icon: LineChart },
   { to: "/calculator", label: "Growth Calculator", icon: Calculator },
-  { to: "/glossary", label: "Glossary", icon: BookA },
-  { to: "/progress", label: "My Progress", icon: Trophy },
 ] as const;
+
+// Secondary pages live behind a "More" menu so the three main features stand out.
+const more = [
+  { to: "/progress", label: "My Progress", icon: Trophy },
+  { to: "/glossary", label: "Glossary", icon: BookA },
+] as const;
+
+function MoreMenu({ path, mobile }: { path: string; mobile?: boolean }) {
+  const active = more.some((m) => path.startsWith(m.to));
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={mobile
+          ? `flex flex-col items-center gap-1 py-2 text-[11px] ${active ? "text-primary" : "text-muted-foreground"}`
+          : `flex items-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium transition-colors lg:px-3 ${active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+      >
+        {mobile ? <><MoreHorizontal className="h-5 w-5" />More</> : <>More<ChevronDown className="h-4 w-4" /></>}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" side={mobile ? "top" : "bottom"} className="w-48">
+        {more.map(({ to, label, icon: Icon }) => (
+          <DropdownMenuItem key={to} asChild className="min-h-11 cursor-pointer">
+            <Link to={to}><Icon className="h-4 w-4" />{label}</Link>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 function LogoImage({ className = "h-8 w-8" }: { className?: string }) {
   return (
@@ -58,17 +85,19 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </Link>
               );
             })}
+            <MoreMenu path={path} />
           </nav>
           <div className="flex items-center gap-2"><StreakBadge /><AccountMenu /></div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8">{children}</main>
-      <nav className="app-bottom-bar fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t bg-surface md:hidden">
+      <nav className="app-bottom-bar fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 border-t bg-surface md:hidden">
         {nav.map(({ to, label, icon: Icon }) => (
           <Link key={to} to={to} className={`flex flex-col items-center gap-1 py-2 text-[11px] ${path.startsWith(to) ? "text-primary" : "text-muted-foreground"}`}>
             <Icon className="h-5 w-5" />{label.replace(/^(Paper|Growth) /, "")}
           </Link>
         ))}
+        <MoreMenu path={path} mobile />
       </nav>
     </div>
   );
