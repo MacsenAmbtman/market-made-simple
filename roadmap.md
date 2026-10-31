@@ -1,5 +1,5 @@
 # Roadmap
 
-- [ ] Build feedback→owner email notification (building now); recipient = macsenambtman@gmail.com, which the user forwards to stockifylearn@gmail.com in Gmail
-- [x] Confirmed: the mail account's free sender only delivers to its registered address (macsenambtman@gmail.com); stockifylearn@gmail.com directly is refused until a domain is verified
-- [ ] Remove the placeholder sender secret (hello@yourdomain.com) so app emails can send at all — deletion approval was cancelled four times by incoming messages; retry
+- [x] Feedback→owner email notification built and verified end-to-end: submission emails macsenambtman@gmail.com (user forwards it to stockifylearn@gmail.com in Gmail), max one email per minute
+- [x] Confirmed: the mail account's free sender only delivers to its registered address; stockifylearn@gmail.com directly is refused until a domain is verified
+- [x] Placeholder sender secret (hello@yourdomain.com): user rejected deletion — notifications use an explicit working sender instead; welcome/reset/reminder emails remain blocked by the placeholder until the user verifies a domain or removes it

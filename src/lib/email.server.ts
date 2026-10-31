@@ -11,7 +11,7 @@ const fromAddress = () => process.env["RESEND_FROM_EMAIL"] || `${APP_NAME} <onbo
 export async function sendEmail(
   to: string,
   content: EmailContent,
-  { idempotencyKey, headers }: { idempotencyKey?: string; headers?: Record<string, string> } = {},
+  { idempotencyKey, headers, from }: { idempotencyKey?: string; headers?: Record<string, string>; from?: string } = {},
 ) {
   const key = process.env["RESEND_API_KEY"];
   if (!key) throw new Error("RESEND_API_KEY is not set");
@@ -22,7 +22,7 @@ export async function sendEmail(
       "Content-Type": "application/json",
       ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
     },
-    body: JSON.stringify({ from: fromAddress(), to: [to], subject: content.subject, html: content.html, text: content.text, ...(headers ? { headers } : {}) }),
+    body: JSON.stringify({ from: from ?? fromAddress(), to: [to], subject: content.subject, html: content.html, text: content.text, ...(headers ? { headers } : {}) }),
   });
   if (!res.ok) throw new Error(`Resend responded ${res.status}: ${(await res.text()).slice(0, 300)}`);
   return (await res.json()) as { id: string };
