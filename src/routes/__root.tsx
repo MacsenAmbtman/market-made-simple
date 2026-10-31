@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -14,6 +15,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../hooks/use-auth";
 import { FeedbackInvite } from "../components/FeedbackInvite";
+import { initAnalytics, trackPageView } from "../lib/analytics";
 
 function NotFoundComponent() {
   return (
