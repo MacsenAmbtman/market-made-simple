@@ -70,7 +70,10 @@ function Simulator() {
 
   return (
     <AppShell>
-      <Toaster position="top-right" theme="dark" richColors />
+      {/* Tap any notification to dismiss it; the X also closes it. */}
+      <div onClick={(e) => { if ((e.target as HTMLElement).closest("[data-sonner-toast]")) toast.dismiss(); }}>
+        <Toaster position="top-right" theme="dark" richColors closeButton />
+      </div>
       <GuestModeBanner />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
