@@ -2,9 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { ArrowRight, Check, ChevronLeft, Coins, Flame, RotateCcw, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getProgress, passMark, saveSlide, type Lesson, type QuizQuestion } from "@/lib/lessons";
+import { getAllProgress, getPracticeEntry, getProgress, passMark, practiceXp, saveSlide, totalXp, type Lesson, type QuizQuestion } from "@/lib/lessons";
+import { trackEvent } from "@/lib/analytics";
+import { markSavePromptSeen, readSavePromptSeen, shouldShowSavePrompt } from "@/lib/save-prompt";
 import { buildSteps, finishPhoneLesson, nextCourseLesson, quizOnlySteps, type PhoneFinish, type Step } from "@/lib/phone-lesson";
-import { courseLessons } from "@/lib/lessons";
 import { fmt } from "@/lib/simulator";
 import { useAuth } from "@/hooks/use-auth";
 import { ScenarioCard } from "./ScenarioCard";
@@ -23,6 +24,7 @@ export function MobileLessonPlayer({ lesson }: { lesson: Lesson }) {
   // Resume a partly finished lesson (read after mount to keep server markup stable).
   useEffect(() => {
     const p = getProgress(lesson.slug);
+    trackEvent("lesson_start", { lesson_slug: lesson.slug, resumed: !p.completed && p.slide > 0 });
     if (p.completed || p.slide <= 0) return;
     const r = buildSteps(lesson, Math.min(p.slide, lesson.slides.length - 1));
     setSteps(r.steps);
@@ -55,7 +57,9 @@ export function MobileLessonPlayer({ lesson }: { lesson: Lesson }) {
       setAnswers(all);
     }
     if (at + 1 < steps.length) return go(at + 1);
-    setResult(finishPhoneLesson(lesson, all));
+    const r = finishPhoneLesson(lesson, all);
+    trackEvent(r.passed ? "lesson_complete" : "lesson_failed", { lesson_slug: lesson.slug, score: r.score, out_of: lesson.quiz.length });
+    setResult(r);
   };
 
   // Back only walks through earlier slides; answered questions stay answered.
@@ -166,7 +170,13 @@ export function QuestionScreen({ item, picked, onPick, onContinue, label = "Quic
 function CompleteScreen({ lesson, result, answers, onRetry, onReview }: { lesson: Lesson; result: PhoneFinish; answers: number[]; onRetry: () => void; onReview: () => void }) {
   const { status } = useAuth();
   const next = nextCourseLesson(lesson.slug);
-  const isFirst = courseLessons[0]?.slug === lesson.slug;
+  const [saving, setSaving] = useState(false);
+  // Decided once, as soon as sign-in status is known, so it can't flip mid-screen.
+  const [offerSave, setOfferSave] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (offerSave !== null || status === "loading") return;
+    setOfferSave(shouldShowSavePrompt({ slug: lesson.slug, passed: result.passed, signedOut: status === "signed-out", seen: readSavePromptSeen() }));
+  }, [offerSave, status, lesson.slug, result.passed]);
   const missed = lesson.quiz.filter((q, i) => answers[i] !== q.answer);
 
   if (!result.passed) {
@@ -191,6 +201,8 @@ function CompleteScreen({ lesson, result, answers, onRetry, onReview }: { lesson
     );
   }
 
+  if (saving) return <SavePrompt lesson={lesson} streak={result.streak?.streak ?? 0} next={next} />;
+
   return (
     <>
       <div className="flex-1 overflow-y-auto px-5 pb-6 text-center">
@@ -209,17 +221,53 @@ function CompleteScreen({ lesson, result, answers, onRetry, onReview }: { lesson
           <Stat icon={<Check className="h-5 w-5 text-primary" />} label="Score" value={`${result.score} / ${lesson.quiz.length}`} />
         </dl>
         {result.rewardGranted > 0 && <p className="mt-4 text-sm text-muted-foreground">Bonus cash is waiting in your paper portfolio on the computer.</p>}
-        {isFirst && status === "signed-out" && (
-          <div className="mt-6 rounded-2xl border border-primary bg-accent p-5 text-left text-accent-foreground">
-            <p className="font-semibold">Want to save your streak and track your progress? Create your free account.</p>
-            <Button asChild className="mt-4 h-12 w-full"><Link to="/signup">Create free account <ArrowRight /></Link></Button>
-          </div>
-        )}
       </div>
       <div className={`border-t px-5 pt-3 ${BOTTOM}`}>
+        {offerSave ? (
+          <Button size="lg" className={`h-14 w-full text-lg shadow-glow ${TAP}`} onClick={() => setSaving(true)}>Continue <ArrowRight /></Button>
+        ) : (
+          <NextButton next={next} />
+        )}
+      </div>
+    </>
+  );
+}
+
+function NextButton({ next, onClick, variant }: { next: Lesson | undefined; onClick?: () => void; variant?: "secondary" }) {
+  return (
+    <Button asChild size="lg" variant={variant} className={`h-14 w-full text-lg ${variant ? "" : "shadow-glow"} ${TAP}`}>
+      {next
+        ? <Link to="/learn/$slug" params={{ slug: next.slug }} onClick={onClick}>{variant ? "Not now" : <>Next lesson <ArrowRight /></>}</Link>
+        : <Link to="/learn" onClick={onClick}>{variant ? "Not now" : <>Back to the path <ArrowRight /></>}</Link>}
+    </Button>
+  );
+}
+
+/** Shown after the celebration for signed-out learners. Never blocks: "Not now" carries on. */
+function SavePrompt({ lesson, streak, next }: { lesson: Lesson; streak: number; next: Lesson | undefined }) {
+  const [xp, setXp] = useState(0);
+  useEffect(() => {
+    setXp(totalXp(getAllProgress(), practiceXp(getPracticeEntry())));
+    markSavePromptSeen(lesson.slug);
+    trackEvent("save_prompt_shown", { lesson_slug: lesson.slug });
+  }, [lesson.slug]);
+  return (
+    <>
+      <div className="flex-1 overflow-y-auto px-5 pb-6 text-center animate-in fade-in duration-300 motion-reduce:animate-none">
+        <h2 className="mt-10 text-3xl font-bold">Save your streak</h2>
+        <p className="mx-auto mt-3 max-w-sm text-base text-muted-foreground">
+          Right now your progress is only saved on this device and browser. Create a free account to keep it safe.
+        </p>
+        <dl className="mt-8 grid grid-cols-2 gap-3 text-left">
+          <Stat icon={<Flame className="h-5 w-5 text-orange-400" />} label="Day streak" value={String(streak)} />
+          <Stat icon={<Sparkles className="h-5 w-5 text-primary" />} label="Total XP" value={String(xp)} />
+        </dl>
+      </div>
+      <div className={`grid gap-3 border-t px-5 pt-3 ${BOTTOM}`}>
         <Button asChild size="lg" className={`h-14 w-full text-lg shadow-glow ${TAP}`}>
-          {next ? <Link to="/learn/$slug" params={{ slug: next.slug }}>Next lesson <ArrowRight /></Link> : <Link to="/learn">Back to the path <ArrowRight /></Link>}
+          <Link to="/signup" search={{ next: "/learn" }} onClick={() => trackEvent("save_prompt_signup_click", { lesson_slug: lesson.slug })}>Create free account <ArrowRight /></Link>
         </Button>
+        <NextButton next={next} variant="secondary" onClick={() => trackEvent("save_prompt_dismissed", { lesson_slug: lesson.slug })} />
       </div>
     </>
   );

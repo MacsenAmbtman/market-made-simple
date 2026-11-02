@@ -31,9 +31,40 @@ export function trackPageView(path: string) {
   window.gtag?.("event", "page_view", { page_path: path, page_location: window.location.href, page_title: document.title });
 }
 
+/** "phone" below the md breakpoint (the learning app), otherwise "computer". */
+export function deviceType(): "phone" | "computer" {
+  try {
+    return window.matchMedia("(max-width: 767.98px)").matches ? "phone" : "computer";
+  } catch {
+    return "computer";
+  }
+}
+
+/** Every event carries the device type. Never pass emails, names or other personal data. */
 export function trackEvent(name: string, params: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return;
-  window.gtag?.("event", name, params);
+  window.gtag?.("event", name, { device: deviceType(), ...params });
+}
+
+const LAST_VISIT_KEY = "stockify:last-visit-day";
+
+/** True when the last recorded visit was on an earlier calendar day. Pure, for tests. */
+export function isReturnVisit(lastDay: string | null, today: string): boolean {
+  return lastDay !== null && lastDay < today;
+}
+
+/** Sends return_visit at most once per day, for visitors first seen on an earlier day. */
+export function trackReturnVisit(today: string) {
+  let last: string | null = null;
+  try { last = localStorage.getItem(LAST_VISIT_KEY); } catch { return; }
+  if (last === today) return;
+  if (isReturnVisit(last, today)) trackEvent("return_visit", { days_since: daysBetween(last!, today) });
+  try { localStorage.setItem(LAST_VISIT_KEY, today); } catch { /* storage blocked */ }
+}
+
+function daysBetween(a: string, b: string): number {
+  const d = (Date.parse(b) - Date.parse(a)) / 86_400_000;
+  return Number.isFinite(d) ? Math.round(d) : 0;
 }
 
 const chartSeen = new Set<string>();

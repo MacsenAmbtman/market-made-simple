@@ -7,7 +7,7 @@ import { accountDb } from "./account-db";
 import { fromRow, isEmpty, mergeSnapshots, toRow, type LocalOwner, type Snapshot } from "./account-data";
 import { DAILY_EVENT, DAILY_KEY, getDaily } from "./daily";
 import { getAllProgress, getPracticeEntry, LESSONS_KEY, PRACTICE_SLUG } from "./lessons";
-import { ACCOUNT_SYNCED_EVENT, LOCAL_WRITE_EVENT } from "./local-store";
+import { ACCOUNT_SYNCED_EVENT, LOCAL_WRITE_EVENT, store } from "./local-store";
 import { getRewards, REWARDS_EVENT, REWARDS_KEY } from "./rewards";
 import { loadState, SIM_KEY } from "./simulator";
 
@@ -49,8 +49,8 @@ function readLocal(): Snapshot {
 function writeLocal(s: Snapshot) {
   const set = (key: string, value: unknown) => {
     try {
-      if (value == null) localStorage.removeItem(key);
-      else localStorage.setItem(key, JSON.stringify(value));
+      if (value == null) store.remove(key);
+      else store.set(key, JSON.stringify(value));
     } catch { /* storage blocked */ }
   };
   set(LESSONS_KEY, s.lessons);
@@ -68,7 +68,7 @@ function announce() {
 /** Wipe account data from this browser (on sign-out), leaving a fresh guest session. */
 export function clearLocalAccountData() {
   for (const key of [...Object.keys(PART_BY_KEY), META_KEY, "stockify-completed"]) {
-    try { localStorage.removeItem(key); } catch { /* storage blocked */ }
+    try { store.remove(key); } catch { /* storage blocked */ }
   }
   announce();
 }

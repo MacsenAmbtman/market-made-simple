@@ -5,6 +5,7 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { BOTTOM, QuestionScreen, TAP } from "@/components/lesson/MobileLessonPlayer";
 import { getAllProgress } from "@/lib/lessons";
+import { trackEvent } from "@/lib/analytics";
 import { pickPractice, practiceQuestion, PRACTICE, recordPractice, type PracticeItem, type PracticeResult } from "@/lib/practice";
 
 export const Route = createFileRoute("/practice")({
@@ -29,7 +30,9 @@ function PracticePage() {
   const [result, setResult] = useState<PracticeResult | null>(null);
 
   const start = () => {
-    setRound(pickPractice(getAllProgress()));
+    const picked = pickPractice(getAllProgress());
+    if (picked.length > 0) trackEvent("practice_start", { questions: picked.length });
+    setRound(picked);
     setAt(0);
     setPicked(null);
     setCorrect(0);

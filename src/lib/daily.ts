@@ -1,6 +1,7 @@
 // Daily check-in streak and a rotating daily challenge that pays bonus simulator capital.
 // Days are the user's local calendar dates ("YYYY-MM-DD").
 
+import { store } from "./local-store";
 import { attemptPassed, getAllProgress, type LessonProgress } from "./lessons";
 import { notifyLocalWrite } from "./local-store";
 import { grantReward, hasReward } from "./rewards";
@@ -32,7 +33,7 @@ export function parseDaily(p: unknown): DailyState {
 export function getDaily(): DailyState {
   if (typeof window === "undefined") return parseDaily(null);
   try {
-    return parseDaily(JSON.parse(localStorage.getItem(DAILY_KEY) || "null"));
+    return parseDaily(JSON.parse(store.get(DAILY_KEY) || "null"));
   } catch {
     return parseDaily(null);
   }
@@ -53,7 +54,7 @@ export function nextCheckIn(s: DailyState, today: string): DailyState {
 export function checkIn(today = dayKey()): DailyState {
   const next = nextCheckIn(getDaily(), today);
   try {
-    localStorage.setItem(DAILY_KEY, JSON.stringify(next));
+    store.set(DAILY_KEY, JSON.stringify(next));
   } catch {
     /* storage blocked */
   }

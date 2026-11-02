@@ -15,10 +15,22 @@ export type InviteRecord = { asked: boolean; submitted: boolean };
 
 export const EMPTY_RECORD: InviteRecord = { asked: false, submitted: false };
 
-/** One ask per visitor, ever — after that only a fresh answer counts. */
-export function shouldInvite(signals: InviteSignals, record: InviteRecord): boolean {
+/**
+ * Phones are a learning app: the ask only happens back on the path (never on the setup
+ * question, inside a lesson or practice, or on sign-in screens) and only after at least
+ * one lesson has been completed.
+ */
+export type PhoneContext = { completedLessons: number };
+export const PHONE_INVITE_PATHS = ["/learn", "/learn/"];
+
+/** One ask per visitor, ever — after that only a fresh answer counts. Computers pass no phone context. */
+export function shouldInvite(signals: InviteSignals, record: InviteRecord, phone?: PhoneContext): boolean {
   if (record.asked || record.submitted) return false;
   if (SKIP_PATHS.some((skip) => signals.path.startsWith(skip))) return false;
+  if (phone) {
+    if (!PHONE_INVITE_PATHS.includes(signals.path)) return false;
+    if (phone.completedLessons < 1) return false;
+  }
   return signals.seconds >= INVITE_AFTER_SECONDS || signals.screens >= INVITE_AFTER_SCREENS;
 }
 

@@ -1,6 +1,7 @@
 // Ledger of bonus virtual capital earned outside the simulator (e.g. passing a lesson quiz).
 // The simulator applies each reward once; it never reads lesson state directly.
 
+import { store } from "./local-store";
 import { notifyLocalWrite } from "./local-store";
 
 export type Reward = { id: string; amount: number; label: string; t: number };
@@ -19,7 +20,7 @@ export function parseRewards(parsed: unknown): Reward[] {
 export function getRewards(): Reward[] {
   if (typeof window === "undefined") return [];
   try {
-    return parseRewards(JSON.parse(localStorage.getItem(REWARDS_KEY) || "[]"));
+    return parseRewards(JSON.parse(store.get(REWARDS_KEY) || "[]"));
   } catch {
     return [];
   }
@@ -34,7 +35,7 @@ export function grantReward(reward: Omit<Reward, "t">): boolean {
   const all = getRewards();
   if (all.some((r) => r.id === reward.id)) return false;
   try {
-    localStorage.setItem(REWARDS_KEY, JSON.stringify([...all, { ...reward, t: Date.now() }]));
+    store.set(REWARDS_KEY, JSON.stringify([...all, { ...reward, t: Date.now() }]));
   } catch {
     return false;
   }

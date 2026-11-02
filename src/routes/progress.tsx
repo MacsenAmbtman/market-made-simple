@@ -1,12 +1,11 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Progress } from "@/components/ui/progress";
 import { courseLessons, getAllProgress, isRewarded, lessons, getPracticeEntry, practiceXp, scoreOutOf, totalXp, type LessonProgress } from "@/lib/lessons";
 import { totalRewards } from "@/lib/rewards";
-import { resetOnboarding } from "@/lib/onboarding";
 import { fmt } from "@/lib/simulator";
-import { CheckCircle2, Circle, Coins, RotateCcw, Sparkles } from "lucide-react";
+import { CheckCircle2, Circle, Coins, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/progress")({
   head: () => ({
@@ -23,7 +22,6 @@ export const Route = createFileRoute("/progress")({
 });
 
 function MyProgress() {
-  const navigate = useNavigate();
   const [progress, setProgress] = useState<Record<string, LessonProgress>>({});
   const [rewarded, setRewarded] = useState<string[]>([]);
   const [earned, setEarned] = useState(0);
@@ -41,11 +39,6 @@ function MyProgress() {
   const phoneDone = courseLessons.filter((l) => progress[l.slug]?.completed).length;
   const phonePct = Math.round((phoneDone / courseLessons.length) * 100);
   const xp = totalXp(progress, pxp);
-
-  const retakeQuiz = () => {
-    resetOnboarding();
-    void navigate({ to: "/" });
-  };
 
   return (
     <AppShell>
@@ -89,9 +82,6 @@ function MyProgress() {
           );
         })}
       </ul>
-      <button type="button" onClick={retakeQuiz} className="mt-6 flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground md:hidden">
-        <RotateCcw className="h-4 w-4" /> Retake the setup quiz
-      </button>
     </AppShell>
   );
 }

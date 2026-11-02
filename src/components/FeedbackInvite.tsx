@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { FEEDBACK_MAX, validateFeedback } from "@/lib/feedback-validate";
 import { submitFeedback } from "@/lib/feedback.functions";
 import { useEngagement } from "@/hooks/use-engagement";
+import { useIsPhone } from "@/hooks/use-is-phone";
+import { courseLessons, getAllProgress } from "@/lib/lessons";
 import {
   EMPTY_RECORD,
   isTyping,
@@ -20,7 +22,16 @@ import {
   shouldInvite,
   writeInviteRecord,
   type InviteRecord,
+  type PhoneContext,
 } from "@/lib/feedback-invite";
+
+// On phones, wait a moment after landing back on the path so it never stacks on a transition.
+export const PHONE_CALM_MS = 4000;
+
+function phoneContext(): PhoneContext {
+  const progress = getAllProgress();
+  return { completedLessons: courseLessons.filter((l) => progress[l.slug]?.completed).length };
+}
 
 /**
  * No feedback button anywhere — this asks on its own, once, when a visitor has clearly
@@ -29,6 +40,7 @@ import {
  */
 export function FeedbackInvite() {
   const { seconds, screens, path } = useEngagement();
+  const isPhone = useIsPhone();
   const [record, setRecord] = useState<InviteRecord>(EMPTY_RECORD);
   const [open, setOpen] = useState(false);
   const [liked, setLiked] = useState("");
@@ -43,14 +55,28 @@ export function FeedbackInvite() {
     setRecord(readInviteRecord());
   }, []);
 
+  const eligible = isPhone !== null && shouldInvite({ seconds, screens, path }, record, isPhone ? phoneContext() : undefined);
+
   useEffect(() => {
-    if (asked.current || open) return;
-    if (!shouldInvite({ seconds, screens, path }, record)) return;
+    if (!eligible || asked.current || open) return;
     if (isTyping()) return; // wait for them to leave the box they're in
-    asked.current = true;
-    setRecord(writeInviteRecord({ asked: true }));
-    setOpen(true);
-  }, [seconds, screens, path, record, open]);
+    const ask = () => {
+      asked.current = true;
+      setRecord(writeInviteRecord({ asked: true }));
+      setOpen(true);
+    };
+    if (!isPhone) return ask();
+    // Phones: only if they're still calmly on the path a few seconds later, with nothing else open.
+    const t = window.setTimeout(() => {
+      if (asked.current) return;
+      const still = shouldInvite({ seconds, screens, path: window.location.pathname }, readInviteRecord(), phoneContext());
+      if (!still || isTyping() || document.querySelector('[role="dialog"]')) return;
+      ask();
+    }, PHONE_CALM_MS);
+    return () => window.clearTimeout(t);
+    // Computers re-check every tick (so typing just delays the ask); phones keep one steady timer.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eligible, open, isPhone, isPhone ? path : seconds]);
 
   function dismiss() {
     setOpen(false);
@@ -132,7 +158,7 @@ export function FeedbackInvite() {
                   onChange={(event) => setLiked(event.target.value)}
                   rows={4}
                   maxLength={FEEDBACK_MAX}
-                  placeholder="The lessons were clear, but the simulator felt slow."
+                  placeholder={isPhone ? "The lessons were clear, but I wanted more examples." : "The lessons were clear, but the simulator felt slow."}
                   className="mt-2 min-h-28 resize-none rounded-xl bg-background p-3 text-base"
                 />
               </div>
@@ -147,7 +173,7 @@ export function FeedbackInvite() {
                   onChange={(event) => setWanted(event.target.value)}
                   rows={4}
                   maxLength={FEEDBACK_MAX}
-                  placeholder="More real companies, or a way to compare two stocks."
+                  placeholder={isPhone ? "More lessons on a topic I care about, or daily reminders." : "More real companies, or a way to compare two stocks."}
                   className="mt-2 min-h-28 resize-none rounded-xl bg-background p-3 text-base"
                 />
               </div>
