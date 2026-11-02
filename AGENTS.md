@@ -18,3 +18,11 @@
 - `public.feedback` is write-only from the app (an INSERT policy and no SELECT policy, by
   design): visitors must never be able to read other people's responses through the site, so
   read them back with a service-role query instead of adding a read policy.
+
+## Progressive web app
+
+- Home-screen support stays manifest-only (`public/manifest.webmanifest` plus the head tags in
+  `src/routes/__root.tsx`); add no service worker, `vite-plugin-pwa`, or offline caching unless
+  the user explicitly asks for offline use, because workers keep serving stale bundles inside
+  the Lovable preview.
+
