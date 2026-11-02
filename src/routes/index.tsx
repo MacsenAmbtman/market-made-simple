@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
 import { LessonPath } from "@/components/LessonPath";
+import { OnboardingQuiz } from "@/components/OnboardingQuiz";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -64,12 +65,10 @@ function Landing() {
           <HeaderActions />
         </div>
       </header>
-      {/* Phones: Duolingo-style learning path; swipe games live on the Simulator tab. */}
+      {/* Phones: 4-step onboarding quiz, then the learning path. */}
       <section className="px-5 pt-2 pb-10 md:hidden">
-        <h1 className="text-center text-3xl font-bold leading-tight">
-          The stock market, <span className="text-primary">finally in plain English.</span>
-        </h1>
-        <div className="mt-8"><LessonPath /></div>
+        <OnboardingQuiz />
+        <div className="mt-10"><LessonPath /></div>
       </section>
       <section className="mx-auto hidden max-w-4xl px-5 pt-16 pb-20 text-center md:block">
         <h1 className="text-6xl font-bold leading-tight">
