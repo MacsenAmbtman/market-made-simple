@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { LessonPath } from "@/components/LessonPath";
 import { DailyChallenge } from "@/components/daily/DailyChallenge";
 import { Progress } from "@/components/ui/progress";
 import { courseLessons, dayTradingLessons, getAllProgress, isRewarded, lessons, upcoming, type LessonProgress } from "@/lib/lessons";
@@ -15,6 +16,8 @@ export const Route = createFileRoute("/learn/")({
       { name: "description", content: "Your beginner investing lesson modules and progress." },
       { property: "og:title", content: "Learn — Stockify Learn" },
       { property: "og:description", content: "Bite-sized investing lessons." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Learn,
@@ -63,6 +66,8 @@ function Learn() {
 
   return (
     <AppShell>
+      <div className="md:hidden"><LessonPath /></div>
+      <div className="hidden md:block">
       <h1 className="text-3xl font-bold">Welcome back</h1>
       <p className="mt-1 text-muted-foreground">
         {nextUp ? <>Up next: <Link to="/learn/$slug" params={{ slug: nextUp.slug }} className="text-primary hover:underline">{nextUp.title}</Link></> : "You've finished every module — nice work!"}
@@ -100,6 +105,7 @@ function Learn() {
       <p className="mt-1 text-muted-foreground">Start with Beginner, then level up. Practise what you learn in the simulator's Day Trading mode.</p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {dayTradingLessons.map((l) => card(l, l.level ?? "Day trading"))}
+      </div>
       </div>
     </AppShell>
   );

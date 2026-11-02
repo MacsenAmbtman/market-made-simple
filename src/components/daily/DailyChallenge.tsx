@@ -147,17 +147,18 @@ export function StreakBadge({ className = "" }: { className?: string }) {
           {streak}-day streak
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          {checkedInToday ? "You're checked in today — come back tomorrow to keep it going." : "Check in today to keep your streak alive!"}
+          <span className="md:hidden">{checkedInToday ? "Today counts — come back tomorrow to keep it going." : "Finish a lesson today to keep your streak going."}</span>
+          <span className="hidden md:inline">{checkedInToday ? "You're checked in today — come back tomorrow to keep it going." : "Check in today to keep your streak alive!"}</span>
           {daily.best > 0 && ` Best: ${daily.best} days.`}
         </p>
         {status !== "signed-in" ? (
           <div className="mt-3 grid gap-2">
-            <p className="text-xs text-muted-foreground">Sign in so your streak is saved to your account.</p>
+            <p className="text-xs text-muted-foreground">Create a free account to save your streak.</p>
             <Button size="sm" className="w-full" asChild><Link to="/login">Sign in</Link></Button>
             <Button size="sm" variant="secondary" className="w-full" asChild><Link to="/signup">Create free account</Link></Button>
           </div>
         ) : !checkedInToday && (
-          <Button size="sm" variant="secondary" className="mt-3 w-full" onClick={checkIn}>
+          <Button size="sm" variant="secondary" className="mt-3 w-full max-md:hidden" onClick={checkIn}>
             <Flame /> Check in for today
           </Button>
         )}
