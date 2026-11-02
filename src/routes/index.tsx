@@ -5,7 +5,7 @@ import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
-import { SwipeDeck, DesktopCTA } from "@/components/SwipeDeck";
+import { LessonPath } from "@/components/LessonPath";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -64,55 +64,12 @@ function Landing() {
           <HeaderActions />
         </div>
       </header>
-      {/* Phones: app-style home — one daily swipe challenge, then the learning path. */}
-      <section className="px-5 pt-2 pb-8 md:hidden">
+      {/* Phones: Duolingo-style learning path; swipe games live on the Simulator tab. */}
+      <section className="px-5 pt-2 pb-10 md:hidden">
         <h1 className="text-center text-3xl font-bold leading-tight">
           The stock market, <span className="text-primary">finally in plain English.</span>
         </h1>
-        <ul className="mt-4 flex justify-center gap-2 text-xs font-medium text-muted-foreground">
-          {["3-min lessons", "Risk-free", "$10k fake cash"].map((s) => (
-            <li key={s} className="whitespace-nowrap rounded-full border bg-card px-3 py-1.5">{s}</li>
-          ))}
-        </ul>
-        <div className="mt-7">
-          <h2 className="mb-3 text-xl font-bold">Daily market pulse</h2>
-          <SwipeDeck />
-        </div>
-        <div className="mt-9">
-          <h2 className="text-xl font-bold">Your learning path</h2>
-          <ol className="relative mt-4 space-y-3 before:absolute before:left-5 before:top-5 before:bottom-5 before:w-px before:bg-border">
-            {[
-              { n: 1, title: "What is a Stock?", text: "Own a slice of a company", slug: "what-is-a-stock" },
-              { n: 2, title: "Risk & Reward", text: "Why prices wiggle", slug: "risk-and-reward" },
-              { n: 3, title: "Your first paper trade", text: "$10,000 fake cash, zero risk", slug: null },
-            ].map((step) => {
-              const inner = (
-                <>
-                  <span className={`relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full font-bold ${step.n === 1 ? "bg-primary text-primary-foreground shadow-glow" : "border bg-card text-muted-foreground"}`}>{step.n}</span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-semibold">{step.title}</span>
-                    <span className="block text-sm text-muted-foreground">{step.text}</span>
-                  </span>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                </>
-              );
-              const cls = "flex min-h-16 items-center gap-4 rounded-2xl border bg-card p-3 shadow-card";
-              return (
-                <li key={step.n}>
-                  {step.slug ? (
-                    <Link to="/learn/$slug" params={{ slug: step.slug }} className={cls}>{inner}</Link>
-                  ) : (
-                    <Link to="/simulator" className={cls}>{inner}</Link>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
-          <Button asChild size="lg" className="mt-5 h-14 w-full text-base shadow-glow">
-            <Link to="/learn/$slug" params={{ slug: "what-is-a-stock" }}>Start Free Lesson 1 <ArrowRight /></Link>
-          </Button>
-        </div>
-        <div className="mt-9"><DesktopCTA /></div>
+        <div className="mt-8"><LessonPath /></div>
       </section>
       <section className="mx-auto hidden max-w-4xl px-5 pt-16 pb-20 text-center md:block">
         <h1 className="text-6xl font-bold leading-tight">
