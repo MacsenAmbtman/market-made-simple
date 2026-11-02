@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { isOnboardingDone } from "@/lib/onboarding";
+import { isOnboardingDone, skipFirstQuestion } from "@/lib/onboarding";
 import { useIsPhone } from "@/hooks/use-is-phone";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/AppShell";
@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FirstQuestion } from "@/components/FirstQuestion";
-import { courseLessons, getAllProgress } from "@/lib/lessons";
+import { getAllProgress } from "@/lib/lessons";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -59,9 +59,7 @@ function Landing() {
   // setup quiz) or already has lesson progress goes straight to the path.
   useEffect(() => {
     if (!isPhone) return;
-    const progress = getAllProgress();
-    const hasProgress = courseLessons.some((l) => { const p = progress[l.slug]; return !!p && (p.completed || p.slide > 0 || p.attempts > 0); });
-    if (isOnboardingDone() || hasProgress) void navigate({ to: "/learn", replace: true });
+    if (skipFirstQuestion(isOnboardingDone(), getAllProgress())) void navigate({ to: "/learn", replace: true });
     else setShowQuiz(true);
   }, [isPhone, navigate]);
   return (
