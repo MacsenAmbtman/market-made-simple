@@ -8,7 +8,8 @@ import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
-import { OnboardingQuiz } from "@/components/OnboardingQuiz";
+import { FirstQuestion } from "@/components/FirstQuestion";
+import { courseLessons, getAllProgress } from "@/lib/lessons";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -43,8 +44,9 @@ function HeaderActions() {
   }
   return (
     <div className="flex items-center gap-2">
-      <Button asChild variant="ghost"><Link to="/login">Sign in</Link></Button>
-      <Button asChild><Link to="/signup">Sign up</Link></Button>
+      <Button asChild variant="ghost" className="max-md:h-9 max-md:px-3 max-md:text-sm max-md:text-muted-foreground"><Link to="/login">Sign in</Link></Button>
+      {/* Phones keep the first screen about "Start Lesson 1"; only a small Sign in link shows. */}
+      <Button asChild className="hidden md:inline-flex"><Link to="/signup">Sign up</Link></Button>
     </div>
   );
 }
@@ -53,10 +55,13 @@ function Landing() {
   const isPhone = useIsPhone();
   const navigate = useNavigate();
   const [showQuiz, setShowQuiz] = useState(false);
-  // Phones: first visit shows the setup quiz once; returning visitors go straight to the path.
+  // Phones: first visit shows one quick question; anyone who answered it before (or the old
+  // setup quiz) or already has lesson progress goes straight to the path.
   useEffect(() => {
     if (!isPhone) return;
-    if (isOnboardingDone()) void navigate({ to: "/learn", replace: true });
+    const progress = getAllProgress();
+    const hasProgress = courseLessons.some((l) => { const p = progress[l.slug]; return !!p && (p.completed || p.slide > 0 || p.attempts > 0); });
+    if (isOnboardingDone() || hasProgress) void navigate({ to: "/learn", replace: true });
     else setShowQuiz(true);
   }, [isPhone, navigate]);
   return (
@@ -78,9 +83,9 @@ function Landing() {
           <HeaderActions />
         </div>
       </header>
-      {/* Phones: the setup quiz, shown once; afterwards phones open the path on /learn. */}
-      <section className="min-h-[60vh] px-5 pt-2 pb-10 md:hidden">
-        {showQuiz && <OnboardingQuiz />}
+      {/* Phones: one quick question, shown once; afterwards phones open the path on /learn. */}
+      <section className="px-5 pt-1 pb-[max(1.25rem,env(safe-area-inset-bottom))] md:hidden">
+        {showQuiz && <FirstQuestion />}
       </section>
       <section className="mx-auto hidden max-w-4xl px-5 pt-16 pb-20 text-center md:block">
         <h1 className="text-6xl font-bold leading-tight">
