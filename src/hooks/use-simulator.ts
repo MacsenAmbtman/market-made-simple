@@ -11,6 +11,7 @@ import {
   placeMarketOrder,
   saveState,
   stepMarket,
+  fastForward,
   type OrderResult,
   type Side,
   type SimState,
@@ -83,6 +84,8 @@ export function useSimulator({ onRewards }: { onRewards?: (applied: Reward[]) =>
 
   const step = useCallback(() => commit(stepMarket(ref.current)), [commit]);
 
+  const skipYears = useCallback((years: number) => commit(fastForward(ref.current, years)), [commit]);
+
   const submit = useCallback(
     (order: { sym: string; side: Side; shares: number; type: "market" | "limit"; limit?: number }): OrderResult => {
       const r =
@@ -103,5 +106,5 @@ export function useSimulator({ onRewards }: { onRewards?: (applied: Reward[]) =>
     commit(applyRewards(initialState(), getRewards()).state);
   }, [commit]);
 
-  return { state, live, setLive, hydrated, step, submit, cancel, reset };
+  return { state, live, setLive, hydrated, step, skipYears, submit, cancel, reset };
 }

@@ -254,3 +254,26 @@ export function clearState() {
   try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
   notifyLocalWrite(STORAGE_KEY);
 }
+
+// ---------- long-term fast-forward ----------
+
+/** Typical yearly growth used when skipping ahead. Long-run averages, not predictions. */
+export const ANNUAL_DRIFT: Record<string, number> = { AAPL: 0.1, TSLA: 0.12, SPY: 0.08, KO: 0.06 };
+
+/** Skip ahead `years`, one month per step, then fill any triggered limit orders. */
+export function fastForward(s: SimState, years: number, rand: () => number = Math.random): SimState {
+  let state = s;
+  for (let m = 0; m < Math.round(years * 12); m++) {
+    const prices: Record<string, number[]> = {};
+    for (const def of STOCKS) {
+      const hist = state.prices[def.sym] ?? [def.price];
+      const last = hist.at(-1)!;
+      const shock = (rand() + rand() - 1) * def.vol * 4 + (ANNUAL_DRIFT[def.sym] ?? 0.07) / 12;
+      prices[def.sym] = keep([...hist, Math.max(0.5, round2(last * (1 + shock)))], HISTORY_LEN);
+    }
+    const tick = state.tick + 1;
+    const moved = executeOrders({ ...state, tick, prices });
+    state = { ...moved, valueHistory: keep([...moved.valueHistory, { t: tick, value: round2(totalValue(moved)) }], HISTORY_LEN) };
+  }
+  return state;
+}
