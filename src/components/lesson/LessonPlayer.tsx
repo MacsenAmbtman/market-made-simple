@@ -7,6 +7,7 @@ import { getProgress, lessons, passMark, recordQuiz, saveSlide, type Lesson, typ
 import { fmt } from "@/lib/simulator";
 import { ScenarioCard } from "./ScenarioCard";
 import { useAuth } from "@/hooks/use-auth";
+import { trackEvent } from "@/lib/analytics";
 
 type Phase = "slides" | "quiz" | "result";
 
@@ -46,6 +47,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
     setPicked(null);
     if (q + 1 < lesson.quiz.length) return setQ(q + 1);
     const result = recordQuiz(lesson, all);
+    trackEvent(result.passed ? "lesson_complete" : "lesson_failed", { lesson_slug: lesson.slug, score: result.score, out_of: lesson.quiz.length });
     if (result.passed) setCompletedBefore(true);
     setOutcome(result);
     setPhase("result");
