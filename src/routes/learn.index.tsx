@@ -4,7 +4,7 @@ import { AppShell } from "@/components/AppShell";
 import { LessonPath } from "@/components/LessonPath";
 import { DailyChallenge } from "@/components/daily/DailyChallenge";
 import { Progress } from "@/components/ui/progress";
-import { courseLessons, dayTradingLessons, getAllProgress, isRewarded, lessons, upcoming, type LessonProgress } from "@/lib/lessons";
+import { courseLessons, dayTradingLessons, getAllProgress, isRewarded, lessons, scoreOutOf, upcoming, type LessonProgress } from "@/lib/lessons";
 import { REWARDS_EVENT, totalRewards } from "@/lib/rewards";
 import { fmt } from "@/lib/simulator";
 import { CheckCircle2, Clock, Coins, Lock } from "lucide-react";
@@ -43,7 +43,7 @@ function Learn() {
 
   const card = (l: (typeof lessons)[number], label: string) => {
           const p = progress[l.slug];
-          const status = p?.completed ? `Best score ${p.bestScore}/${l.quiz.length}` : p && p.slide > 0 ? `Slide ${p.slide + 1} of ${l.slides.length}` : `${l.slides.length} slides · ${l.quiz.length}-question quiz`;
+          const status = p?.completed ? `Best score ${p.bestScore}/${scoreOutOf(p, l)}` : p && p.slide > 0 ? `Slide ${p.slide + 1} of ${l.slides.length}` : `${l.slides.length} slides · ${l.quiz.length}-question quiz`;
           return (
             <Link key={l.slug} to="/learn/$slug" params={{ slug: l.slug }} className="group flex flex-col rounded-2xl border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:border-primary/50">
               <div className="flex items-start justify-between">

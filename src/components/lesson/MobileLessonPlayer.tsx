@@ -2,15 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { ArrowRight, Check, ChevronLeft, Coins, Flame, RotateCcw, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getProgress, PASS_SCORE, saveSlide, type Lesson } from "@/lib/lessons";
+import { getProgress, passMark, saveSlide, type Lesson, type QuizQuestion } from "@/lib/lessons";
 import { buildSteps, finishPhoneLesson, nextCourseLesson, quizOnlySteps, type PhoneFinish, type Step } from "@/lib/phone-lesson";
 import { courseLessons } from "@/lib/lessons";
 import { fmt } from "@/lib/simulator";
 import { useAuth } from "@/hooks/use-auth";
 import { ScenarioCard } from "./ScenarioCard";
 
-const TAP = "transition-transform active:scale-[0.97] motion-reduce:transform-none motion-reduce:transition-none";
-const BOTTOM = "pb-[max(1rem,env(safe-area-inset-bottom))]";
+export const TAP = "transition-transform active:scale-[0.97] motion-reduce:transform-none motion-reduce:transition-none";
+export const BOTTOM = "pb-[max(1rem,env(safe-area-inset-bottom))]";
 
 /** Phone lesson: one idea per screen, quiz questions mixed in, a fixed Continue button. */
 export function MobileLessonPlayer({ lesson }: { lesson: Lesson }) {
@@ -92,7 +92,7 @@ export function MobileLessonPlayer({ lesson }: { lesson: Lesson }) {
       ) : step?.kind === "slide" ? (
         <SlideScreen key={`s${at}`} lesson={lesson} index={step.i} onContinue={advance} />
       ) : step?.kind === "quiz" ? (
-        <QuestionScreen key={`q${at}`} lesson={lesson} index={step.i} picked={picked} onPick={setPicked} onContinue={advance} />
+        <QuestionScreen key={`q${at}`} item={lesson.quiz[step.i]} picked={picked} onPick={setPicked} onContinue={advance} />
       ) : null}
     </div>
   );
@@ -122,15 +122,14 @@ function SlideScreen({ lesson, index, onContinue }: { lesson: Lesson; index: num
   );
 }
 
-function QuestionScreen({ lesson, index, picked, onPick, onContinue }: { lesson: Lesson; index: number; picked: number | null; onPick: (i: number) => void; onContinue: () => void }) {
-  const item = lesson.quiz[index];
+export function QuestionScreen({ item, picked, onPick, onContinue, label = "Quick check" }: { item: QuizQuestion | undefined; picked: number | null; onPick: (i: number) => void; onContinue: () => void; label?: string }) {
   if (!item) return null;
   const revealed = picked !== null;
   const right = picked === item.answer;
   return (
     <>
       <div className="flex-1 overflow-y-auto px-5 pb-6 animate-in fade-in duration-300 motion-reduce:animate-none">
-        <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-primary">Quick check</p>
+        <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-primary">{label}</p>
         <h2 className="mt-2 text-2xl font-bold leading-snug">{item.q}</h2>
         <div className="mt-6 grid gap-3" role="radiogroup">
           {item.options.map((o, oi) => {
@@ -175,7 +174,7 @@ function CompleteScreen({ lesson, result, answers, onRetry, onReview }: { lesson
       <>
         <div className="flex-1 overflow-y-auto px-5 pb-6 text-center animate-in fade-in duration-300 motion-reduce:animate-none">
           <h2 className="mt-10 text-3xl font-bold">Almost there</h2>
-          <p className="mt-3 text-lg text-muted-foreground">You got {result.score} of {lesson.quiz.length}. You need {PASS_SCORE} to pass — one more go will do it.</p>
+          <p className="mt-3 text-lg text-muted-foreground">You got {result.score} of {lesson.quiz.length}. You need {passMark(lesson)} to pass — one more go will do it.</p>
           {missed.length > 0 && (
             <ul className="mt-6 space-y-2 text-left">
               {missed.map((q) => (

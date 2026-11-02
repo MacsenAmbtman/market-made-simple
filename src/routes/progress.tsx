@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Progress } from "@/components/ui/progress";
-import { courseLessons, getAllProgress, isRewarded, lessons, totalXp, type LessonProgress } from "@/lib/lessons";
+import { courseLessons, getAllProgress, isRewarded, lessons, getPracticeEntry, practiceXp, scoreOutOf, totalXp, type LessonProgress } from "@/lib/lessons";
 import { totalRewards } from "@/lib/rewards";
 import { resetOnboarding } from "@/lib/onboarding";
 import { fmt } from "@/lib/simulator";
@@ -38,7 +38,7 @@ function MyProgress() {
   // Phones only count the investing course; day trading lives on the computer.
   const phoneDone = courseLessons.filter((l) => progress[l.slug]?.completed).length;
   const phonePct = Math.round((phoneDone / courseLessons.length) * 100);
-  const xp = totalXp(progress);
+  const xp = totalXp(progress, practiceXp(getPracticeEntry()));
 
   const retakeQuiz = () => {
     resetOnboarding();
@@ -79,7 +79,7 @@ function MyProgress() {
                 {p?.completed ? <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" /> : <Circle className="h-5 w-5 shrink-0 text-muted-foreground" />}
                 <span className="min-w-0 font-medium">{l.title}</span>
                 <span className="flex items-center gap-3 text-xs text-muted-foreground max-md:w-full max-md:pl-8 md:ml-auto">
-                  {p && p.attempts > 0 && <span>Best {p.bestScore}/{l.quiz.length} · {p.attempts} {p.attempts === 1 ? "attempt" : "attempts"}</span>}
+                  {p && p.attempts > 0 && <span>Best {p.bestScore}/{scoreOutOf(p, l)} · {p.attempts} {p.attempts === 1 ? "attempt" : "attempts"}</span>}
                   <span className={rewarded.includes(l.slug) ? "text-primary" : ""}>{rewarded.includes(l.slug) ? `+${fmt(l.reward)} earned` : `${fmt(l.reward)} available`}</span>
                 </span>
               </Link>
