@@ -1,6 +1,7 @@
 // Lesson manager: module content, quiz scoring, and progress saved to localStorage.
 // Passing a quiz grants one-time bonus capital through the rewards ledger.
 
+import { store } from "./local-store";
 import { notifyLocalWrite } from "./local-store";
 import { grantReward, hasReward } from "./rewards";
 import type { Scenario } from "./scenarios";
@@ -621,13 +622,13 @@ const blank = (): LessonProgress => ({ slide: 0, completed: false, bestScore: 0,
 function readAll(): Record<string, LessonProgress> {
   if (typeof window === "undefined") return {};
   try {
-    const raw = localStorage.getItem(LESSONS_KEY);
+    const raw = store.get(LESSONS_KEY);
     if (raw) {
       const parsed: unknown = JSON.parse(raw);
       return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? (parsed as Record<string, LessonProgress>) : {};
     }
     // Carry over completions saved by the earlier version of the app.
-    const legacy: unknown = JSON.parse(localStorage.getItem(LEGACY_KEY) || "[]");
+    const legacy: unknown = JSON.parse(store.get(LEGACY_KEY) || "[]");
     if (!Array.isArray(legacy)) return {};
     return Object.fromEntries(legacy.filter((s) => getLesson(s)).map((s) => [s, { ...blank(), completed: true }]));
   } catch {
@@ -637,7 +638,7 @@ function readAll(): Record<string, LessonProgress> {
 
 function writeAll(all: Record<string, LessonProgress>) {
   try {
-    localStorage.setItem(LESSONS_KEY, JSON.stringify(all));
+    store.set(LESSONS_KEY, JSON.stringify(all));
   } catch {
     // Storage blocked — progress just won't persist.
   }

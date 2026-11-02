@@ -4,13 +4,13 @@ export const ONBOARDING_KEY = "stockify:onboarding";
 
 export function isOnboardingDone(): boolean {
   if (typeof window === "undefined") return false;
-  try { return localStorage.getItem(ONBOARDING_KEY) === "done"; } catch { return false; }
+  try { return store.get(ONBOARDING_KEY) === "done"; } catch { return false; }
 }
 export function markOnboardingDone() {
-  try { localStorage.setItem(ONBOARDING_KEY, "done"); } catch { /* storage blocked */ }
+  try { store.set(ONBOARDING_KEY, "done"); } catch { /* storage blocked */ }
 }
 export function resetOnboarding() {
-  try { localStorage.removeItem(ONBOARDING_KEY); } catch { /* storage blocked */ }
+  try { store.remove(ONBOARDING_KEY); } catch { /* storage blocked */ }
 }
 
 /** Phones skip the opening question if it was answered before (or the old setup quiz was done), or there is any lesson progress. */

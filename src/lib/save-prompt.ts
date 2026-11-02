@@ -2,6 +2,7 @@
 // for Lesson 1, once more after Lesson 3, and then never again on its own. It never blocks
 // learning: "Not now" always carries on to the next lesson.
 
+import { store } from "./local-store";
 import { courseLessons } from "./lessons";
 
 const SEEN_KEY = "stockify:save-prompt-seen";
@@ -17,7 +18,7 @@ export function shouldShowSavePrompt(input: { slug: string; passed: boolean; sig
 
 export function readSavePromptSeen(): string[] {
   try {
-    const raw = localStorage.getItem(SEEN_KEY);
+    const raw = store.get(SEEN_KEY);
     const parsed: unknown = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed.filter((s): s is string => typeof s === "string") : [];
   } catch {
@@ -28,7 +29,7 @@ export function readSavePromptSeen(): string[] {
 export function markSavePromptSeen(slug: string) {
   try {
     const seen = readSavePromptSeen();
-    if (!seen.includes(slug)) localStorage.setItem(SEEN_KEY, JSON.stringify([...seen, slug]));
+    if (!seen.includes(slug)) store.set(SEEN_KEY, JSON.stringify([...seen, slug]));
   } catch {
     // Storage blocked (private mode, some in-app browsers): the prompt may show again, never breaks.
   }
