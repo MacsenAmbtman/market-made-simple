@@ -150,9 +150,9 @@ function Simulator() {
         ))}
       </div>
 
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="mt-6 grid items-start gap-6 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_320px]">
         {/* On phones the chart sticks under the header so it stays visible while filling in the order ticket. */}
-        <div className="sticky top-16 z-10 min-w-0 rounded-2xl border bg-card p-4 shadow-card sm:p-5 lg:static">
+        <div className="sticky top-16 z-10 min-w-0 rounded-2xl border bg-card p-4 shadow-card sm:p-5 md:static">
           <Tabs defaultValue="stock">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <TabsList>
@@ -217,7 +217,7 @@ function Simulator() {
         })}
       </div>
 
-      <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_380px]">
+      <div className="mt-8 grid items-start gap-6 md:grid-cols-[1fr_320px] lg:grid-cols-[1fr_380px]">
         <div className="grid min-w-0 gap-6">
           <PortfolioTracker state={state} onCancel={cancel} onSelect={setSym} />
           <TradeHistoryLog trades={state.trades} />
