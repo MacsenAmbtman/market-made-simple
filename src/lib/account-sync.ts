@@ -49,8 +49,8 @@ function readLocal(): Snapshot {
 function writeLocal(s: Snapshot) {
   const set = (key: string, value: unknown) => {
     try {
-      if (value == null) localStorage.removeItem(key);
-      else localStorage.setItem(key, JSON.stringify(value));
+      if (value == null) store.remove(key);
+      else store.set(key, JSON.stringify(value));
     } catch { /* storage blocked */ }
   };
   set(LESSONS_KEY, s.lessons);
@@ -68,7 +68,7 @@ function announce() {
 /** Wipe account data from this browser (on sign-out), leaving a fresh guest session. */
 export function clearLocalAccountData() {
   for (const key of [...Object.keys(PART_BY_KEY), META_KEY, "stockify-completed"]) {
-    try { localStorage.removeItem(key); } catch { /* storage blocked */ }
+    try { store.remove(key); } catch { /* storage blocked */ }
   }
   announce();
 }
