@@ -70,9 +70,9 @@ export function OnboardingQuiz() {
 
       {step < 3 ? (
         <>
-          <h2 className="text-2xl font-bold leading-tight">{STEPS[step].q}</h2>
+          <h2 className="text-2xl font-bold leading-tight">{STEPS[step]!.q}</h2>
           <div className="mt-5 grid gap-3">
-            {STEPS[step].options.map((o) => {
+            {STEPS[step]!.options.map((o) => {
               const sel = picked?.label === o.label;
               return (
                 <button
@@ -102,7 +102,7 @@ export function OnboardingQuiz() {
           <p className="mt-1 text-sm text-muted-foreground">{answers[1]} · {answers[0]}</p>
           <div className="mt-5 rounded-2xl bg-background p-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground"><Clock className="h-4 w-4" /> Quick 2-minute read</div>
-            <p className="mt-2 text-base leading-relaxed">{READS[answers[0]]}</p>
+            <p className="mt-2 text-base leading-relaxed">{READS[answers[0] ?? ""]}</p>
             <Link to="/learn/$slug" params={{ slug: "what-is-a-stock" }} className="mt-3 inline-block text-sm font-semibold text-primary">Start Lesson 1</Link>
           </div>
           <Button className="mt-5 h-auto min-h-14 w-full whitespace-normal py-3 text-base font-bold" onClick={sendLink}>
