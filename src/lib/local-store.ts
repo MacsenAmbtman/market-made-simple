@@ -17,8 +17,8 @@ const memory = new Map<string, string>();
 export const store = {
   get(key: string): string | null {
     try {
-      const v = localStorage.getItem(key);
-      return v ?? memory.get(key) ?? null;
+      // When storage works it is the single source of truth (so clearing it on sign-out clears progress).
+      return localStorage.getItem(key);
     } catch {
       return memory.get(key) ?? null;
     }

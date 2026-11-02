@@ -1,5 +1,7 @@
 // Phone opening question: shown once, then skipped. Uses the same saved flag as the old setup quiz.
 
+import { store } from "./local-store";
+
 export const ONBOARDING_KEY = "stockify:onboarding";
 
 export function isOnboardingDone(): boolean {
