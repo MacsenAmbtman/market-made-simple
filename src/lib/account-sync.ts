@@ -7,7 +7,7 @@ import { accountDb } from "./account-db";
 import { fromRow, isEmpty, mergeSnapshots, toRow, type LocalOwner, type Snapshot } from "./account-data";
 import { DAILY_EVENT, DAILY_KEY, getDaily } from "./daily";
 import { getAllProgress, getPracticeEntry, LESSONS_KEY, PRACTICE_SLUG } from "./lessons";
-import { ACCOUNT_SYNCED_EVENT, LOCAL_WRITE_EVENT } from "./local-store";
+import { ACCOUNT_SYNCED_EVENT, LOCAL_WRITE_EVENT, store } from "./local-store";
 import { getRewards, REWARDS_EVENT, REWARDS_KEY } from "./rewards";
 import { loadState, SIM_KEY } from "./simulator";
 
