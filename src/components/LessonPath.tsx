@@ -80,7 +80,6 @@ export function LessonPath() {
                 params={{ slug: l.slug }}
                 onClick={(e) => { if (locked) { e.preventDefault(); setMessage(LOCKED_MESSAGE); } }}
                 aria-label={`${l.title}${done ? " (completed)" : locked ? " (locked)" : ""}`}
-                aria-disabled={locked || undefined}
                 className={`${NODE} ${
                   done ? "border-primary/60 bg-primary text-primary-foreground"
                   : isCurrent ? "border-primary/60 bg-primary text-primary-foreground shadow-glow ring-4 ring-primary/25"
