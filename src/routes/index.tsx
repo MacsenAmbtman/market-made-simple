@@ -70,15 +70,12 @@ function Landing() {
           The stock market, <span className="text-primary">finally in plain English.</span>
         </h1>
         <ul className="mt-4 flex justify-center gap-2 text-xs font-medium text-muted-foreground">
-          {["3-min lessons", "100% risk-free", "$10k paper cash"].map((s) => (
-            <li key={s} className="rounded-full border bg-card px-3 py-1.5">{s}</li>
+          {["3-min lessons", "Risk-free", "$10k fake cash"].map((s) => (
+            <li key={s} className="whitespace-nowrap rounded-full border bg-card px-3 py-1.5">{s}</li>
           ))}
         </ul>
         <div className="mt-7">
-          <div className="mb-3 flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary">Daily market pulse</p>
-            <p className="text-xs text-muted-foreground">Swipe right to buy, left to pass</p>
-          </div>
+          <h2 className="mb-3 text-xl font-bold">Daily market pulse</h2>
           <SwipeDeck />
         </div>
         <div className="mt-9">
