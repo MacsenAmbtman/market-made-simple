@@ -32,3 +32,5 @@
 - Quiz pass marks come from passMark(lesson) (two-thirds, rounded up); stored best scores carry `outOf`, and saves without it are treated as old 3-question scores so earlier passes and perfect scores stay intact.
 - Progress stores (lessons, rewards, streak, onboarding, save prompt, account sync) read and write through `store` in local-store.ts, which falls back to memory when the browser blocks localStorage, so in-app browsers and private mode can still finish lessons in order during a visit.
 - The phone feedback invite only fires on the /learn path after at least one completed lesson (shouldInvite's phone context); computers pass no phone context so their rules stay unchanged.
+
+- Optional tracking (GA4, TikTok Pixel) goes only through trackEvent/trackPageView in src/lib/analytics.ts, which checks consent (src/lib/consent.ts) and the live-site host on every send, so nothing loads before Accept or outside production.
