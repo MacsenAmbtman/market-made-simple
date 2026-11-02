@@ -22,5 +22,8 @@ describe("Desktop routes", () => {
     expect(router.matchRoutes("/simulator").at(-1)?.routeId).toBe("/simulator");
     expect(router.matchRoutes("/calculator").at(-1)?.routeId).toBe("/calculator");
     expect(router.matchRoutes("/learn/what-is-a-stock").at(-1)?.routeId).toBe("/learn/$slug");
+    expect(router.matchRoutes("/learn/compound-interest").at(-1)?.routeId).toBe("/learn/$slug");
+    expect(router.matchRoutes("/learn").at(-1)?.routeId).toBe("/learn/");
+    expect(router.matchRoutes("/practice").at(-1)?.routeId).toBe("/practice");
   });
 });
