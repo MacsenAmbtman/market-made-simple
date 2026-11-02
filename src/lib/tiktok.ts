@@ -1,7 +1,7 @@
 // TikTok Pixel (browser only). Loaded only after cookie consent, only on the live site.
 // Never send emails, names, phone numbers, user IDs or hashes of them; no identify/advanced matching.
 
-export const TIKTOK_PIXEL_ID = "DBKB77JC77U97ADLO04G";
+export const TIKTOK_PIXEL_ID = "DBKC6GBC77UCRTSK0ECG";
 export const TIKTOK_SCRIPT_URL = "https://analytics.tiktok.com/i18n/pixel/events.js";
 
 type Ttq = {
