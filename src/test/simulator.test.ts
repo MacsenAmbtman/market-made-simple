@@ -112,14 +112,14 @@ describe("persistence", () => {
 });
 
 import { fastForward as ff, initialState as init0 } from "@/lib/simulator";
-import { DAY_BARS, DAY_CASH, dayOver, dayRecap, dayTrade, newDay, stepDay } from "@/lib/daytrade";
+import { DAY_BARS, DAY_CASH, dayOver, dayRecap, dayTrade, newDay, stepDay, setStop, setTarget, placeLimit, askPrice, bidPrice } from "@/lib/daytrade";
 
 describe("modes", () => {
   it("fast-forwarding 5 years adds 60 monthly steps", () => {
     expect(ff(init0(), 5, () => 0.5).tick).toBe(60);
   });
   it("a trading day ends after 78 bars and compares to buy-and-hold", () => {
-    let d = newDay(() => 0);
+    let d = newDay("beginner", () => 0);
     d = dayTrade(d, "buy", 10)!;
     for (let i = 0; i < DAY_BARS; i++) d = stepDay(d, () => 0.6);
     expect(dayOver(d)).toBe(true);
@@ -127,5 +127,33 @@ describe("modes", () => {
     const r = dayRecap(d);
     expect(r.holdPnl).toBeGreaterThan(r.pnl);
     expect(DAY_CASH).toBe(10000);
+  });
+  it("a stop-loss sells everything when the price falls to it", () => {
+    let d = dayTrade(newDay("intermediate", () => 0), "buy", 10)!;
+    d = setStop(d, d.candles[0]!.o * 0.995);
+    for (let i = 0; i < 5 && d.shares; i++) d = stepDay(d, () => 0.1);
+    expect(d.shares).toBe(0);
+    expect(d.fills.at(-1)!.reason).toBe("stop");
+    expect(d.stop).toBeUndefined();
+  });
+  it("a take-profit sells when the price rises to it", () => {
+    let d = dayTrade(newDay("intermediate", () => 0), "buy", 10)!;
+    d = setTarget(d, d.candles[0]!.o * 1.005);
+    for (let i = 0; i < 5 && d.shares; i++) d = stepDay(d, () => 0.9);
+    expect(d.fills.at(-1)!.reason).toBe("target");
+    expect(d.fills.at(-1)!.pnl).toBeGreaterThan(0);
+  });
+  it("a limit buy waits until the price drops to it", () => {
+    let d = placeLimit(newDay("advanced", () => 0), "buy", 5, 180)!;
+    expect(d.shares).toBe(0);
+    for (let i = 0; i < 20 && !d.shares; i++) d = stepDay(d, () => 0.1);
+    expect(d.shares).toBe(5);
+    expect(d.fills[0]!.price).toBeLessThanOrEqual(180);
+  });
+  it("only advanced has a bid/ask spread", () => {
+    const a = newDay("advanced", () => 0);
+    expect(askPrice(a)).toBeGreaterThan(bidPrice(a));
+    const b = newDay("beginner", () => 0);
+    expect(askPrice(b)).toBe(bidPrice(b));
   });
 });
