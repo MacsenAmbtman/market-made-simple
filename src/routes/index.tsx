@@ -110,7 +110,6 @@ function Landing() {
           </div>
         </div>
       </section>
-      <DesktopTradingBanner />
       <SiteFooter />
     </div>
   );
