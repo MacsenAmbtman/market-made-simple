@@ -57,7 +57,7 @@ export function SiteFooter() {
         <div>
           <h3 className="text-sm font-semibold">Explore</h3>
           <ul className="mt-3 space-y-2">
-            {nav.map(({ to, label }) => <li key={to}><Link to={to} className={linkCls}>{label}</Link></li>)}
+            {nav.map(({ to, label }) => <li key={to} className={to === "/simulator" || to === "/calculator" ? "max-md:hidden" : undefined}><Link to={to} className={linkCls}>{label}</Link></li>)}
           </ul>
         </div>
         <div>

@@ -26,8 +26,7 @@ import { PortfolioTracker } from "@/components/simulator/PortfolioTracker";
 import { AllocationBreakdown } from "@/components/simulator/AllocationBreakdown";
 import { TradeHistoryLog } from "@/components/simulator/TradeHistoryLog";
 import { GuestModeBanner } from "@/components/simulator/GuestModeBanner";
-import { SwipeDeck } from "@/components/SwipeDeck";
-import { ScenarioCard } from "@/components/ScenarioCard";
+import { ContinueOnComputer } from "@/components/ContinueOnComputer";
 import { DailyChallenge } from "@/components/daily/DailyChallenge";
 import { useSimulator } from "@/hooks/use-simulator";
 import { contributed, fmt, holdingsValue, priceOf, reservedCash, START_CASH, STOCKS, totalValue } from "@/lib/simulator";
@@ -77,14 +76,7 @@ function Simulator() {
       <div onClick={(e) => { if ((e.target as HTMLElement).closest("[data-sonner-toast]")) toast.dismiss(); }}>
         <Toaster position="top-right" theme="dark" richColors closeButton />
       </div>
-      <section className="space-y-8 md:hidden">
-        <div>
-          <h1 className="text-3xl font-bold">Quick Play</h1>
-          <p className="mt-1 text-muted-foreground">15-second market calls. Swipe right to buy, left to pass.</p>
-        </div>
-        <SwipeDeck />
-        <ScenarioCard />
-      </section>
+      <div className="md:hidden"><ContinueOnComputer /></div>
       <div className="hidden md:block">
       <GuestModeBanner />
       <Tabs defaultValue="long" onValueChange={(v) => trackEvent("sim_mode", { mode: v })}>

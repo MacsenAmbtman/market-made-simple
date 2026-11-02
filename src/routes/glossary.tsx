@@ -8,6 +8,8 @@ export const Route = createFileRoute("/glossary")({
       { name: "description", content: "Investing terms explained in plain English." },
       { property: "og:title", content: "Glossary — Stockify Learn" },
       { property: "og:description", content: "Investing jargon, decoded." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Glossary,

@@ -1,11 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { isOnboardingDone } from "@/lib/onboarding";
+import { useIsPhone } from "@/hooks/use-is-phone";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/AppShell";
 import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
-import { LessonPath } from "@/components/LessonPath";
 import { OnboardingQuiz } from "@/components/OnboardingQuiz";
 
 export const Route = createFileRoute("/")({
@@ -15,6 +17,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Bite-sized stock market lessons for complete beginners, plus a risk-free paper trading simulator." },
       { property: "og:title", content: "Stockify Learn — The stock market, finally in plain English" },
       { property: "og:description", content: "Bite-sized investing lessons and a $10,000 paper simulator." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Landing,
@@ -46,9 +50,18 @@ function HeaderActions() {
 }
 
 function Landing() {
+  const isPhone = useIsPhone();
+  const navigate = useNavigate();
+  const [showQuiz, setShowQuiz] = useState(false);
+  // Phones: first visit shows the setup quiz once; returning visitors go straight to the path.
+  useEffect(() => {
+    if (!isPhone) return;
+    if (isOnboardingDone()) void navigate({ to: "/learn", replace: true });
+    else setShowQuiz(true);
+  }, [isPhone, navigate]);
   return (
     <div className="min-h-screen bg-hero">
-      <div className="pt-10 md:pt-16">
+      <div className="hidden pt-16 md:block">
         <div
           role="img"
           aria-label="Stockify"
@@ -59,16 +72,15 @@ function Landing() {
           </span>
         </div>
       </div>
-      <header className="mx-auto flex max-w-6xl items-center justify-between p-5">
+      <header className="mx-auto flex max-w-6xl items-center justify-between p-5 max-md:pt-[max(1.25rem,env(safe-area-inset-top))]">
         <LogoMark />
         <div className="flex items-center gap-2">
           <HeaderActions />
         </div>
       </header>
-      {/* Phones: 4-step onboarding quiz, then the learning path. */}
-      <section className="px-5 pt-2 pb-10 md:hidden">
-        <OnboardingQuiz />
-        <div className="mt-10"><LessonPath /></div>
+      {/* Phones: the setup quiz, shown once; afterwards phones open the path on /learn. */}
+      <section className="min-h-[60vh] px-5 pt-2 pb-10 md:hidden">
+        {showQuiz && <OnboardingQuiz />}
       </section>
       <section className="mx-auto hidden max-w-4xl px-5 pt-16 pb-20 text-center md:block">
         <h1 className="text-6xl font-bold leading-tight">

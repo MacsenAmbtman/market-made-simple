@@ -535,7 +535,43 @@ export type LessonProgress = {
   lastScore?: number | undefined;
   lastAttemptAt?: number | undefined;
   completedAt?: number | undefined;
+  /** XP earned on this lesson. Missing on progress saved before XP existed; see lessonXp. */
+  xp?: number | undefined;
 };
+
+// ---------- XP ----------
+
+/** XP rules: first pass, first perfect score, and small capped replay XP. Never tied to bonus cash. */
+export const XP = { first: 50, perfect: 20, replay: 10, maxPerLesson: 100 } as const;
+
+/** XP held on a lesson, backfilling progress saved before XP existed. */
+export function lessonXp(p: Partial<LessonProgress> | undefined, lesson: Lesson): number {
+  if (!p) return 0;
+  if (typeof p.xp === "number") return Math.min(p.xp, XP.maxPerLesson);
+  return p.completed ? XP.first + ((p.bestScore ?? 0) >= lesson.quiz.length ? XP.perfect : 0) : 0;
+}
+
+/** XP a quiz attempt earns, given the progress before it. Capped per lesson so replays can't farm it. */
+export function xpGain(prev: LessonProgress, lesson: Lesson, score: number): number {
+  if (score < PASS_SCORE) return 0;
+  let gain: number = prev.completed ? XP.replay : XP.first;
+  if (score === lesson.quiz.length && prev.bestScore < lesson.quiz.length) gain += XP.perfect;
+  return Math.max(0, Math.min(gain, XP.maxPerLesson - lessonXp(prev, lesson)));
+}
+
+export function totalXp(progress: Record<string, LessonProgress>): number {
+  return lessons.reduce((sum, l) => sum + lessonXp(progress[l.slug], l), 0);
+}
+
+// ---------- phone path locking ----------
+
+/** On phones, investing lessons unlock in order; completed ones stay replayable. Day-trading lessons are never open on phones. */
+export function isUnlockedOnPhone(slug: string, progress: Record<string, LessonProgress>): boolean {
+  const idx = courseLessons.findIndex((l) => l.slug === slug);
+  if (idx < 0) return false;
+  if (progress[slug]?.completed) return true;
+  return courseLessons.slice(0, idx).every((l) => progress[l.slug]?.completed);
+}
 
 export const LESSONS_KEY = "stockify:lessons";
 const LEGACY_KEY = "stockify-completed"; // pre-quiz completions: string[] of slugs
@@ -591,7 +627,7 @@ export function saveSlide(slug: string, slide: number) {
 
 export const scoreQuiz = (lesson: Lesson, answers: number[]) => lesson.quiz.filter((q, i) => answers[i] === q.answer).length;
 
-export type QuizOutcome = { score: number; passed: boolean; rewardGranted: number; alreadyRewarded: boolean };
+export type QuizOutcome = { score: number; passed: boolean; rewardGranted: number; alreadyRewarded: boolean; xpGained: number };
 
 /** Record a finished quiz attempt; passing marks the lesson complete and grants its reward once. */
 export function recordQuiz(lesson: Lesson, answers: number[]): QuizOutcome {
@@ -599,6 +635,7 @@ export function recordQuiz(lesson: Lesson, answers: number[]): QuizOutcome {
   const passed = score >= PASS_SCORE;
   const all = readAll();
   const prev = { ...blank(), ...all[lesson.slug] };
+  const xpGained = xpGain(prev, lesson, score);
   all[lesson.slug] = {
     ...prev,
     attempts: prev.attempts + 1,
@@ -607,12 +644,13 @@ export function recordQuiz(lesson: Lesson, answers: number[]): QuizOutcome {
     bestScore: Math.max(prev.bestScore, score),
     completed: prev.completed || passed,
     completedAt: prev.completedAt ?? (passed ? Date.now() : undefined),
+    xp: lessonXp(prev, lesson) + xpGained,
   };
   writeAll(all);
 
   const alreadyRewarded = hasReward(rewardId(lesson.slug));
   const granted = passed && !alreadyRewarded && grantReward({ id: rewardId(lesson.slug), amount: lesson.reward, label: `Passed “${lesson.title}”` });
-  return { score, passed, rewardGranted: granted ? lesson.reward : 0, alreadyRewarded };
+  return { score, passed, rewardGranted: granted ? lesson.reward : 0, alreadyRewarded, xpGained };
 }
 
 export function isRewarded(slug: string) {

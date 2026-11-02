@@ -50,7 +50,7 @@ export function AccountMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <StreakRow />
-        <DropdownMenuItem asChild><Link to="/simulator"><LineChart className="mr-2 h-4 w-4" />My portfolio</Link></DropdownMenuItem>
+        <DropdownMenuItem asChild className="max-md:hidden"><Link to="/simulator"><LineChart className="mr-2 h-4 w-4" />My portfolio</Link></DropdownMenuItem>
         <DropdownMenuItem asChild><Link to="/progress"><Trophy className="mr-2 h-4 w-4" />My progress</Link></DropdownMenuItem>
         <DropdownMenuItem asChild><Link to="/progress"><UserRound className="mr-2 h-4 w-4" />Account settings</Link></DropdownMenuItem>
         <DropdownMenuSeparator />

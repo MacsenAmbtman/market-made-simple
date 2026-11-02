@@ -12,6 +12,13 @@ const nav = [
   { to: "/calculator", label: "Growth Calculator", icon: Calculator },
 ] as const;
 
+// Phones are for learning: three tabs, no trading pages.
+const phoneNav = [
+  { to: "/learn", label: "Learn", icon: BookOpen },
+  { to: "/progress", label: "Progress", icon: Trophy },
+  { to: "/glossary", label: "Glossary", icon: BookA },
+] as const;
+
 // Secondary pages live behind a "More" menu so the three main features stand out.
 const more = [
   { to: "/progress", label: "My Progress", icon: Trophy },
@@ -72,8 +79,8 @@ export function Logo() {
 export function AppShell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <div className="flex min-h-screen w-full flex-col pb-20 md:pb-0">
-      <header className="sticky top-0 z-30 border-b bg-surface/95 backdrop-blur">
+    <div className="flex min-h-screen w-full flex-col pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">
+      <header className="sticky top-0 z-30 border-b bg-surface/95 pt-[env(safe-area-inset-top)] backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 md:px-8 lg:gap-4">
           <Logo />
           <nav className="hidden items-center gap-1 md:flex">
@@ -91,13 +98,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8">{children}</main>
-      <nav className="app-bottom-bar fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 border-t bg-surface md:hidden">
-        {nav.map(({ to, label, icon: Icon }) => (
-          <Link key={to} to={to} className={`flex flex-col items-center gap-1 py-2 text-[11px] ${path.startsWith(to) ? "text-primary" : "text-muted-foreground"}`}>
-            <Icon className="h-5 w-5" />{label.replace(/^(Paper|Growth) /, "")}
+      <nav className="app-bottom-bar fixed inset-x-0 bottom-0 z-20 grid grid-cols-3 border-t bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
+        {phoneNav.map(({ to, label, icon: Icon }) => (
+          <Link key={to} to={to} className={`flex min-h-14 flex-col items-center justify-center gap-1 py-2 text-xs font-medium ${path.startsWith(to) ? "text-primary" : "text-muted-foreground"}`}>
+            <Icon className="h-6 w-6" />{label}
           </Link>
         ))}
-        <MoreMenu path={path} mobile />
       </nav>
     </div>
   );
