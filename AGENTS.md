@@ -26,4 +26,5 @@
   the user explicitly asks for offline use, because workers keep serving stale bundles inside
   the Lovable preview.
 
-- Phones (<768px) get quick-play learning (swipe deck, tap scenarios, desktop prompt); the full trading workstation renders only from md up — keep heavy charting off the phone layout so mobile stays fast and simple.
+- Phones (<768px) are learning-only: /learn shows the LessonPath, lessons play in MobileLessonPlayer with in-order locking, and trading routes (simulator, calculator, day-trading lessons) render ContinueOnComputer; desktop keeps the original pages untouched. Switch layouts with md: CSS, and use useIsPhone (null until mounted) only for logic such as redirects, so server and first client render match.
+- New per-lesson progress (e.g. XP) is stored as optional fields on LessonProgress and handled in parseLessons/mergeLesson, so it syncs with the existing lessons column without a schema change and old saves keep working.
