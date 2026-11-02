@@ -178,3 +178,23 @@ export function beginnerTip(d: DayState): string {
   if (bar > DAY_BARS - 8) return "The closing bell is near. Day traders usually sell everything before 4:00 PM.";
   return d.shares ? "Watching a winner? Selling part of your shares locks in some profit." : "Look for a few candles in a row heading the same way. That's a trend.";
 }
+
+/** Merge consecutive 5-minute candles into wider bars (e.g. group=3 gives 15-minute candles). */
+export function groupCandles(candles: Candle[], group: number): Candle[] {
+  if (group <= 1) return candles;
+  const out: Candle[] = [];
+  for (let i = 0; i < candles.length; i += group) {
+    const g = candles.slice(i, i + group);
+    out.push({ o: g[0]!.o, c: g[g.length - 1]!.c, h: Math.max(...g.map((x) => x.h)), l: Math.min(...g.map((x) => x.l)), v: g.reduce((a, x) => a + x.v, 0) });
+  }
+  return out;
+}
+
+/** Simulated order book: five price levels either side of the current price. */
+export function orderBook(price: number, bar: number, levels = 5) {
+  const tick = Math.max(0.01, round2(price * 0.0005));
+  const size = (k: number, side: number) => 100 + ((bar * 37 + k * 53 + side * 91) % 900);
+  const bids = Array.from({ length: levels }, (_, k) => ({ price: round2(price - tick * (k + 1)), size: size(k, 1) }));
+  const asks = Array.from({ length: levels }, (_, k) => ({ price: round2(price + tick * (k + 1)), size: size(k, 2) }));
+  return { bids, asks };
+}

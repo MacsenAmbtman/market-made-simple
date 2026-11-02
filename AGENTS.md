@@ -26,3 +26,4 @@
   the user explicitly asks for offline use, because workers keep serving stale bundles inside
   the Lovable preview.
 
+- Phones (<768px) get quick-play learning (swipe deck, tap scenarios, desktop prompt); the full trading workstation renders only from md up — keep heavy charting off the phone layout so mobile stays fast and simple.

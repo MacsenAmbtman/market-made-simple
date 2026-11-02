@@ -8,7 +8,7 @@ import { CandleChart, type ChartLine } from "@/components/simulator/CandleChart"
 import { trackEvent } from "@/lib/analytics";
 import {
   askPrice, avgCost, beginnerTip, bidPrice, cancelLimit, DAY_BARS, DAY_CASH, DAY_TICK_MS, dayBar, dayOpen, dayOver, dayPrice,
-  dayRecap, dayTrade, dayValue, hasExits, isAdvanced, LEVELS, moveLimit, newDay, placeLimit, setStop, setTarget, stepDay,
+  dayRecap, dayTrade, dayValue, hasExits, isAdvanced, LEVELS, moveLimit, newDay, placeLimit, setStop, setTarget, stepDay, groupCandles, orderBook,
   type DayState, type Fill, type Level,
 } from "@/lib/daytrade";
 import { fmt, round2 } from "@/lib/simulator";
@@ -36,6 +36,7 @@ export function DayTrading() {
   const [qty, setQty] = useState("10");
   const [limitPrice, setLimitPrice] = useState("");
   const [error, setError] = useState("");
+  const [group, setGroup] = useState(1);
   const ref = useRef(day);
   ref.current = day;
   const seen = useRef(0);
@@ -170,7 +171,7 @@ export function DayTrading() {
   }
 
   return (
-    <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_340px]">
+    <div className="mt-6 grid items-start gap-6 md:grid-cols-[1fr_300px] xl:grid-cols-[1fr_340px]">
       <div className="min-w-0 space-y-4">
         <div className="rounded-2xl border bg-card p-4 shadow-card sm:p-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -184,12 +185,36 @@ export function DayTrading() {
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
             <div className="h-full bg-primary transition-all" style={{ width: `${(bar / DAY_BARS) * 100}%` }} />
           </div>
-          <div className="mt-4">
-            <CandleChart candles={day.candles} slots={DAY_BARS + 1} lines={lines} showVolume={adv} height={adv ? 320 : 280} />
+          <div className="mt-3 flex gap-1" role="group" aria-label="Candle interval">
+            {[1, 3, 6].map((g) => (
+              <Button key={g} size="sm" variant={group === g ? "default" : "ghost"} aria-pressed={group === g} onClick={() => { setGroup(g); trackEvent("chart_interval", { minutes: g * 5 }); }}>
+                {g * 5}m
+              </Button>
+            ))}
+          </div>
+          <div className="mt-2">
+            <CandleChart candles={groupCandles(day.candles, group)} slots={Math.ceil((DAY_BARS + 1) / group)} lines={lines} showVolume={adv} height={adv ? 320 : 280} />
           </div>
           {exits && (day.stop !== undefined || day.target !== undefined || day.limits.length > 0) && (
             <p className="mt-2 text-xs text-muted-foreground">Drag the coloured lines up or down to move your orders.</p>
           )}
+        </div>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <OrderBook price={price} bar={bar} />
+          <div className="rounded-2xl border bg-card p-4 shadow-card sm:p-5">
+            <p className="font-semibold">Active position</p>
+            {day.shares > 0 ? (
+              <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                <div><p className="text-muted-foreground">Symbol</p><p className="font-semibold">{day.sym}</p></div>
+                <div><p className="text-muted-foreground">Shares</p><p className="font-semibold tabular-nums">{day.shares}</p></div>
+                <div><p className="text-muted-foreground">Avg cost</p><p className="font-semibold tabular-nums">{fmt(avgCost(day))}</p></div>
+                <div><p className="text-muted-foreground">Market value</p><p className="font-semibold tabular-nums">{fmt(day.shares * price)}</p></div>
+                <div className="col-span-2"><p className="text-muted-foreground">Unrealized P/L</p><p className={`font-display text-lg font-bold tabular-nums ${price >= avgCost(day) ? "text-primary" : "text-destructive"}`}>{signed(day.shares * (price - avgCost(day)))}</p></div>
+              </div>
+            ) : (
+              <p className="mt-2 text-sm text-muted-foreground">No open position. Buy shares to see live profit and loss here.</p>
+            )}
+          </div>
         </div>
         {day.level === "beginner" && (
           <div className="flex gap-3 rounded-2xl border bg-card p-4 text-sm shadow-card" aria-live="polite">
@@ -297,6 +322,26 @@ function ExitRow({ label, hint, tone, value, disabled, onAdd, onClear }: {
         <p className="text-xs text-muted-foreground">{hint} {fmt(value)}</p>
       </div>
       <Button size="icon" variant="ghost" aria-label={`Remove ${label}`} onClick={onClear}><X /></Button>
+    </div>
+  );
+}
+
+function OrderBook({ price, bar }: { price: number; bar: number }) {
+  const { bids, asks } = orderBook(price, bar);
+  const max = Math.max(...bids.map((b) => b.size), ...asks.map((a) => a.size));
+  const Row = ({ p, size, side }: { p: number; size: number; side: "bid" | "ask" }) => (
+    <li className="relative flex justify-between px-2 py-0.5 tabular-nums">
+      <span className={`absolute inset-y-0 right-0 ${side === "bid" ? "bg-primary/10" : "bg-destructive/10"}`} style={{ width: `${(size / max) * 100}%` }} aria-hidden />
+      <span className={`relative ${side === "bid" ? "text-primary" : "text-destructive"}`}>{fmt(p)}</span>
+      <span className="relative text-muted-foreground">{size}</span>
+    </li>
+  );
+  return (
+    <div className="rounded-2xl border bg-card p-4 shadow-card sm:p-5">
+      <div className="flex justify-between"><p className="font-semibold">Order book</p><p className="text-xs text-muted-foreground">Price · Shares</p></div>
+      <ul className="mt-2 text-sm">{[...asks].reverse().map((a) => <Row key={a.price} p={a.price} size={a.size} side="ask" />)}</ul>
+      <p className="my-1 border-y py-1 text-center font-display font-bold tabular-nums">{fmt(price)}</p>
+      <ul className="text-sm">{bids.map((b) => <Row key={b.price} p={b.price} size={b.size} side="bid" />)}</ul>
     </div>
   );
 }
