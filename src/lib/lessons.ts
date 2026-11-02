@@ -23,6 +23,8 @@ export type Lesson = {
   reward: number; // bonus simulator cash for passing the quiz
   slides: Slide[];
   quiz: QuizQuestion[];
+  track?: "day-trading"; // lessons outside the core investing course
+  level?: "Beginner" | "Intermediate" | "Advanced";
 };
 
 export const PASS_SCORE = 2; // correct answers out of 3 needed to pass
@@ -270,6 +272,243 @@ export const lessons: Lesson[] = [
       },
     ],
   },
+  {
+    "slug": "day-trading-basics",
+    "title": "Day Trading Basics",
+    "emoji": "",
+    "blurb": "What day traders actually do, and the honest odds.",
+    "minutes": 5,
+    "reward": 500,
+    "track": "day-trading",
+    "level": "Beginner",
+    "slides": [
+      {
+        "emoji": "",
+        "title": "Investing vs. day trading",
+        "body": "Investors buy a company and hold for years, letting the business grow. Day traders buy and sell within the same day, trying to profit from small price moves. Every position is closed before the market shuts at 4:00 PM.",
+        "callout": "Day trading = no shares held overnight."
+      },
+      {
+        "emoji": "",
+        "title": "Market hours",
+        "body": "The main US stock market is open 9:30 AM to 4:00 PM Eastern time. The first and last 30 minutes are usually the busiest and most jumpy, because that's when news gets priced in and big funds trade."
+      },
+      {
+        "emoji": "",
+        "title": "Small moves, many trades",
+        "body": "A long-term investor might hope for 8 to 10 percent a year. A day trader tries to catch moves of a fraction of a percent, many times. That means you need to be right often, and small mistakes add up fast."
+      },
+      {
+        "emoji": "",
+        "title": "Reading the chart",
+        "body": "Day traders watch price charts split into short time slices, like 1 minute or 5 minutes. Each slice is often drawn as a candlestick: a box showing where the price opened and closed, with thin lines for the highest and lowest prices in that slice.",
+        "callout": "Green candle = closed higher than it opened. Red = closed lower."
+      },
+      {
+        "emoji": "",
+        "title": "Volume",
+        "body": "Volume is how many shares changed hands. A price move on high volume means lots of people agree on it. A move on low volume is easier to reverse."
+      },
+      {
+        "emoji": "",
+        "title": "The honest odds",
+        "body": "Studies of real accounts keep finding the same thing: most people who day trade lose money, and only a small share make steady profits over the years. That's why Stockify lets you practise with pretend money first.",
+        "callout": "Treat day trading here as a skill game, not a way to get rich quick."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "What makes a trade a day trade?",
+        "options": [
+          "Holding a stock for at least a year",
+          "Buying and selling it within the same day",
+          "Only buying stocks under $10",
+          "Trading on weekends"
+        ],
+        "answer": 1,
+        "explain": "Day traders open and close their positions in the same session."
+      },
+      {
+        "q": "A green candlestick means...",
+        "options": [
+          "The price closed higher than it opened in that time slice",
+          "The stock pays a dividend",
+          "The market is closed",
+          "Volume was zero"
+        ],
+        "answer": 0,
+        "explain": "Green candles close above their opening price; red candles close below it."
+      },
+      {
+        "q": "What do studies of real day traders usually find?",
+        "options": [
+          "Almost everyone profits",
+          "Most lose money over time",
+          "It is guaranteed income",
+          "Fees don't matter"
+        ],
+        "answer": 1,
+        "explain": "Most day traders lose money, so practising risk-free is a smart first step."
+      }
+    ]
+  },
+  {
+    "slug": "day-trading-risk",
+    "title": "Managing Risk Like a Pro",
+    "emoji": "",
+    "blurb": "Stop-losses, position size and the 1% rule.",
+    "minutes": 6,
+    "reward": 750,
+    "track": "day-trading",
+    "level": "Intermediate",
+    "slides": [
+      {
+        "emoji": "",
+        "title": "Protect first, profit second",
+        "body": "Good traders think about how much they could lose before thinking about how much they could win. One bad trade without a plan can wipe out a week of small gains."
+      },
+      {
+        "emoji": "",
+        "title": "The stop-loss",
+        "body": "A stop-loss is an order that sells automatically if the price falls to a level you pick. If you buy at $50 with a stop at $49, the most you plan to lose is about $1 a share, even if you look away.",
+        "callout": "Decide your exit before you enter."
+      },
+      {
+        "emoji": "",
+        "title": "The 1% rule",
+        "body": "Many traders never risk more than 1 to 2 percent of their account on one trade. With $10,000, that's $100 to $200. Lose ten trades in a row and you still have most of your money to keep learning."
+      },
+      {
+        "emoji": "",
+        "title": "Position size",
+        "body": "Work backwards from your risk. If you'll risk $100 and your stop is $1 below your entry, you can buy 100 shares. If the stop is $2 away, buy 50. The stop decides the size, not your excitement."
+      },
+      {
+        "emoji": "",
+        "title": "Risk vs. reward",
+        "body": "Before entering, compare what you could lose with what you hope to gain. Risking $1 to make $2 (a 1-to-2 ratio) means you can be wrong more than half the time and still come out ahead."
+      },
+      {
+        "emoji": "",
+        "title": "Spread and slippage",
+        "body": "Every trade has a small hidden cost: the gap between the buying and selling price (the spread), plus slippage when prices move fast. Day traders pay these costs many times a day, so they matter much more than for long-term investors."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "You buy at $40 and set a stop-loss at $38. What does the stop do?",
+        "options": [
+          "Buys more at $38",
+          "Sells automatically if the price falls to $38",
+          "Locks the price at $40",
+          "Cancels the trade at 4 PM"
+        ],
+        "answer": 1,
+        "explain": "A stop-loss sells for you if the price drops to your chosen level."
+      },
+      {
+        "q": "With a $10,000 account and the 1% rule, the most you'd risk on one trade is about...",
+        "options": [
+          "$10",
+          "$100",
+          "$1,000",
+          "$5,000"
+        ],
+        "answer": 1,
+        "explain": "1% of $10,000 is $100."
+      },
+      {
+        "q": "You risk $1 a share to try to make $3. That's a risk-to-reward ratio of...",
+        "options": [
+          "3 to 1",
+          "1 to 3",
+          "1 to 1",
+          "It can't be measured"
+        ],
+        "answer": 1,
+        "explain": "Risking 1 to make 3 is a 1-to-3 ratio, which gives you room to be wrong sometimes."
+      }
+    ]
+  },
+  {
+    "slug": "day-trading-advanced",
+    "title": "Patterns, Psychology and Rules",
+    "emoji": "",
+    "blurb": "Support, resistance, news and the mistakes that sink traders.",
+    "minutes": 7,
+    "reward": 1000,
+    "track": "day-trading",
+    "level": "Advanced",
+    "slides": [
+      {
+        "emoji": "",
+        "title": "Support and resistance",
+        "body": "Support is a price where a falling stock has stopped and bounced before, because buyers stepped in. Resistance is a price where a rising stock has stalled, because sellers showed up. Traders watch these levels for possible entries and exits."
+      },
+      {
+        "emoji": "",
+        "title": "Moving averages and VWAP",
+        "body": "A moving average smooths out the price to show the trend. VWAP (volume-weighted average price) is the average price paid so far today, weighted by volume. Many traders see price above VWAP as strength and below it as weakness.",
+        "callout": "Indicators describe the past; they don't predict the future."
+      },
+      {
+        "emoji": "",
+        "title": "News moves markets",
+        "body": "Earnings reports, economic data and headlines can make a stock jump or gap in seconds. Fast moves create opportunity, but also wider spreads and more slippage. Many beginners do better sitting out the first few minutes after big news."
+      },
+      {
+        "emoji": "",
+        "title": "Your brain is the biggest risk",
+        "body": "The common mistakes are emotional: chasing a stock after it already jumped (fear of missing out), revenge trading to win back a loss, and moving your stop-loss because you hope it will turn around. A written plan for every trade helps you avoid all three."
+      },
+      {
+        "emoji": "",
+        "title": "Rules and taxes",
+        "body": "In the US, brokers have special rules for people who day trade often in small accounts, and some limit how many day trades you can make. Profits from short trades are usually taxed at higher rates than long-term investments. Check the current rules where you live before trading real money."
+      },
+      {
+        "emoji": "",
+        "title": "Keep a journal",
+        "body": "Serious traders record every trade: why they entered, where their stop was, and what happened. After a few weeks, patterns show up, like losing most money in the first 15 minutes. Use the Day Trading mode to build this habit risk-free.",
+        "callout": "Measure yourself against buy-and-hold. If you can't beat it on paper, don't try it with real money."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "A stock keeps bouncing up from $25. Traders would call $25...",
+        "options": [
+          "Resistance",
+          "Support",
+          "VWAP",
+          "The spread"
+        ],
+        "answer": 1,
+        "explain": "A level where buyers keep stepping in is support."
+      },
+      {
+        "q": "You lost money on a trade and immediately make a bigger one to win it back. This is called...",
+        "options": [
+          "Revenge trading",
+          "Hedging",
+          "Dollar-cost averaging",
+          "A stop-loss"
+        ],
+        "answer": 0,
+        "explain": "Revenge trading is an emotional mistake that often makes losses bigger."
+      },
+      {
+        "q": "What's a good test before day trading with real money?",
+        "options": [
+          "Trade only on news days",
+          "Consistently beat buy-and-hold on paper first",
+          "Skip stop-losses to save money",
+          "Use your whole account on one trade"
+        ],
+        "answer": 1,
+        "explain": "If your practice results can't beat simply holding, real money will likely do worse once fees are added."
+      }
+    ]
+  },
 ];
 
 /** Planned modules shown on the dashboard but not yet playable. */
@@ -278,6 +517,10 @@ export const upcoming = [
   { title: "Index Funds vs. Single Stocks", emoji: "🧺", blurb: "One basket or one egg?" },
   { title: "Dividends Explained", emoji: "💸", blurb: "Getting paid just for holding." },
 ];
+
+/** The core investing course; day-trading lessons live in their own track. */
+export const courseLessons = lessons.filter((l) => !l.track);
+export const dayTradingLessons = lessons.filter((l) => l.track === "day-trading");
 
 export const getLesson = (slug: string) => lessons.find((l) => l.slug === slug);
 export const rewardId = (slug: string) => `lesson:${slug}`;

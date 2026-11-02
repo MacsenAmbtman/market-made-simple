@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getAllProgress, getCompleted, getLesson, getProgress, lessons, recordQuiz, saveSlide, type Lesson } from "@/lib/lessons";
+import { courseLessons, dayTradingLessons, getAllProgress, getCompleted, getLesson, getProgress, lessons, recordQuiz, saveSlide, type Lesson } from "@/lib/lessons";
 import { getRewards, grantReward, totalRewards } from "@/lib/rewards";
 import { applyRewards, contributed, initialState, START_CASH } from "@/lib/simulator";
 
@@ -11,7 +11,8 @@ beforeEach(() => localStorage.clear());
 
 describe("lesson content", () => {
   it("ships three modules, each with slides and a valid 3-question quiz", () => {
-    expect(lessons.map((l) => l.title)).toEqual(["What is a Stock?", "Understanding Risk & Reward", "How Market Orders Work"]);
+    expect(courseLessons.map((l) => l.title)).toEqual(["What is a Stock?", "Understanding Risk & Reward", "How Market Orders Work"]);
+    expect(dayTradingLessons.map((l) => l.level)).toEqual(["Beginner", "Intermediate", "Advanced"]);
     for (const l of lessons) {
       expect(l.slides.length).toBeGreaterThan(0);
       expect(l.quiz).toHaveLength(3);

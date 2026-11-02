@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Play, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,7 +42,10 @@ export function DayTrading() {
           You get {fmt(DAY_CASH)} and one stock. Buy low, sell high, and finish before the closing bell. Any shares you still hold count at the closing price.
         </p>
         <Button size="lg" className="mt-6 h-12 w-full sm:w-auto" onClick={start}><Play /> Start the day</Button>
-        <p className="mt-4 text-xs text-muted-foreground">This is separate from your long-term portfolio.</p>
+        <p className="mt-4 text-sm text-muted-foreground">
+          New to this? <Link to="/learn/$slug" params={{ slug: "day-trading-basics" }} className="text-primary hover:underline">Take the Day Trading Basics lesson first</Link>
+        </p>
+        <p className="mt-2 text-xs text-muted-foreground">This is separate from your long-term portfolio.</p>
       </div>
     );
   }
