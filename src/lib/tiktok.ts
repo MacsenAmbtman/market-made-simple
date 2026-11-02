@@ -69,7 +69,7 @@ export function tiktokPage() {
  * Returns the [event, payload] pair sent, or null when the event isn't forwarded.
  */
 export function mapToTikTok(name: string, params: Record<string, unknown>): [string, Record<string, unknown>] | null {
-  const slug = typeof params.lesson_slug === "string" ? params.lesson_slug : undefined;
+  const slug = typeof params["lesson_slug"] === "string" ? params["lesson_slug"] : undefined;
   switch (name) {
     case "lesson_start":
       return slug ? ["ViewContent", { content_id: slug, content_type: "product" }] : null;
