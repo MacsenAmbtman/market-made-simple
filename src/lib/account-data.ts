@@ -3,7 +3,7 @@
 
 import type { ProgressRow } from "./account-db";
 import { parseDaily, type DailyState } from "./daily";
-import { lessons, type LessonProgress } from "./lessons";
+import { getLesson, lessonXp, lessons, XP, type LessonProgress } from "./lessons";
 import { parseRewards, type Reward } from "./rewards";
 import { parseState, type SimState } from "./simulator";
 
@@ -37,6 +37,7 @@ export function parseLessons(raw: unknown): Record<string, LessonProgress> {
       lastScore: optNum(r.lastScore),
       lastAttemptAt: optNum(r.lastAttemptAt),
       completedAt: optNum(r.completedAt),
+      xp: typeof r.xp === "number" && Number.isFinite(r.xp) && r.xp >= 0 ? Math.min(r.xp, XP.maxPerLesson) : undefined,
     };
   }
   return out;
@@ -49,7 +50,7 @@ export function isEmpty(s: Snapshot) {
 /** A portfolio someone has actually used, as opposed to the untouched $10,000 starter. */
 export const hasActivity = (sim: SimState | null) => !!sim && (sim.trades.length > 0 || sim.orders.length > 0 || sim.appliedRewards.length > 0);
 
-function mergeLesson(a: LessonProgress, b: LessonProgress): LessonProgress {
+function mergeLesson(a: LessonProgress, b: LessonProgress, slug: string): LessonProgress {
   const latest = (a.lastAttemptAt ?? 0) >= (b.lastAttemptAt ?? 0) ? a : b;
   const done = [a.completedAt, b.completedAt].filter((t): t is number => t != null);
   return {
@@ -60,6 +61,7 @@ function mergeLesson(a: LessonProgress, b: LessonProgress): LessonProgress {
     lastScore: latest.lastScore,
     lastAttemptAt: latest.lastAttemptAt,
     completedAt: done.length ? Math.min(...done) : undefined,
+    xp: (() => { const l = getLesson(slug); return l ? Math.max(lessonXp(a, l), lessonXp(b, l)) : Math.max(a.xp ?? 0, b.xp ?? 0); })(),
   };
 }
 
@@ -67,7 +69,7 @@ export function mergeLessons(a: Record<string, LessonProgress>, b: Record<string
   const out: Record<string, LessonProgress> = { ...a };
   for (const [slug, p] of Object.entries(b)) {
     const mine = out[slug];
-    out[slug] = mine ? mergeLesson(mine, p) : p;
+    out[slug] = mine ? mergeLesson(mine, p, slug) : p;
   }
   return out;
 }
