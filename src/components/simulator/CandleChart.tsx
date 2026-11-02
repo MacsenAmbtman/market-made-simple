@@ -120,8 +120,8 @@ export function CandleChart({
             >
               {l.onDrag && <rect x={0} y={ly - 12} width={width} height={24} fill="transparent" />}
               <line x1={0} x2={plotW} y1={ly} y2={ly} stroke={c} strokeWidth={drag === l.id ? 2 : 1.25} strokeDasharray={l.tone === "muted" ? "4 3" : "6 4"} />
-              <rect x={4} y={ly - 10} width={l.label.length * 6.4 + 12} height={20} rx={4} fill={c} />
-              <text x={10} y={ly + 4} fontSize={11} fontWeight={600} fill="var(--background)">{l.label}</text>
+              <rect x={plotW - l.label.length * 6.4 - 16} y={ly - 10} width={l.label.length * 6.4 + 12} height={20} rx={4} fill={c} />
+              <text x={plotW - l.label.length * 6.4 - 10} y={ly + 4} fontSize={11} fontWeight={600} fill="var(--background)">{l.label}</text>
               <rect x={plotW + 2} y={ly - 9} width={axisW - 4} height={18} rx={4} fill={c} />
               <text x={plotW + 6} y={ly + 4} fontSize={11} fontWeight={600} fill="var(--background)">{l.price.toFixed(2)}</text>
             </g>
