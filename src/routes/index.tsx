@@ -5,6 +5,7 @@ import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ScenarioCard, DesktopTradingBanner } from "@/components/ScenarioCard";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -63,18 +64,24 @@ function Landing() {
           <HeaderActions />
         </div>
       </header>
-      <section className="mx-auto max-w-4xl px-5 pt-10 pb-20 text-center md:pt-16">
-        <h1 className="text-4xl font-bold leading-tight md:text-6xl">
+      {/* Phones: one gamified scenario card instead of the desktop marketing layout. */}
+      <section className="px-5 pt-4 pb-8 md:hidden">
+        <h1 className="mb-5 text-center text-3xl font-bold leading-tight">
+          The stock market, <span className="text-primary">finally in plain English.</span>
+        </h1>
+        <ScenarioCard />
+      </section>
+      <section className="mx-auto hidden max-w-4xl px-5 pt-16 pb-20 text-center md:block">
+        <h1 className="text-6xl font-bold leading-tight">
           The stock market, <span className="text-primary">finally in plain English.</span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">Short, friendly lessons that turn "what's a stock?" into confident first steps.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {/* max-sm:* only below the phone/tablet cut-off, so tablet and desktop keep the size="lg" look. */}
-          <Button asChild size="lg" className="shadow-glow max-sm:w-full max-sm:min-h-14 max-sm:rounded-xl max-sm:px-6 max-sm:text-lg"><Link to="/learn/$slug" params={{ slug: "what-is-a-stock" }}>Start Free Lesson 1 <ArrowRight /></Link></Button>
+          <Button asChild size="lg" className="shadow-glow"><Link to="/learn/$slug" params={{ slug: "what-is-a-stock" }}>Start Free Lesson 1 <ArrowRight /></Link></Button>
           <Button asChild size="lg" variant="ghost"><Link to="/simulator">Try the simulator</Link></Button>
         </div>
       </section>
-      <section className="mx-auto grid max-w-6xl gap-5 px-5 pb-16 md:grid-cols-3">
+      <section className="mx-auto hidden max-w-6xl gap-5 px-5 pb-16 md:grid md:grid-cols-3">
         {features.map(({ icon: Icon, title, text }) => (
           <div key={title} className="rounded-2xl border bg-card p-6 shadow-card">
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent text-primary"><Icon className="h-5 w-5" /></span>
@@ -83,8 +90,8 @@ function Landing() {
           </div>
         ))}
       </section>
-      <section className="mx-auto max-w-6xl px-5 pb-24">
-        <div className="rounded-2xl border bg-card p-6 shadow-card md:p-10">
+      <section className="mx-auto hidden max-w-6xl px-5 pb-24 md:block">
+        <div className="rounded-2xl border bg-card p-10 shadow-card">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Paper portfolio</p>
@@ -100,6 +107,7 @@ function Landing() {
           </div>
         </div>
       </section>
+      <DesktopTradingBanner />
       <SiteFooter />
     </div>
   );

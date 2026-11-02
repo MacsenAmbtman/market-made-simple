@@ -129,7 +129,7 @@ function Simulator() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         {tiles.map((t) => (
           <div key={t.label} className="rounded-2xl border bg-card p-4 shadow-card sm:p-5">
             <p className="text-sm text-muted-foreground">{t.label}</p>
@@ -139,9 +139,9 @@ function Simulator() {
         ))}
       </div>
 
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="mt-6 grid items-start gap-6 md:grid-cols-[1fr_300px] xl:grid-cols-[1fr_320px]">
         {/* On phones the chart sticks under the header so it stays visible while filling in the order ticket. */}
-        <div className="sticky top-16 z-10 min-w-0 rounded-2xl border bg-card p-4 shadow-card sm:p-5 lg:static">
+        <div className="sticky top-16 z-10 min-w-0 rounded-2xl border bg-card p-4 shadow-card sm:p-5 md:static">
           <Tabs defaultValue="stock">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <TabsList>
@@ -155,7 +155,7 @@ function Simulator() {
                 <p className={`text-sm ${symChange >= 0 ? "text-primary" : "text-destructive"}`}>{pct(symChange)}</p>
                 <p className="text-sm text-muted-foreground">{selected.name} · last {series.length} ticks</p>
               </div>
-              <div className="mt-4 h-44 lg:h-72" onPointerDown={() => trackChartInteraction("price")} onMouseEnter={() => trackChartInteraction("price")}><PriceChart data={series} tick={state.tick} /></div>
+              <div className="mt-4 h-44 md:h-72" onPointerDown={() => trackChartInteraction("price")} onMouseEnter={() => trackChartInteraction("price")}><PriceChart data={series} tick={state.tick} /></div>
             </TabsContent>
             <TabsContent value="portfolio">
               <div className="mt-2 flex items-baseline gap-3">
@@ -163,7 +163,7 @@ function Simulator() {
                 <p className={`text-sm ${change >= 0 ? "text-primary" : "text-destructive"}`}>{pct(change)}</p>
                 <p className="text-sm text-muted-foreground">vs. {fmt(base)} {state.bonus > 0 ? "start + bonuses" : "start"}</p>
               </div>
-              <div className="mt-4 h-44 lg:h-72" onPointerDown={() => trackChartInteraction("portfolio_value")} onMouseEnter={() => trackChartInteraction("portfolio_value")}><ValueChart data={state.valueHistory} start={base} /></div>
+              <div className="mt-4 h-44 md:h-72" onPointerDown={() => trackChartInteraction("portfolio_value")} onMouseEnter={() => trackChartInteraction("portfolio_value")}><ValueChart data={state.valueHistory} start={base} /></div>
             </TabsContent>
           </Tabs>
         </div>
@@ -202,7 +202,7 @@ function Simulator() {
         })}
       </div>
 
-      <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_380px]">
+      <div className="mt-8 grid items-start gap-6 md:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px]">
         <div className="grid min-w-0 gap-6">
           <PortfolioTracker state={state} onCancel={cancel} onSelect={setSym} />
           <TradeHistoryLog trades={state.trades} />
