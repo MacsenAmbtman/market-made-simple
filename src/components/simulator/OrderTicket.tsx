@@ -26,7 +26,7 @@ function Segmented<T extends string>({ value, options, onChange }: { value: T; o
   );
 }
 
-export type TicketPreset = { side: Side; qty?: number; nonce: number };
+export type TicketPreset = { side: Side; qty?: number | undefined; nonce: number };
 
 export function OrderTicket({ state, sym, onSymChange, submit, preset }: { state: SimState; sym: string; onSymChange: (s: string) => void; submit: Submit; preset?: TicketPreset | null }) {
   const [side, setSide] = useState<Side>("buy");

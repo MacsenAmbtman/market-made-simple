@@ -16,7 +16,7 @@ export function QuickTradeDemo() {
   const [price, setPrice] = useState(pick.price);
   const [entry, setEntry] = useState<number | null>(null);
   const [result, setResult] = useState<number | null>(null);
-  const timer = useRef<ReturnType<typeof setInterval>>();
+  const timer = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   useEffect(() => {
     setPrice(pick.price);
