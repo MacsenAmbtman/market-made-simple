@@ -4,8 +4,8 @@ import { phoneGoal } from "@/lib/phone-lesson";
 import type { LessonProgress } from "@/lib/lessons";
 
 /** Phone daily goal: finish one lesson today (or replay one once everything is done). */
-export function PhoneDailyGoal({ progress }: { progress: Record<string, LessonProgress> }) {
-  const goal = phoneGoal(progress);
+export function PhoneDailyGoal({ progress, practice }: { progress: Record<string, LessonProgress>; practice?: LessonProgress | undefined }) {
+  const goal = phoneGoal(progress, undefined, practice);
   const title = goal.mode === "finish" ? "Finish 1 lesson today" : "Replay a lesson";
   return (
     <Link
