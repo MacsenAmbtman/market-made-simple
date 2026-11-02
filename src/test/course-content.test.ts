@@ -135,6 +135,6 @@ describe("practice", () => {
     recordPractice(5, "2026-11-02");
     const local = parseLessons(JSON.parse(localStorage.getItem(LESSONS_KEY)!));
     const remote = parseLessons({ __practice: { xp: 4, attempts: 1, practiceDay: "2026-11-01", practiceDayXp: 4 } });
-    expect(mergeLessons(remote, local).__practice).toMatchObject({ xp: 10, attempts: 1, practiceDay: "2026-11-02", practiceDayXp: 10 });
+    expect(mergeLessons(remote, local)["__practice"]).toMatchObject({ xp: 10, attempts: 1, practiceDay: "2026-11-02", practiceDayXp: 10 });
   });
 });
