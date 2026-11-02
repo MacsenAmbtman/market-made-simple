@@ -146,7 +146,7 @@ function Simulator() {
                 <p className={`text-sm ${change >= 0 ? "text-primary" : "text-destructive"}`}>{pct(change)}</p>
                 <p className="text-sm text-muted-foreground">vs. {fmt(base)} {state.bonus > 0 ? "start + bonuses" : "start"}</p>
               </div>
-              <div className="mt-4 h-72" onPointerDown={() => trackChartInteraction("portfolio_value")} onMouseEnter={() => trackChartInteraction("portfolio_value")}><ValueChart data={state.valueHistory} start={base} /></div>
+              <div className="mt-4 h-44 lg:h-72" onPointerDown={() => trackChartInteraction("portfolio_value")} onMouseEnter={() => trackChartInteraction("portfolio_value")}><ValueChart data={state.valueHistory} start={base} /></div>
             </TabsContent>
           </Tabs>
         </div>
