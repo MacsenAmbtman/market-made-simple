@@ -27,8 +27,10 @@ function MyProgress() {
   const [progress, setProgress] = useState<Record<string, LessonProgress>>({});
   const [rewarded, setRewarded] = useState<string[]>([]);
   const [earned, setEarned] = useState(0);
+  const [pxp, setPxp] = useState(0);
   useEffect(() => {
     setProgress(getAllProgress());
+    setPxp(practiceXp(getPracticeEntry()));
     setRewarded(lessons.filter((l) => isRewarded(l.slug)).map((l) => l.slug));
     setEarned(totalRewards());
   }, []);
@@ -38,7 +40,7 @@ function MyProgress() {
   // Phones only count the investing course; day trading lives on the computer.
   const phoneDone = courseLessons.filter((l) => progress[l.slug]?.completed).length;
   const phonePct = Math.round((phoneDone / courseLessons.length) * 100);
-  const xp = totalXp(progress, practiceXp(getPracticeEntry()));
+  const xp = totalXp(progress, pxp);
 
   const retakeQuiz = () => {
     resetOnboarding();
