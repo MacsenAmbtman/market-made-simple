@@ -25,6 +25,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
     const p = getProgress(lesson.slug);
     setCompletedBefore(p.completed);
     if (!p.completed) setSlide(Math.min(p.slide, lesson.slides.length - 1));
+    trackEvent("lesson_start", { lesson_slug: lesson.slug, resumed: !p.completed && p.slide > 0 });
   }, [lesson]);
 
   const goSlide = (i: number) => {
