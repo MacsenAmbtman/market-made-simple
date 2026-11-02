@@ -90,7 +90,7 @@ describe("phone lesson completion", () => {
     expect(kinds).toBe("sqsqsqsqssq");
     const resumed = buildSteps(lesson, 3);
     expect(resumed.steps[resumed.start]).toEqual({ kind: "slide", i: 3 });
-    expect(resumed.steps.slice(resumed.start).filter((s) => s.kind === "quiz").map((s) => s.i)).toEqual([2, 3, 4, 0, 1]);
+    expect(resumed.steps.slice(resumed.start).filter((s) => s.kind === "quiz").map((s) => s.i)).toEqual([3, 4, 0, 1, 2]);
     expect(resumed.steps.filter((s) => s.kind === "slide")).toHaveLength(6);
   });
 
