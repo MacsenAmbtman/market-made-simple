@@ -5,7 +5,8 @@ import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ScenarioCard, DesktopTradingBanner } from "@/components/ScenarioCard";
+import { ScenarioCard } from "@/components/ScenarioCard";
+import { SwipeDeck, DesktopCTA } from "@/components/SwipeDeck";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -70,6 +71,8 @@ function Landing() {
           The stock market, <span className="text-primary">finally in plain English.</span>
         </h1>
         <ScenarioCard />
+        <div className="mt-8"><SwipeDeck /></div>
+        <div className="mt-8"><DesktopCTA /></div>
       </section>
       <section className="mx-auto hidden max-w-4xl px-5 pt-16 pb-20 text-center md:block">
         <h1 className="text-6xl font-bold leading-tight">
