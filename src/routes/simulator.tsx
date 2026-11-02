@@ -122,8 +122,9 @@ function Simulator() {
         ))}
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="min-w-0 rounded-2xl border bg-card p-5 shadow-card">
+      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_320px]">
+        {/* On phones the chart sticks under the header so it stays visible while filling in the order ticket. */}
+        <div className="sticky top-16 z-10 min-w-0 rounded-2xl border bg-card p-4 shadow-card sm:p-5 lg:static">
           <Tabs defaultValue="stock">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <TabsList>
