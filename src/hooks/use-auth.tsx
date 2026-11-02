@@ -37,6 +37,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (cancelled) return;
       setSession(data.session);
       setStatus(data.session ? "signed-in" : "signed-out");
+    }).catch(() => {
+      // Storage blocked (private mode, some in-app browsers): carry on as a guest instead of loading forever.
+      if (!cancelled) setStatus("signed-out");
     });
     // Keep this callback synchronous: awaiting Supabase calls inside it can deadlock the client.
     const { data } = supabase.auth.onAuthStateChange((event, next) => {
