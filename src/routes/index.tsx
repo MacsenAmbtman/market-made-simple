@@ -5,7 +5,6 @@ import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
-import { QuickTradeDemo, SendToLaptop } from "@/components/landing/QuickTradeDemo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -64,10 +63,6 @@ function Landing() {
           <HeaderActions />
         </div>
       </header>
-      {/* Phones only: instant mock trade above the fold. */}
-      <div className="mx-auto max-w-md px-5 md:hidden">
-        <QuickTradeDemo />
-      </div>
       <section className="mx-auto max-w-4xl px-5 pt-10 pb-20 text-center md:pt-16">
         <h1 className="text-4xl font-bold leading-tight md:text-6xl">
           The stock market, <span className="text-primary">finally in plain English.</span>
@@ -78,7 +73,6 @@ function Landing() {
           <Button asChild size="lg" className="shadow-glow max-sm:w-full max-sm:min-h-14 max-sm:rounded-xl max-sm:px-6 max-sm:text-lg"><Link to="/learn/$slug" params={{ slug: "what-is-a-stock" }}>Start Free Lesson 1 <ArrowRight /></Link></Button>
           <Button asChild size="lg" variant="ghost"><Link to="/simulator">Try the simulator</Link></Button>
         </div>
-        <div className="mt-2 md:hidden"><SendToLaptop /></div>
       </section>
       <section className="mx-auto grid max-w-6xl gap-5 px-5 pb-16 md:grid-cols-3">
         {features.map(({ icon: Icon, title, text }) => (

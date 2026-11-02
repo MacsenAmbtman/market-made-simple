@@ -26,21 +26,11 @@ function Segmented<T extends string>({ value, options, onChange }: { value: T; o
   );
 }
 
-export type TicketPreset = { side: Side; qty?: number | undefined; nonce: number };
-
-export function OrderTicket({ state, sym, onSymChange, submit, preset }: { state: SimState; sym: string; onSymChange: (s: string) => void; submit: Submit; preset?: TicketPreset | null }) {
+export function OrderTicket({ state, sym, onSymChange, submit }: { state: SimState; sym: string; onSymChange: (s: string) => void; submit: Submit }) {
   const [side, setSide] = useState<Side>("buy");
   const [type, setType] = useState<"market" | "limit">("market");
   const [qty, setQty] = useState("1");
   const [limit, setLimit] = useState("");
-
-  // Floating Buy/Sell buttons and Copy Trade pre-fill the ticket.
-  useEffect(() => {
-    if (!preset) return;
-    setSide(preset.side);
-    setType("market");
-    if (preset.qty) setQty(String(preset.qty));
-  }, [preset?.nonce]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const price = priceOf(state, sym);
   // Prefill a sensible limit whenever the symbol changes.
@@ -73,7 +63,7 @@ export function OrderTicket({ state, sym, onSymChange, submit, preset }: { state
   };
 
   return (
-    <form id="order-ticket" onSubmit={onSubmit} className="scroll-mb-40 flex flex-col gap-4 rounded-2xl border bg-card p-5 shadow-card">
+    <form onSubmit={onSubmit} className="flex flex-col gap-4 rounded-2xl border bg-card p-5 shadow-card">
       <h2 className="font-semibold">Place an order</h2>
 
       <div className="grid grid-cols-4 gap-1">
@@ -97,7 +87,7 @@ export function OrderTicket({ state, sym, onSymChange, submit, preset }: { state
             Max {Math.max(0, maxShares)}
           </button>
         </div>
-        <Input id="qty" enterKeyHint="go" type="number" inputMode="numeric" min={1} step={1} value={qty} onChange={(e) => setQty(e.target.value)} className="no-spin" />
+        <Input id="qty" type="number" inputMode="numeric" min={1} step={1} value={qty} onChange={(e) => setQty(e.target.value)} className="no-spin" />
       </div>
 
       {type === "limit" && (

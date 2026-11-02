@@ -21,9 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { trackChartInteraction, trackEvent } from "@/lib/analytics";
 import { PriceChart, Sparkline, ValueChart } from "@/components/simulator/charts";
-import { OrderTicket, type TicketPreset } from "@/components/simulator/OrderTicket";
-import { FeaturedTraders } from "@/components/simulator/FeaturedTraders";
-import type { Side } from "@/lib/simulator";
+import { OrderTicket } from "@/components/simulator/OrderTicket";
 import { PortfolioTracker } from "@/components/simulator/PortfolioTracker";
 import { AllocationBreakdown } from "@/components/simulator/AllocationBreakdown";
 import { TradeHistoryLog } from "@/components/simulator/TradeHistoryLog";
@@ -53,15 +51,6 @@ const pct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
 function Simulator() {
   const { state, live, setLive, step, skipYears, submit, cancel, reset } = useSimulator({ onRewards: announceRewards });
   const [sym, setSym] = useState(STOCKS[0]!.sym);
-  const [preset, setPreset] = useState<TicketPreset | null>(null);
-  const openTicket = (side: Side, opts: { sym?: string; qty?: number } = {}) => {
-    if (opts.sym) setSym(opts.sym);
-    setPreset({ side, qty: opts.qty, nonce: Date.now() });
-    requestAnimationFrame(() => {
-      document.getElementById("order-ticket")?.scrollIntoView({ behavior: "smooth", block: "end" });
-      (document.getElementById("qty") as HTMLInputElement | null)?.focus({ preventScroll: true });
-    });
-  };
 
   const total = totalValue(state);
   const base = contributed(state);
@@ -150,9 +139,9 @@ function Simulator() {
         ))}
       </div>
 
-      <div className="mt-6 grid items-start gap-6 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_320px]">
+      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_320px]">
         {/* On phones the chart sticks under the header so it stays visible while filling in the order ticket. */}
-        <div className="sticky top-16 z-10 min-w-0 rounded-2xl border bg-card p-4 shadow-card sm:p-5 md:static">
+        <div className="sticky top-16 z-10 min-w-0 rounded-2xl border bg-card p-4 shadow-card sm:p-5 lg:static">
           <Tabs defaultValue="stock">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <TabsList>
@@ -178,11 +167,7 @@ function Simulator() {
             </TabsContent>
           </Tabs>
         </div>
-        <OrderTicket state={state} sym={sym} onSymChange={setSym} submit={submit} preset={preset} />
-      </div>
-
-      <div className="mt-6">
-        <FeaturedTraders onCopy={(t) => { openTicket(t.side, { sym: t.sym, qty: t.qty }); toast(`Order filled in: ${t.side} ${t.qty} ${t.sym}`, { description: "Check it, then tap the button to place it." }); }} />
+        <OrderTicket state={state} sym={sym} onSymChange={setSym} submit={submit} />
       </div>
 
       <h2 className="mt-8 font-semibold">Market</h2>
@@ -217,7 +202,7 @@ function Simulator() {
         })}
       </div>
 
-      <div className="mt-8 grid items-start gap-6 md:grid-cols-[1fr_320px] lg:grid-cols-[1fr_380px]">
+      <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_380px]">
         <div className="grid min-w-0 gap-6">
           <PortfolioTracker state={state} onCancel={cancel} onSelect={setSym} />
           <TradeHistoryLog trades={state.trades} />
@@ -226,12 +211,6 @@ function Simulator() {
           <DailyChallenge sim={state} />
           <AllocationBreakdown state={state} />
         </div>
-      </div>
-      {/* Phones: floating Buy / Sell, sitting just above the bottom nav. */}
-      <div className="h-20 md:hidden" aria-hidden />
-      <div className="fixed inset-x-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 grid grid-cols-2 gap-3 px-4 md:hidden">
-        <Button className="min-h-12 text-base font-bold shadow-glow" onClick={() => { trackEvent("floating_buy"); openTicket("buy"); }}>BUY</Button>
-        <Button variant="destructive" className="min-h-12 text-base font-bold" onClick={() => { trackEvent("floating_sell"); openTicket("sell"); }}>SELL</Button>
       </div>
       </TabsContent>
       </Tabs>
