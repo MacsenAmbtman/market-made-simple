@@ -31,7 +31,7 @@ export const SCENARIOS: Scenario[] = [
 export function ScenarioCard() {
   const [i, setI] = useState(0);
   const [pick, setPick] = useState<Move | null>(null);
-  const s = SCENARIOS[i];
+  const s = SCENARIOS[i] ?? SCENARIOS[0]!;
   const correct = pick === s.answer;
 
   const choose = (m: Move) => {
