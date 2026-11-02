@@ -1,0 +1,33 @@
+{
+  "id": "/",
+  "name": "Stockify Learn",
+  "short_name": "Stockify",
+  "description": "Bite-sized investing lessons and a paper trading simulator for complete beginners.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#0F172B",
+  "theme_color": "#0F172B",
+  "categories": ["education", "finance"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
