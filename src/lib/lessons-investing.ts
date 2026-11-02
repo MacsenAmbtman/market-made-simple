@@ -775,8 +775,8 @@ export const investingLessons: Lesson[] = [
       },
       {
         q: "Which pair are both examples of tax-friendly accounts in different countries?",
-        options: ["A US IRA and a UK ISA", "A credit card and a mortgage", "A current account and a debit card", "A car loan and a student loan"],
-        answer: 0,
+        options: ["A credit card and a mortgage", "A current account and a debit card", "A car loan and a student loan", "A US IRA and a UK ISA"],
+        answer: 3,
         explain: "IRAs (US) and ISAs (UK) are both accounts with tax benefits for saving and investing.",
       },
       {
