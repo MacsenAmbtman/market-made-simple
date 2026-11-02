@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Pause, Play, RotateCcw, StepForward } from "lucide-react";
+import { FastForward, Pause, Play, RotateCcw, StepForward } from "lucide-react";
+import { DayTrading } from "@/components/simulator/DayTrading";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
@@ -48,7 +49,7 @@ const announceRewards = (applied: Reward[]) =>
 const pct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
 
 function Simulator() {
-  const { state, live, setLive, step, submit, cancel, reset } = useSimulator({ onRewards: announceRewards });
+  const { state, live, setLive, step, skipYears, submit, cancel, reset } = useSimulator({ onRewards: announceRewards });
   const [sym, setSym] = useState(STOCKS[0]!.sym);
 
   const total = totalValue(state);
@@ -75,11 +76,22 @@ function Simulator() {
         <Toaster position="top-right" theme="dark" richColors closeButton />
       </div>
       <GuestModeBanner />
+      <Tabs defaultValue="long" onValueChange={(v) => trackEvent("sim_mode", { mode: v })}>
+      <TabsList className="mb-6 h-12 w-full sm:w-auto">
+        <TabsTrigger value="long" className="h-10 flex-1 px-5 text-base sm:flex-none">Long-Term</TabsTrigger>
+        <TabsTrigger value="day" className="h-10 flex-1 px-5 text-base sm:flex-none">Day Trading</TabsTrigger>
+      </TabsList>
+      <TabsContent value="day">
+        <h1 className="text-3xl font-bold">Day Trading</h1>
+        <p className="mt-1 text-muted-foreground">A whole trading day, sped up. Try to beat simply buying and holding.</p>
+        <DayTrading />
+      </TabsContent>
+      <TabsContent value="long">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Paper Simulator</h1>
           <p className="mt-1 text-muted-foreground">
-            Fake money, real lessons. Prices move live — your portfolio saves automatically.{" "}
+            Fake money, real lessons. Prices move live, or skip ahead years to see long-term growth. Your portfolio saves automatically.{" "}
             <Link to="/learn" className="text-primary hover:underline">Pass lesson quizzes to earn bonus cash →</Link>
           </p>
         </div>
@@ -94,6 +106,11 @@ function Simulator() {
           <Button size="sm" variant="secondary" onClick={step} disabled={live}>
             <StepForward /> Step
           </Button>
+          {[1, 5, 10].map((y) => (
+            <Button key={y} size="sm" variant="secondary" onClick={() => { trackEvent("sim_fast_forward", { years: y }); skipYears(y); toast.success(`Skipped ahead ${y} ${y === 1 ? "year" : "years"}`); }}>
+              <FastForward /> {y}y
+            </Button>
+          ))}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button size="sm" variant="ghost"><RotateCcw /> Reset</Button>
@@ -195,6 +212,8 @@ function Simulator() {
           <AllocationBreakdown state={state} />
         </div>
       </div>
+      </TabsContent>
+      </Tabs>
     </AppShell>
   );
 }

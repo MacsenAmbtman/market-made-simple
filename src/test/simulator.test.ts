@@ -110,3 +110,22 @@ describe("persistence", () => {
     expect(loadState()).toBeNull();
   });
 });
+
+import { fastForward as ff, initialState as init0 } from "@/lib/simulator";
+import { DAY_BARS, DAY_CASH, dayOver, dayRecap, dayTrade, newDay, stepDay } from "@/lib/daytrade";
+
+describe("modes", () => {
+  it("fast-forwarding 5 years adds 60 monthly steps", () => {
+    expect(ff(init0(), 5, () => 0.5).tick).toBe(60);
+  });
+  it("a trading day ends after 78 bars and compares to buy-and-hold", () => {
+    let d = newDay(() => 0);
+    d = dayTrade(d, "buy", 10)!;
+    for (let i = 0; i < DAY_BARS; i++) d = stepDay(d, () => 0.6);
+    expect(dayOver(d)).toBe(true);
+    expect(dayTrade(d, "sell", 10)).toBeNull();
+    const r = dayRecap(d);
+    expect(r.holdPnl).toBeGreaterThan(r.pnl);
+    expect(DAY_CASH).toBe(10000);
+  });
+});
