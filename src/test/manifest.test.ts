@@ -1,9 +1,11 @@
 import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 // The home-screen install depends on this file staying valid and complete.
+const publicDir = join(process.cwd(), "public");
 const manifest = JSON.parse(
-  readFileSync(new URL("../../public/manifest.webmanifest", import.meta.url), "utf8"),
+  readFileSync(join(publicDir, "manifest.webmanifest"), "utf8"),
 );
 
 describe("web app manifest", () => {
@@ -29,9 +31,7 @@ describe("web app manifest", () => {
 
   it("points every icon at a file that exists", () => {
     for (const icon of manifest.icons as { src: string }[]) {
-      expect(() =>
-        readFileSync(new URL(`../../public${icon.src}`, import.meta.url)),
-      ).not.toThrow();
+      expect(() => readFileSync(join(publicDir, icon.src))).not.toThrow();
     }
   });
 });
