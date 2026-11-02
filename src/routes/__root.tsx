@@ -17,6 +17,7 @@ import { AuthProvider } from "../hooks/use-auth";
 import { FeedbackInvite } from "../components/FeedbackInvite";
 import { initAnalytics, trackPageView, trackReturnVisit } from "../lib/analytics";
 import { dayKey } from "../lib/daily";
+import { CookieBanner } from "../components/CookieBanner";
 
 function NotFoundComponent() {
   return (
@@ -140,6 +141,8 @@ function RootComponent() {
         <Outlet />
         {/* Asks engaged visitors the two feedback questions; there is no feedback button. */}
         <FeedbackInvite />
+        {/* Optional tracking stays off until the visitor presses Accept. */}
+        <CookieBanner />
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -5,7 +5,8 @@ import { skipFirstQuestion } from "@/lib/onboarding";
 import { markSavePromptSeen, parseNext, readSavePromptSeen, SAVE_PROMPT_LESSONS, shouldShowSavePrompt } from "@/lib/save-prompt";
 import { courseLessons } from "@/lib/lessons";
 import { mergeSnapshots, type Snapshot } from "@/lib/account-data";
-import { isReturnVisit, trackEvent, trackReturnVisit } from "@/lib/analytics";
+import { __setTrackingHostForTests, isReturnVisit, trackEvent, trackReturnVisit } from "@/lib/analytics";
+import { saveConsent } from "@/lib/consent";
 import { FIRST_QUESTION } from "@/lib/first-question";
 
 vi.mock("@tanstack/react-router", () => ({
@@ -103,7 +104,8 @@ describe("progress transfers on sign-up", () => {
 
 describe("tracking", () => {
   const gtag = vi.fn();
-  beforeEach(() => { gtag.mockClear(); window.gtag = gtag; localStorage.clear(); });
+  beforeEach(() => { gtag.mockClear(); window.gtag = gtag; localStorage.clear(); saveConsent("granted"); __setTrackingHostForTests("stockifylearn.lovable.app"); });
+  afterEach(() => { __setTrackingHostForTests(null); });
   afterEach(() => { delete window.gtag; vi.restoreAllMocks(); });
 
   it("adds the device type to every event", () => {
