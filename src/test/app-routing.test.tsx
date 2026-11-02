@@ -15,3 +15,12 @@ describe("App routing", () => {
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
 });
+
+describe("Desktop routes", () => {
+  it("still match the simulator, calculator and lesson pages", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    expect(router.matchRoutes("/simulator").at(-1)?.routeId).toBe("/simulator");
+    expect(router.matchRoutes("/calculator").at(-1)?.routeId).toBe("/calculator");
+    expect(router.matchRoutes("/learn/what-is-a-stock").at(-1)?.routeId).toBe("/learn/$slug");
+  });
+});
