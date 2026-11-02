@@ -26,7 +26,7 @@ import { PortfolioTracker } from "@/components/simulator/PortfolioTracker";
 import { AllocationBreakdown } from "@/components/simulator/AllocationBreakdown";
 import { TradeHistoryLog } from "@/components/simulator/TradeHistoryLog";
 import { GuestModeBanner } from "@/components/simulator/GuestModeBanner";
-import { SwipeDeck, DesktopCTA } from "@/components/SwipeDeck";
+import { SwipeDeck } from "@/components/SwipeDeck";
 import { ScenarioCard } from "@/components/ScenarioCard";
 import { DailyChallenge } from "@/components/daily/DailyChallenge";
 import { useSimulator } from "@/hooks/use-simulator";
@@ -84,7 +84,6 @@ function Simulator() {
         </div>
         <SwipeDeck />
         <ScenarioCard />
-        <DesktopCTA />
       </section>
       <div className="hidden md:block">
       <GuestModeBanner />
