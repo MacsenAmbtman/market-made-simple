@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Coins, RotateCcw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { getProgress, lessons, PASS_SCORE, recordQuiz, saveSlide, type Lesson, type QuizOutcome } from "@/lib/lessons";
+import { getProgress, lessons, passMark, recordQuiz, saveSlide, type Lesson, type QuizOutcome } from "@/lib/lessons";
 import { fmt } from "@/lib/simulator";
 import { ScenarioCard } from "./ScenarioCard";
 import { useAuth } from "@/hooks/use-auth";
@@ -197,7 +197,7 @@ function ResultView({ lesson, answers, outcome, onRetry, onReview }: { lesson: L
     <section className="mt-4 rounded-2xl border bg-card p-6 text-center shadow-card animate-in fade-in zoom-in-95 duration-300 sm:p-8" aria-live="polite">      <h1 className="text-3xl font-bold sm:text-4xl">{outcome.passed ? "Lesson complete!" : "Almost there"}</h1>
       <p className="mt-2 text-muted-foreground">
         You got <span className="font-semibold text-foreground">{outcome.score} of {lesson.quiz.length}</span> right.
-        {!outcome.passed && ` You need ${PASS_SCORE} to pass.`}
+        {!outcome.passed && ` You need ${passMark(lesson)} to pass.`}
       </p>
 
       {outcome.rewardGranted > 0 && (

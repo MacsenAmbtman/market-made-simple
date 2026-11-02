@@ -3,7 +3,7 @@
 
 import type { ProgressRow } from "./account-db";
 import { parseDaily, type DailyState } from "./daily";
-import { getLesson, lessonXp, lessons, XP, type LessonProgress } from "./lessons";
+import { getLesson, lessonXp, lessons, PRACTICE_SLUG, scoreOutOf, XP, type LessonProgress } from "./lessons";
 import { parseRewards, type Reward } from "./rewards";
 import { parseState, type SimState } from "./simulator";
 
@@ -29,10 +29,12 @@ export function parseLessons(raw: unknown): Record<string, LessonProgress> {
     const p = (raw as Record<string, unknown>)[l.slug];
     if (!p || typeof p !== "object") continue;
     const r = p as Partial<Record<keyof LessonProgress, unknown>>;
+    const outOf = typeof r.outOf === "number" && Number.isInteger(r.outOf) && r.outOf >= 1 && r.outOf <= l.quiz.length ? r.outOf : undefined;
     out[l.slug] = {
       slide: Math.min(num(r.slide), l.slides.length - 1),
       completed: r.completed === true,
-      bestScore: Math.min(num(r.bestScore), l.quiz.length),
+      bestScore: Math.min(num(r.bestScore), outOf ?? l.quiz.length),
+      outOf,
       attempts: num(r.attempts),
       lastScore: optNum(r.lastScore),
       lastAttemptAt: optNum(r.lastAttemptAt),
@@ -40,7 +42,38 @@ export function parseLessons(raw: unknown): Record<string, LessonProgress> {
       xp: typeof r.xp === "number" && Number.isFinite(r.xp) && r.xp >= 0 ? Math.min(r.xp, XP.maxPerLesson) : undefined,
     };
   }
+  const practice = parsePractice((raw as Record<string, unknown>)[PRACTICE_SLUG]);
+  if (practice) out[PRACTICE_SLUG] = practice;
   return out;
+}
+
+/** The practice entry: total practice XP, rounds played, and today's practice XP. */
+function parsePractice(p: unknown): LessonProgress | undefined {
+  if (!p || typeof p !== "object") return undefined;
+  const r = p as Partial<Record<keyof LessonProgress, unknown>>;
+  const day = typeof r.practiceDay === "string" && /^\d{4}-\d{2}-\d{2}$/.test(r.practiceDay) ? r.practiceDay : undefined;
+  return {
+    slide: 0,
+    completed: false,
+    bestScore: 0,
+    attempts: Math.floor(num(r.attempts)),
+    xp: Math.floor(Math.min(num(r.xp), 1_000_000)),
+    practiceDay: day,
+    practiceDayXp: day ? Math.min(Math.floor(num(r.practiceDayXp)), 20) : undefined,
+  };
+}
+
+function mergePractice(a: LessonProgress, b: LessonProgress): LessonProgress {
+  const da = a.practiceDay ?? "";
+  const db = b.practiceDay ?? "";
+  const dayXp = da === db ? Math.max(a.practiceDayXp ?? 0, b.practiceDayXp ?? 0) : (da > db ? a : b).practiceDayXp;
+  return {
+    ...a,
+    attempts: Math.max(a.attempts, b.attempts),
+    xp: Math.max(a.xp ?? 0, b.xp ?? 0),
+    practiceDay: da >= db ? a.practiceDay : b.practiceDay,
+    practiceDayXp: dayXp,
+  };
 }
 
 export function isEmpty(s: Snapshot) {
@@ -51,12 +84,18 @@ export function isEmpty(s: Snapshot) {
 export const hasActivity = (sim: SimState | null) => !!sim && (sim.trades.length > 0 || sim.orders.length > 0 || sim.appliedRewards.length > 0);
 
 function mergeLesson(a: LessonProgress, b: LessonProgress, slug: string): LessonProgress {
+  if (slug === PRACTICE_SLUG) return mergePractice(a, b);
+  const lesson = getLesson(slug);
+  // Keep the stronger best score, comparing old 3-question scores by share of questions right.
+  const ratio = (p: LessonProgress) => (lesson ? p.bestScore / scoreOutOf(p, lesson) : p.bestScore);
+  const best = ratio(a) >= ratio(b) ? a : b;
   const latest = (a.lastAttemptAt ?? 0) >= (b.lastAttemptAt ?? 0) ? a : b;
   const done = [a.completedAt, b.completedAt].filter((t): t is number => t != null);
   return {
     slide: Math.max(a.slide, b.slide),
     completed: a.completed || b.completed,
-    bestScore: Math.max(a.bestScore, b.bestScore),
+    bestScore: best.bestScore,
+    outOf: lesson ? scoreOutOf(best, lesson) : best.outOf,
     attempts: Math.max(a.attempts, b.attempts),
     lastScore: latest.lastScore,
     lastAttemptAt: latest.lastAttemptAt,

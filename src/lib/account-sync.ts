@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { accountDb } from "./account-db";
 import { fromRow, isEmpty, mergeSnapshots, toRow, type LocalOwner, type Snapshot } from "./account-data";
 import { DAILY_EVENT, DAILY_KEY, getDaily } from "./daily";
-import { getAllProgress, LESSONS_KEY } from "./lessons";
+import { getAllProgress, getPracticeEntry, LESSONS_KEY, PRACTICE_SLUG } from "./lessons";
 import { ACCOUNT_SYNCED_EVENT, LOCAL_WRITE_EVENT } from "./local-store";
 import { getRewards, REWARDS_EVENT, REWARDS_KEY } from "./rewards";
 import { loadState, SIM_KEY } from "./simulator";
@@ -41,6 +41,8 @@ function writeMeta(m: Meta) {
 function readLocal(): Snapshot {
   // Only stored lessons count; getAllProgress pads every lesson with blanks.
   const stored = Object.fromEntries(Object.entries(getAllProgress()).filter(([, p]) => p.attempts > 0 || p.completed || p.slide > 0));
+  const practice = getPracticeEntry();
+  if (practice) stored[PRACTICE_SLUG] = practice;
   return { lessons: stored, rewards: getRewards(), daily: getDaily(), simulator: loadState(), simulatorAt: readMeta().simulatorAt };
 }
 

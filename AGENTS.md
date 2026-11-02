@@ -28,3 +28,5 @@
 
 - Phones (<768px) are learning-only: /learn shows the LessonPath, lessons play in MobileLessonPlayer with in-order locking, and trading routes (simulator, calculator, day-trading lessons) render ContinueOnComputer; desktop keeps the original pages untouched. Switch layouts with md: CSS, and use useIsPhone (null until mounted) only for logic such as redirects, so server and first client render match.
 - New per-lesson progress (e.g. XP) is stored as optional fields on LessonProgress and handled in parseLessons/mergeLesson, so it syncs with the existing lessons column without a schema change and old saves keep working.
+- Phone practice XP is stored as a reserved `__practice` entry in the lessons store (parsed and merged in account-data), so it syncs with the existing lessons column; getAllProgress excludes it so lesson loops never see it.
+- Quiz pass marks come from passMark(lesson) (two-thirds, rounded up); stored best scores carry `outOf`, and saves without it are treated as old 3-question scores so earlier passes and perfect scores stay intact.

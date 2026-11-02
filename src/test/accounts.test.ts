@@ -16,7 +16,7 @@ describe("merging account data", () => {
       { [slug]: { slide: 2, completed: false, bestScore: 1, attempts: 1, lastScore: 1, lastAttemptAt: 10 } },
       { [slug]: { slide: 0, completed: true, bestScore: 3, attempts: 2, lastScore: 3, lastAttemptAt: 20, completedAt: 20 } },
     );
-    expect(merged[slug]).toEqual({ slide: 2, completed: true, bestScore: 3, attempts: 2, lastScore: 3, lastAttemptAt: 20, completedAt: 20, xp: 70 });
+    expect(merged[slug]).toEqual({ slide: 2, completed: true, bestScore: 3, attempts: 2, lastScore: 3, lastAttemptAt: 20, completedAt: 20, xp: 70, outOf: 3 });
   });
 
   it("unions rewards by id so bonuses are never doubled", () => {

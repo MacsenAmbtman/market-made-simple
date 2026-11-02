@@ -2,20 +2,23 @@
 // the phone daily goal, and the one-off "locked lesson" message carried across a redirect.
 
 import { checkIn, dayKey, type DailyState } from "./daily";
-import { courseLessons, PASS_SCORE, recordQuiz, type Lesson, type LessonProgress, type QuizOutcome } from "./lessons";
+import { attemptPassed, courseLessons, recordQuiz, type Lesson, type LessonProgress, type QuizOutcome } from "./lessons";
 
 export type Step = { kind: "slide"; i: number } | { kind: "quiz"; i: number };
 
 /**
- * Slides with a quiz question after roughly every two slides. When resuming at `startSlide`,
+ * Slides with the questions spread evenly between them (5 questions over 6 slides: after slides 1, 2, 3, 4 and 6). When resuming at `startSlide`,
  * earlier slides stay reachable with Back and any questions before that point move to the end.
  */
 export function buildSteps(lesson: Lesson, startSlide = 0): { steps: Step[]; start: number } {
   const base: Step[] = [];
+  const S = lesson.slides.length;
+  const Q = lesson.quiz.length;
   let qi = 0;
   lesson.slides.forEach((_, i) => {
     base.push({ kind: "slide", i });
-    if ((i + 1) % 2 === 0 && qi < lesson.quiz.length) base.push({ kind: "quiz", i: qi++ });
+    // Question k follows slide floor((k + 1) * S / Q) - 1, so the last question comes after the last slide.
+    while (qi < Q && Math.floor(((qi + 1) * S) / Q) - 1 === i) base.push({ kind: "quiz", i: qi++ });
   });
   while (qi < lesson.quiz.length) base.push({ kind: "quiz", i: qi++ });
   const at = startSlide > 0 ? base.findIndex((s) => s.kind === "slide" && s.i === startSlide) : -1;
@@ -39,13 +42,17 @@ export function finishPhoneLesson(lesson: Lesson, answers: number[], today = day
 
 export type PhoneGoal = { mode: "finish" | "replay"; done: boolean; slug: string };
 
-/** "Finish 1 lesson today", or "Replay a lesson" once every investing lesson is done. */
-export function phoneGoal(progress: Record<string, LessonProgress>, today = dayKey()): PhoneGoal {
-  const done = Object.values(progress).some(
-    (p) => p.lastAttemptAt != null && dayKey(new Date(p.lastAttemptAt)) === today && (p.lastScore ?? 0) >= PASS_SCORE,
+/**
+ * "Finish 1 lesson today", or "Replay a lesson" once every investing lesson is done.
+ * In replay mode a practice round finished today also counts.
+ */
+export function phoneGoal(progress: Record<string, LessonProgress>, today = dayKey(), practice?: LessonProgress): PhoneGoal {
+  const passedToday = Object.entries(progress).some(
+    ([slug, p]) => p.lastAttemptAt != null && dayKey(new Date(p.lastAttemptAt)) === today && attemptPassed(slug, p),
   );
   const next = courseLessons.find((l) => !progress[l.slug]?.completed);
-  return next ? { mode: "finish", done, slug: next.slug } : { mode: "replay", done, slug: courseLessons[0]!.slug };
+  if (next) return { mode: "finish", done: passedToday, slug: next.slug };
+  return { mode: "replay", done: passedToday || practice?.practiceDay === today, slug: courseLessons[0]!.slug };
 }
 
 /** The next investing lesson after this one, for the "Next lesson" button. */

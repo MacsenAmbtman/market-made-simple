@@ -1,7 +1,7 @@
 // Daily check-in streak and a rotating daily challenge that pays bonus simulator capital.
 // Days are the user's local calendar dates ("YYYY-MM-DD").
 
-import { getAllProgress, PASS_SCORE, type LessonProgress } from "./lessons";
+import { attemptPassed, getAllProgress, type LessonProgress } from "./lessons";
 import { notifyLocalWrite } from "./local-store";
 import { grantReward, hasReward } from "./rewards";
 import { holdingsValue, totalValue, type SimState } from "./simulator";
@@ -96,7 +96,7 @@ export const CHALLENGES: Challenge[] = [
   },
   {
     id: "quiz", emoji: "🧠", title: "Brain workout", description: "Pass any lesson quiz today (retakes count).", target: 1, where: "/learn",
-    progress: (c) => Object.values(c.lessons).filter((p) => p.lastAttemptAt != null && dayKey(new Date(p.lastAttemptAt)) === c.today && (p.lastScore ?? 0) >= PASS_SCORE).length,
+    progress: (c) => Object.entries(c.lessons).filter(([slug, p]) => p.lastAttemptAt != null && dayKey(new Date(p.lastAttemptAt)) === c.today && attemptPassed(slug, p)).length,
   },
 ];
 

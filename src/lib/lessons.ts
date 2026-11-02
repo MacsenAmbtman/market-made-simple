@@ -4,6 +4,7 @@
 import { notifyLocalWrite } from "./local-store";
 import { grantReward, hasReward } from "./rewards";
 import type { Scenario } from "./scenarios";
+import { extraQuestions, investingLessons } from "./lessons-investing";
 
 export type Slide = {
   emoji: string;
@@ -27,9 +28,10 @@ export type Lesson = {
   level?: "Beginner" | "Intermediate" | "Advanced";
 };
 
-export const PASS_SCORE = 2; // correct answers out of 3 needed to pass
+/** Correct answers needed to pass: two-thirds of the questions, rounded up (4 of 5). */
+export const passMark = (lesson: Pick<Lesson, "quiz">) => Math.ceil((lesson.quiz.length * 2) / 3);
 
-export const lessons: Lesson[] = [
+const baseLessons: Lesson[] = [
   {
     slug: "what-is-a-stock",
     title: "What is a Stock?",
@@ -122,7 +124,7 @@ export const lessons: Lesson[] = [
       {
         emoji: "🎢",
         title: "Prices wiggle",
-        body: "Stock prices move up and down every day. Volatility is how much — and how quickly — a price swings. In the Paper Simulator, watch how much more Tesla (TSLA) jumps around than Coca-Cola (KO).",
+        body: "Stock prices move up and down every day. Volatility is how much — and how quickly — a price swings. On your computer, in the Paper Simulator, you can watch how much more Tesla (TSLA) jumps around than Coca-Cola (KO).",
         callout: "Volatility = the size of the swings, not the direction.",
       },
       {
@@ -247,7 +249,7 @@ export const lessons: Lesson[] = [
       {
         emoji: "🧪",
         title: "Try it yourself",
-        body: "Head to the Paper Simulator. Buy one share with a market order and see it fill instantly. Then place a limit buy a little below the current price and watch whether the market comes to you.",
+        body: "On your computer, open the Paper Simulator. Buy one share with a market order and see it fill instantly. Then place a limit buy a little below the current price and watch whether the market comes to you.",
         callout: "Passing this quiz adds $1,000 of bonus cash to practice with.",
       },
     ],
@@ -511,18 +513,33 @@ export const lessons: Lesson[] = [
   },
 ];
 
-/** Planned modules shown on the dashboard but not yet playable. */
-export const upcoming = [
-  { title: "Compound Interest Magic", emoji: "✨", blurb: "How money grows on its own growth." },
-  { title: "Index Funds vs. Single Stocks", emoji: "🧺", blurb: "One basket or one egg?" },
-  { title: "Dividends Explained", emoji: "💸", blurb: "Getting paid just for holding." },
-];
+/**
+ * Every lesson in order: investing lessons first (so "next lesson" follows the course), then day trading.
+ * Existing lessons keep their original three questions and gain two more.
+ */
+export const lessons: Lesson[] = [
+  ...baseLessons.filter((l) => !l.track),
+  ...investingLessons,
+  ...baseLessons.filter((l) => l.track),
+].map((l) => ({ ...l, quiz: [...l.quiz, ...(extraQuestions[l.slug] ?? [])] }));
+
+/** Planned modules shown on the dashboard but not yet playable. All have shipped. */
+export const upcoming: { title: string; emoji: string; blurb: string }[] = [];
 
 /** The core investing course; day-trading lessons live in their own track. */
 export const courseLessons = lessons.filter((l) => !l.track);
 export const dayTradingLessons = lessons.filter((l) => l.track === "day-trading");
 
 export const getLesson = (slug: string) => lessons.find((l) => l.slug === slug);
+
+/** Units on the phone path; together they list every investing lesson in course order. */
+export const units: { name: string; slugs: string[] }[] = [
+  { name: "Stock basics", slugs: ["what-is-a-stock", "risk-and-reward", "market-orders"] },
+  { name: "Growing your money", slugs: ["compound-interest", "index-funds-vs-stocks", "dividends", "dollar-cost-averaging"] },
+  { name: "Reading a company", slugs: ["earnings-reports", "pe-ratios", "market-cap"] },
+  { name: "Building a portfolio", slugs: ["stocks-bonds-cash", "etfs-and-fees", "rebalancing", "tax-friendly-accounts"] },
+  { name: "The investor mindset", slugs: ["bull-and-bear-markets", "emotions-and-money", "investing-scams", "first-investing-plan"] },
+];
 export const rewardId = (slug: string) => `lesson:${slug}`;
 
 // ---------- progress ----------
@@ -537,7 +554,28 @@ export type LessonProgress = {
   completedAt?: number | undefined;
   /** XP earned on this lesson. Missing on progress saved before XP existed; see lessonXp. */
   xp?: number | undefined;
+  /** How many questions bestScore is out of. Missing on saves from the 3-question quizzes; see scoreOutOf. */
+  outOf?: number | undefined;
+  /** Practice entry only: the day of the last practice round and the XP earned that day. */
+  practiceDay?: string | undefined;
+  practiceDayXp?: number | undefined;
 };
+
+/** Quizzes had 3 questions before every lesson moved to 5. */
+export const LEGACY_QUIZ_LENGTH = 3;
+
+/** What a stored best score is out of: older attempts were on 3-question quizzes. */
+export function scoreOutOf(p: Partial<LessonProgress> | undefined, lesson: Lesson): number {
+  if (!p) return lesson.quiz.length;
+  if (typeof p.outOf === "number") return p.outOf;
+  return (p.attempts ?? 0) > 0 || p.completed ? LEGACY_QUIZ_LENGTH : lesson.quiz.length;
+}
+
+/** Whether a lesson's most recent attempt reached the pass mark. */
+export function attemptPassed(slug: string, p: LessonProgress): boolean {
+  const lesson = getLesson(slug);
+  return !!lesson && (p.lastScore ?? 0) >= passMark(lesson);
+}
 
 // ---------- XP ----------
 
@@ -548,19 +586,21 @@ export const XP = { first: 50, perfect: 20, replay: 10, maxPerLesson: 100 } as c
 export function lessonXp(p: Partial<LessonProgress> | undefined, lesson: Lesson): number {
   if (!p) return 0;
   if (typeof p.xp === "number") return Math.min(p.xp, XP.maxPerLesson);
-  return p.completed ? XP.first + ((p.bestScore ?? 0) >= lesson.quiz.length ? XP.perfect : 0) : 0;
+  return p.completed ? XP.first + ((p.bestScore ?? 0) >= scoreOutOf(p, lesson) ? XP.perfect : 0) : 0;
 }
 
 /** XP a quiz attempt earns, given the progress before it. Capped per lesson so replays can't farm it. */
 export function xpGain(prev: LessonProgress, lesson: Lesson, score: number): number {
-  if (score < PASS_SCORE) return 0;
+  if (score < passMark(lesson)) return 0;
   let gain: number = prev.completed ? XP.replay : XP.first;
-  if (score === lesson.quiz.length && prev.bestScore < lesson.quiz.length) gain += XP.perfect;
+  const perfectBefore = prev.bestScore > 0 && prev.bestScore >= scoreOutOf(prev, lesson);
+  if (score === lesson.quiz.length && !perfectBefore) gain += XP.perfect;
   return Math.max(0, Math.min(gain, XP.maxPerLesson - lessonXp(prev, lesson)));
 }
 
-export function totalXp(progress: Record<string, LessonProgress>): number {
-  return lessons.reduce((sum, l) => sum + lessonXp(progress[l.slug], l), 0);
+/** Lesson XP plus any XP earned in practice rounds. */
+export function totalXp(progress: Record<string, LessonProgress>, practiceXp = 0): number {
+  return lessons.reduce((sum, l) => sum + lessonXp(progress[l.slug], l), 0) + practiceXp;
 }
 
 // ---------- phone path locking ----------
@@ -632,16 +672,20 @@ export type QuizOutcome = { score: number; passed: boolean; rewardGranted: numbe
 /** Record a finished quiz attempt; passing marks the lesson complete and grants its reward once. */
 export function recordQuiz(lesson: Lesson, answers: number[]): QuizOutcome {
   const score = scoreQuiz(lesson, answers);
-  const passed = score >= PASS_SCORE;
+  const passed = score >= passMark(lesson);
   const all = readAll();
   const prev = { ...blank(), ...all[lesson.slug] };
   const xpGained = xpGain(prev, lesson, score);
+  // Keep whichever best score is stronger, comparing old 3-question scores by share of questions right.
+  const prevOut = scoreOutOf(prev, lesson);
+  const newBest = score / lesson.quiz.length >= prev.bestScore / prevOut;
   all[lesson.slug] = {
     ...prev,
     attempts: prev.attempts + 1,
     lastScore: score,
     lastAttemptAt: Date.now(),
-    bestScore: Math.max(prev.bestScore, score),
+    bestScore: newBest ? score : prev.bestScore,
+    outOf: newBest ? lesson.quiz.length : prevOut,
     completed: prev.completed || passed,
     completedAt: prev.completedAt ?? (passed ? Date.now() : undefined),
     xp: lessonXp(prev, lesson) + xpGained,
@@ -656,3 +700,21 @@ export function recordQuiz(lesson: Lesson, answers: number[]): QuizOutcome {
 export function isRewarded(slug: string) {
   return hasReward(rewardId(slug));
 }
+
+// ---------- practice storage ----------
+
+/** Practice XP lives as one extra entry in the lessons store so it syncs with the account like lesson progress. */
+export const PRACTICE_SLUG = "__practice";
+
+export function getPracticeEntry(): LessonProgress | undefined {
+  return readAll()[PRACTICE_SLUG];
+}
+
+export function savePracticeEntry(p: LessonProgress) {
+  if (typeof window === "undefined") return;
+  const all = readAll();
+  all[PRACTICE_SLUG] = p;
+  writeAll(all);
+}
+
+export const practiceXp = (p: LessonProgress | undefined) => p?.xp ?? 0;
