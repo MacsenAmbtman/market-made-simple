@@ -1,3 +1,4 @@
+import { openCookieSettings } from "@/lib/consent";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
@@ -82,6 +83,9 @@ function MyProgress() {
           );
         })}
       </ul>
+      <div className="mt-8 text-center md:hidden">
+        <button type="button" onClick={openCookieSettings} className="min-h-11 px-3 text-sm text-muted-foreground underline underline-offset-2">Cookie settings</button>
+      </div>
     </AppShell>
   );
 }

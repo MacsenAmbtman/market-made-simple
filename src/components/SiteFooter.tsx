@@ -1,3 +1,4 @@
+import { openCookieSettings } from "@/lib/consent";
 import { Link } from "@tanstack/react-router";
 import { Mail, ShieldAlert } from "lucide-react";
 import { Logo } from "@/components/AppShell";
@@ -65,6 +66,7 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-2">
             <li><Link to="/privacy" className={linkCls}>Privacy Policy</Link></li>
             <li><Link to="/terms" className={linkCls}>Terms of Service</Link></li>
+            <li><button type="button" onClick={openCookieSettings} className={linkCls}>Cookie settings</button></li>
           </ul>
         </div>
       </div>
