@@ -85,12 +85,13 @@ describe("phone lesson completion", () => {
     expect(getDaily().streak).toBe(0);
   });
 
-  it("mixes a question in after every two slides and moves skipped questions to the end on resume", () => {
+  it("spreads 5 questions evenly over 6 slides and moves skipped questions to the end on resume", () => {
     const kinds = buildSteps(lesson).steps.map((s) => s.kind[0]).join("");
-    expect(kinds).toBe("ssqssqssq".slice(0, lesson.slides.length + lesson.quiz.length));
+    expect(kinds).toBe("sqsqsqsqssq");
     const resumed = buildSteps(lesson, 3);
     expect(resumed.steps[resumed.start]).toEqual({ kind: "slide", i: 3 });
-    expect(resumed.steps.filter((s) => s.kind === "quiz").map((s) => s.i).sort()).toEqual([0, 1, 2]);
+    expect(resumed.steps.slice(resumed.start).filter((s) => s.kind === "quiz").map((s) => s.i)).toEqual([2, 3, 4, 0, 1]);
+    expect(resumed.steps.filter((s) => s.kind === "slide")).toHaveLength(6);
   });
 
   it("daily goal is a lesson, then a replay once everything is done", () => {

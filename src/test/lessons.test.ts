@@ -10,12 +10,12 @@ const wrong = lesson.quiz.map((q) => (q.answer + 1) % q.options.length);
 beforeEach(() => localStorage.clear());
 
 describe("lesson content", () => {
-  it("ships three modules, each with slides and a valid 3-question quiz", () => {
-    expect(courseLessons.map((l) => l.title)).toEqual(["What is a Stock?", "Understanding Risk & Reward", "How Market Orders Work"]);
+  it("starts the course with the original three modules, then the day-trading track", () => {
+    expect(courseLessons.slice(0, 3).map((l) => l.title)).toEqual(["What is a Stock?", "Understanding Risk & Reward", "How Market Orders Work"]);
     expect(dayTradingLessons.map((l) => l.level)).toEqual(["Beginner", "Intermediate", "Advanced"]);
     for (const l of lessons) {
       expect(l.slides.length).toBeGreaterThan(0);
-      expect(l.quiz).toHaveLength(3);
+      expect(l.quiz).toHaveLength(5);
       for (const q of l.quiz) expect(q.options[q.answer]).toBeDefined();
     }
   });
@@ -34,13 +34,13 @@ describe("progress", () => {
     expect(getRewards()).toHaveLength(0);
   });
 
-  it("completes on 2 of 3 and grants the reward exactly once", () => {
-    const first = recordQuiz(lesson, [correct[0]!, correct[1]!, wrong[2]!]);
-    expect(first).toMatchObject({ score: 2, passed: true, rewardGranted: lesson.reward, alreadyRewarded: false });
+  it("completes on 4 of 5 and grants the reward exactly once", () => {
+    const first = recordQuiz(lesson, correct.map((a, i) => (i === 4 ? wrong[4]! : a)));
+    expect(first).toMatchObject({ score: 4, passed: true, rewardGranted: lesson.reward, alreadyRewarded: false });
     const again = recordQuiz(lesson, correct);
-    expect(again).toMatchObject({ score: 3, passed: true, rewardGranted: 0, alreadyRewarded: true });
+    expect(again).toMatchObject({ score: 5, passed: true, rewardGranted: 0, alreadyRewarded: true });
     expect(totalRewards()).toBe(lesson.reward);
-    expect(getProgress(lesson.slug)).toMatchObject({ completed: true, bestScore: 3, attempts: 2 });
+    expect(getProgress(lesson.slug)).toMatchObject({ completed: true, bestScore: 5, attempts: 2 });
     expect(getCompleted()).toEqual([lesson.slug]);
   });
 

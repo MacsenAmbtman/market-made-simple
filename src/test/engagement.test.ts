@@ -58,7 +58,7 @@ describe("daily challenges", () => {
     expect(limit.progress(ctxFor(sim))).toBe(1);
 
     const quiz = CHALLENGES.find((c) => c.id === "quiz")!;
-    expect(quiz.progress({ sim, lessons: { "what-is-a-stock": { slide: 0, completed: true, bestScore: 3, attempts: 1, lastScore: 3, lastAttemptAt: Date.now() } }, today: dayKey() })).toBe(1);
+    expect(quiz.progress({ sim, lessons: { "what-is-a-stock": { slide: 0, completed: true, bestScore: 5, attempts: 1, lastScore: 5, outOf: 5, lastAttemptAt: Date.now() } }, today: dayKey() })).toBe(1);
   });
 
   it("grants the bonus once per day and counts as a check-in", () => {
