@@ -121,7 +121,8 @@ function Landing() {
           </div>
         </div>
       </section>
-      <SiteFooter />
+      {/* The phone opening question fits one screen; the footer returns everywhere else. */}
+      <div className={showQuiz ? "max-md:hidden" : undefined}><SiteFooter /></div>
     </div>
   );
 }
