@@ -42,7 +42,8 @@ export function LessonPath() {
     <div>
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="min-w-0">
-          <h1 className="truncate text-2xl font-bold">Unit 1: Stock basics</h1>
+          <p className="text-xs font-semibold uppercase tracking-wide text-primary">Unit 1</p>
+          <h1 className="truncate text-2xl font-bold">Stock basics</h1>
           <p className="text-sm text-muted-foreground tabular-nums">{doneCount} of {courseLessons.length} lessons done</p>
         </div>
         <div className="flex shrink-0 items-center gap-2 text-sm font-semibold tabular-nums">
