@@ -174,7 +174,6 @@ function CompleteScreen({ lesson, result, answers, onRetry, onReview }: { lesson
   // Decided once, as soon as sign-in status is known, so it can't flip mid-screen.
   const [offerSave, setOfferSave] = useState<boolean | null>(null);
   useEffect(() => {
-    console.log("[savedbg]", offerSave, status, result.passed);
     if (offerSave !== null || status === "loading") return;
     setOfferSave(shouldShowSavePrompt({ slug: lesson.slug, passed: result.passed, signedOut: status === "signed-out", seen: readSavePromptSeen() }));
   }, [offerSave, status, lesson.slug, result.passed]);
