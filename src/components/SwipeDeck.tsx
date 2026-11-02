@@ -42,7 +42,7 @@ export function SwipeDeck() {
     const right = call === card.answer;
     if (right) setScore((s) => s + 1);
     trackEvent("swipe_answer", { sym: card.sym, call, correct: right });
-    setDx(call === "buy" ? 500 : -500);
+    setDx(0);
     setResult({ call, card });
   };
   const next = () => { setResult(null); setDx(0); setI((n) => n + 1); };
@@ -60,7 +60,7 @@ export function SwipeDeck() {
   }
 
   const tilt = dx / 20;
-  const hint = dx > 30 ? "buy" : dx < -30 ? "pass" : null;
+  const hint = result ? result.call : dx > 30 ? "buy" : dx < -30 ? "pass" : null;
 
   return (
     <div>
