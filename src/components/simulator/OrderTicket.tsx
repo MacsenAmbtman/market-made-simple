@@ -73,7 +73,7 @@ export function OrderTicket({ state, sym, onSymChange, submit, preset }: { state
   };
 
   return (
-    <form id="order-ticket" onSubmit={onSubmit} className="scroll-mt-20 flex flex-col gap-4 rounded-2xl border bg-card p-5 shadow-card">
+    <form id="order-ticket" onSubmit={onSubmit} className="scroll-mb-40 flex flex-col gap-4 rounded-2xl border bg-card p-5 shadow-card">
       <h2 className="font-semibold">Place an order</h2>
 
       <div className="grid grid-cols-4 gap-1">

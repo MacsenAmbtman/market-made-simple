@@ -58,7 +58,7 @@ function Simulator() {
     if (opts.sym) setSym(opts.sym);
     setPreset({ side, qty: opts.qty, nonce: Date.now() });
     requestAnimationFrame(() => {
-      document.getElementById("order-ticket")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("order-ticket")?.scrollIntoView({ behavior: "smooth", block: "end" });
       (document.getElementById("qty") as HTMLInputElement | null)?.focus({ preventScroll: true });
     });
   };
