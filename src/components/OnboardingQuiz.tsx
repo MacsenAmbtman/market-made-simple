@@ -103,7 +103,7 @@ export function OnboardingQuiz() {
           <div className="mt-5 rounded-2xl bg-background p-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground"><Clock className="h-4 w-4" /> Quick 2-minute read</div>
             <p className="mt-2 text-base leading-relaxed">{READS[answers[0]]}</p>
-            <Link to="/learn" className="mt-3 inline-block text-sm font-semibold text-primary">Start Lesson 1</Link>
+            <Link to="/learn/$slug" params={{ slug: "what-is-a-stock" }} className="mt-3 inline-block text-sm font-semibold text-primary">Start Lesson 1</Link>
           </div>
           <Button className="mt-5 h-auto min-h-14 w-full whitespace-normal py-3 text-base font-bold" onClick={sendLink}>
             <Monitor className="mr-2 h-5 w-5 shrink-0" /> Send Workstation Link to Computer to Start Paper Trading
