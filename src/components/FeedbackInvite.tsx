@@ -55,10 +55,10 @@ export function FeedbackInvite() {
     setRecord(readInviteRecord());
   }, []);
 
+  const eligible = isPhone !== null && shouldInvite({ seconds, screens, path }, record, isPhone ? phoneContext() : undefined);
+
   useEffect(() => {
-    if (asked.current || open || isPhone === null) return;
-    const phone = isPhone ? phoneContext() : undefined;
-    if (!shouldInvite({ seconds, screens, path }, record, phone)) return;
+    if (!eligible || asked.current || open) return;
     if (isTyping()) return; // wait for them to leave the box they're in
     const ask = () => {
       asked.current = true;
@@ -66,15 +66,17 @@ export function FeedbackInvite() {
       setOpen(true);
     };
     if (!isPhone) return ask();
-    // Phones: only if they're still calmly on the path a few seconds later.
+    // Phones: only if they're still calmly on the path a few seconds later, with nothing else open.
     const t = window.setTimeout(() => {
       if (asked.current) return;
-      if (!shouldInvite({ seconds, screens, path: window.location.pathname }, readInviteRecord(), phoneContext())) return;
-      if (isTyping() || document.querySelector('[role="dialog"]')) return;
+      const still = shouldInvite({ seconds, screens, path: window.location.pathname }, readInviteRecord(), phoneContext());
+      if (!still || isTyping() || document.querySelector('[role="dialog"]')) return;
       ask();
     }, PHONE_CALM_MS);
     return () => window.clearTimeout(t);
-  }, [seconds, screens, path, record, open, isPhone]);
+    // Computers re-check every tick (so typing just delays the ask); phones keep one steady timer.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eligible, open, isPhone, isPhone ? path : seconds]);
 
   function dismiss() {
     setOpen(false);
