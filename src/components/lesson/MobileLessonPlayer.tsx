@@ -6,7 +6,6 @@ import { getAllProgress, getPracticeEntry, getProgress, passMark, practiceXp, sa
 import { trackEvent } from "@/lib/analytics";
 import { markSavePromptSeen, readSavePromptSeen, shouldShowSavePrompt } from "@/lib/save-prompt";
 import { buildSteps, finishPhoneLesson, nextCourseLesson, quizOnlySteps, type PhoneFinish, type Step } from "@/lib/phone-lesson";
-import { courseLessons } from "@/lib/lessons";
 import { fmt } from "@/lib/simulator";
 import { useAuth } from "@/hooks/use-auth";
 import { ScenarioCard } from "./ScenarioCard";
