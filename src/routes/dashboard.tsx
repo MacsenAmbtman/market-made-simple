@@ -37,7 +37,7 @@ function Dashboard() {
       <p className="mt-2 text-muted-foreground">Where would you like to go today?</p>
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {cards.map(({ to, icon: Icon, title, text }) => (
-          <Link key={to} to={to} className="group rounded-2xl border bg-card p-6 shadow-card transition hover:border-primary">
+          <Link key={to} to={to} className={`${to === "/simulator" ? "max-md:hidden " : ""}group rounded-2xl border bg-card p-6 shadow-card transition hover:border-primary`}>
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent text-primary"><Icon className="h-5 w-5" /></span>
             <h2 className="mt-4 flex items-center gap-2 text-lg font-semibold">{title}<ArrowRight className="h-4 w-4 opacity-0 transition group-hover:opacity-100" /></h2>
             <p className="mt-1 text-sm text-muted-foreground">{text}</p>
