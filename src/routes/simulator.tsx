@@ -138,7 +138,7 @@ function Simulator() {
                 <p className={`text-sm ${symChange >= 0 ? "text-primary" : "text-destructive"}`}>{pct(symChange)}</p>
                 <p className="text-sm text-muted-foreground">{selected.name} · last {series.length} ticks</p>
               </div>
-              <div className="mt-4 h-72" onPointerDown={() => trackChartInteraction("price")} onMouseEnter={() => trackChartInteraction("price")}><PriceChart data={series} tick={state.tick} /></div>
+              <div className="mt-4 h-44 lg:h-72" onPointerDown={() => trackChartInteraction("price")} onMouseEnter={() => trackChartInteraction("price")}><PriceChart data={series} tick={state.tick} /></div>
             </TabsContent>
             <TabsContent value="portfolio">
               <div className="mt-2 flex items-baseline gap-3">
