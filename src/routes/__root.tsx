@@ -15,7 +15,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../hooks/use-auth";
 import { FeedbackInvite } from "../components/FeedbackInvite";
-import { initAnalytics, trackPageView } from "../lib/analytics";
+import { initAnalytics, trackPageView, trackReturnVisit } from "../lib/analytics";
+import { dayKey } from "../lib/daily";
 
 function NotFoundComponent() {
   return (
