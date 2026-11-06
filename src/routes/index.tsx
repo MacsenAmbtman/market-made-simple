@@ -4,7 +4,10 @@ import { isOnboardingDone, skipFirstQuestion } from "@/lib/onboarding";
 import { useIsPhone } from "@/hooks/use-is-phone";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/AppShell";
-import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { HomePreviews } from "@/components/home/HomePreviews";
+import { HOME_CTAS, resumeTarget } from "@/lib/home";
+import { trackEvent } from "@/lib/analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -25,11 +28,6 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const features = [
-  { icon: Layers, title: "Bite-sized modules", text: "5-minute lessons with quick quizzes. Zero textbooks. Zero stress." },
-  { icon: Globe2, title: "Real-world examples", text: "Learn with brands you know — coffee shops, phones, and cars." },
-  { icon: LineChart, title: "Paper Simulator", text: "Practice with $10,000 of fake cash. Zero risk, real lessons." },
-];
 
 function HeaderActions() {
   const { status } = useAuth();
@@ -55,6 +53,8 @@ function Landing() {
   const isPhone = useIsPhone();
   const navigate = useNavigate();
   const [showQuiz, setShowQuiz] = useState(false);
+  const [resume, setResume] = useState<ReturnType<typeof resumeTarget>>(null);
+  useEffect(() => { setResume(resumeTarget(getAllProgress())); }, []);
   // Phones: first visit shows one quick question; anyone who answered it before (or the old
   // setup quiz) or already has lesson progress goes straight to the path.
   useEffect(() => {
@@ -85,42 +85,28 @@ function Landing() {
       <section className="px-5 pt-1 pb-[max(1.25rem,env(safe-area-inset-bottom))] md:hidden">
         {showQuiz && <FirstQuestion />}
       </section>
-      <section className="mx-auto hidden max-w-4xl px-5 pt-16 pb-20 text-center md:block">
+      <section className="mx-auto hidden max-w-4xl px-5 pt-14 pb-16 text-center md:block">
         <h1 className="text-6xl font-bold leading-tight">
           The stock market, <span className="text-primary">finally in plain English.</span>
         </h1>
-        <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">Short, friendly lessons that turn "what's a stock?" into confident first steps.</p>
+        <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">Free five-minute lessons for complete beginners, then practise what you learn with simulated money. No real cash, no jargon.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Button asChild size="lg" className="shadow-glow"><Link to="/learn/$slug" params={{ slug: "what-is-a-stock" }}>Start Free Lesson 1 <ArrowRight /></Link></Button>
-          <Button asChild size="lg" variant="ghost"><Link to="/simulator">Try the simulator</Link></Button>
+          <Button asChild size="lg" className="shadow-glow">
+            <Link to={HOME_CTAS.primary.to} params={{ slug: HOME_CTAS.primary.slug }} onClick={() => trackEvent("home_cta_click", { button: "start_practising" })}>{HOME_CTAS.primary.label} <ArrowRight /></Link>
+          </Button>
+          <Button asChild size="lg" variant="secondary">
+            <Link to={HOME_CTAS.secondary.to} onClick={() => trackEvent("home_cta_click", { button: "try_simulator" })}>{HOME_CTAS.secondary.label}</Link>
+          </Button>
         </div>
+        {resume && (
+          <p className="mt-6 text-sm text-muted-foreground">
+            Welcome back.{" "}
+            <Link to="/learn/$slug" params={{ slug: resume.slug }} onClick={() => trackEvent("home_cta_click", { button: "resume" })} className="font-medium text-primary hover:underline">Continue with "{resume.title}" →</Link>
+          </p>
+        )}
       </section>
-      <section className="mx-auto hidden max-w-6xl gap-5 px-5 pb-16 md:grid md:grid-cols-3">
-        {features.map(({ icon: Icon, title, text }) => (
-          <div key={title} className="rounded-2xl border bg-card p-6 shadow-card">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent text-primary"><Icon className="h-5 w-5" /></span>
-            <h3 className="mt-4 text-lg font-semibold">{title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">{text}</p>
-          </div>
-        ))}
-      </section>
-      <section className="mx-auto hidden max-w-6xl px-5 pb-24 md:block">
-        <div className="rounded-2xl border bg-card p-10 shadow-card">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Paper portfolio</p>
-              <p className="font-display text-4xl font-bold">$11,284.50</p>
-              <p className="text-sm text-primary">+12.8% since you started</p>
-            </div>
-            <Button asChild variant="secondary"><Link to="/simulator">Open simulator</Link></Button>
-          </div>
-          <div className="mt-8 flex h-32 items-end gap-2">
-            {[30, 42, 38, 50, 47, 60, 58, 70, 66, 78, 74, 90].map((h, i) => (
-              <div key={i} className="flex-1 rounded-t-md bg-primary/80" style={{ height: `${h}%` }} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <HomePreviews />
+      <p className="mx-auto hidden max-w-2xl px-5 pb-12 text-center text-sm text-muted-foreground md:block">Educational only, not financial advice. Every trade in Stockify uses simulated money, and past prices never guarantee future results.</p>
       {/* The phone opening question fits one screen; the footer returns everywhere else. */}
       <div className={showQuiz ? "max-md:hidden" : undefined}><SiteFooter /></div>
     </div>
