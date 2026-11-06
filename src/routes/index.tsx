@@ -4,8 +4,7 @@ import { isOnboardingDone, skipFirstQuestion } from "@/lib/onboarding";
 import { useIsPhone } from "@/hooks/use-is-phone";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/AppShell";
-import { ArrowRight } from "lucide-react";
-import { HomePreviews } from "@/components/home/HomePreviews";
+import { Layers, Globe2, LineChart, ArrowRight } from "lucide-react";
 import { HOME_CTAS, resumeTarget } from "@/lib/home";
 import { trackEvent } from "@/lib/analytics";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,6 +12,12 @@ import { AccountMenu } from "@/components/auth/AccountMenu";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FirstQuestion } from "@/components/FirstQuestion";
 import { getAllProgress } from "@/lib/lessons";
+
+const features = [
+  { icon: Layers, title: "Bite-sized modules", text: "5-minute lessons with quick quizzes. Zero textbooks. Zero stress." },
+  { icon: Globe2, title: "Real-world examples", text: "Learn with brands you know — coffee shops, phones, and cars." },
+  { icon: LineChart, title: "Paper Simulator", text: "Practice with $10,000 of fake cash. Zero risk, real lessons." },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -105,7 +110,15 @@ function Landing() {
           </p>
         )}
       </section>
-      <HomePreviews />
+      <section className="mx-auto hidden max-w-6xl gap-5 px-5 pb-16 md:grid md:grid-cols-3">
+        {features.map(({ icon: Icon, title, text }) => (
+          <div key={title} className="rounded-2xl border bg-card p-6 shadow-card">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent text-primary"><Icon className="h-5 w-5" /></span>
+            <h3 className="mt-4 text-lg font-semibold">{title}</h3>
+            <p className="mt-2 text-sm text-muted-foreground">{text}</p>
+          </div>
+        ))}
+      </section>
       <p className="mx-auto hidden max-w-2xl px-5 pb-12 text-center text-sm text-muted-foreground md:block">Educational only, not financial advice. Every trade in Stockify uses simulated money, and past prices never guarantee future results.</p>
       {/* The phone opening question fits one screen; the footer returns everywhere else. */}
       <div className={showQuiz ? "max-md:hidden" : undefined}><SiteFooter /></div>
