@@ -91,3 +91,18 @@ describe("Waitlist storage permissions", () => {
     expect(attempts.ok).toBe(false);
   });
 });
+
+describe("Phone pages unchanged", () => {
+  it("new homepage, Plus and Progress additions are hidden below the computer breakpoint", async () => {
+    const fs = await import("node:fs");
+    const previews = fs.readFileSync("src/components/home/HomePreviews.tsx", "utf8");
+    expect(previews).toMatch(/<section className="[^"]*\bhidden\b[^"]*md:block/);
+    const plus = fs.readFileSync("src/routes/plus.tsx", "utf8");
+    expect(plus).toContain('<div className="md:hidden"><ContinueOnComputer /></div>');
+    const progress = fs.readFileSync("src/routes/progress.tsx", "utf8");
+    expect(progress).toMatch(/to="\/plus" className="[^"]*\bhidden\b[^"]*md:flex/);
+    const shell = fs.readFileSync("src/components/AppShell.tsx", "utf8");
+    const phoneNav = shell.slice(shell.indexOf("const phoneNav"), shell.indexOf("] as const", shell.indexOf("const phoneNav")));
+    expect(phoneNav).not.toContain("/plus");
+  });
+});
