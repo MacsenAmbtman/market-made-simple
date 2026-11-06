@@ -23,6 +23,8 @@ function Privacy() {
       <p>When you create an account we store your email address and display name. We also store your lesson progress, streaks, quiz results and paper trading activity so you can pick up where you left off. As a guest, this data stays in your browser.</p>
       <h2>How we use it</h2>
       <p>We use your information to run the app, save your progress, and send optional emails such as reminders. You can turn reminders off at any time.</p>
+      <h2>Stockify Plus waitlist</h2>
+      <p>If you join the Stockify Plus waitlist, we store your email address, when you joined and which page you joined from. We only use it to tell you when Stockify Plus launches, and every email will include a way to unsubscribe. You can also ask us to remove you at any time by emailing stockifylearn@gmail.com. To prevent abuse, we briefly keep a scrambled (hashed) version of your network address when you join; it can't be used to identify you directly.</p>
       <h2>Cookies and analytics</h2>
       <p>If you press "Accept" on our cookie banner, we use Google Analytics to understand how people use Stockify (for example which pages and lessons are visited), and the TikTok Pixel to measure how our TikTok ads perform (for example whether a visit from an ad leads to starting a lesson or creating an account). These tools set cookies and receive information about your visit, such as pages viewed, device and browser details. We do not send your email, name or account details to TikTok. If you press "Decline", or make no choice, these tools are not loaded and the site works the same. You can change your choice at any time using "Cookie settings" in the site footer or on the Progress page.</p>
       <h2>Sharing</h2>
