@@ -77,6 +77,8 @@ export function mapToTikTok(name: string, params: Record<string, unknown>): [str
       return ["CompleteRegistration", {}];
     case "lesson_complete":
       return slug ? ["LessonComplete", { content_id: slug }] : null;
+    case "waitlist_join":
+      return ["WaitlistJoin", {}];
     default:
       return null;
   }
