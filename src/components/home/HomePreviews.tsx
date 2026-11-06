@@ -14,7 +14,6 @@ function LessonPreview() {
       <div className="mt-3 space-y-2 text-sm">
         <div className="rounded-lg border px-3 py-2">Less</div>
         <div className="rounded-lg border border-primary bg-accent px-3 py-2 text-accent-foreground">More</div>
-        <div className="rounded-lg border px-3 py-2">Exactly the same</div>
       </div>
     </Frame>
   );
