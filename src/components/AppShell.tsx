@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, LineChart, BookA, Trophy, Calculator, ChevronDown, MoreHorizontal } from "lucide-react";
+import { BookOpen, LineChart, BookA, Trophy, Calculator, ChevronDown, MoreHorizontal, Sparkles } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import logoAsset from "@/assets/stockify-logo-round.png.asset.json";
 import type { ReactNode } from "react";
@@ -23,6 +23,7 @@ const phoneNav = [
 const more = [
   { to: "/progress", label: "My Progress", icon: Trophy },
   { to: "/glossary", label: "Glossary", icon: BookA },
+  { to: "/plus", label: "Stockify Plus", icon: Sparkles },
 ] as const;
 
 function MoreMenu({ path, mobile }: { path: string; mobile?: boolean }) {

@@ -41,6 +41,48 @@ export type Database = {
         }
         Relationships: []
       }
+      plus_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          source_page: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          source_page?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          source_page?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      plus_waitlist_attempts: {
+        Row: {
+          client_hash: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          client_hash: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          client_hash?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

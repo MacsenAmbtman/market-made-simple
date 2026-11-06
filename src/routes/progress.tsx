@@ -66,6 +66,12 @@ function MyProgress() {
           <Link to="/simulator" className="mt-4 hidden text-sm text-primary hover:underline md:inline-block">Put it to work →</Link>
         </div>
       </div>
+      {done >= 3 && (
+        <Link to="/plus" className="mt-6 hidden items-center justify-between gap-4 rounded-2xl border bg-card px-6 py-4 text-sm transition hover:border-primary/50 md:flex">
+          <span><span className="font-medium">Want more practice?</span> <span className="text-muted-foreground">Stockify Plus is on the way. Join the waitlist to hear when it launches.</span></span>
+          <span className="shrink-0 text-primary">Learn more</span>
+        </Link>
+      )}
       <ul className="mt-6 space-y-2">
         {lessons.map((l) => {
           const p = progress[l.slug];

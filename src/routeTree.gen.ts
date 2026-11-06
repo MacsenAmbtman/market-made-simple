@@ -14,6 +14,7 @@ import { Route as CalculatorRouteImport } from './routes/calculator'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PlusRouteImport } from './routes/plus'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProgressRouteImport } from './routes/progress'
@@ -50,6 +51,11 @@ const GlossaryRoute = GlossaryRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlusRoute = PlusRouteImport.update({
+  id: '/plus',
+  path: '/plus',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PracticeRoute = PracticeRouteImport.update({
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/glossary': typeof GlossaryRoute
   '/login': typeof LoginRoute
+  '/plus': typeof PlusRoute
   '/practice': typeof PracticeRoute
   '/privacy': typeof PrivacyRoute
   '/progress': typeof ProgressRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/glossary': typeof GlossaryRoute
   '/login': typeof LoginRoute
+  '/plus': typeof PlusRoute
   '/practice': typeof PracticeRoute
   '/privacy': typeof PrivacyRoute
   '/progress': typeof ProgressRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/glossary': typeof GlossaryRoute
   '/login': typeof LoginRoute
+  '/plus': typeof PlusRoute
   '/practice': typeof PracticeRoute
   '/privacy': typeof PrivacyRoute
   '/progress': typeof ProgressRoute
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/glossary'
     | '/login'
+    | '/plus'
     | '/practice'
     | '/privacy'
     | '/progress'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/glossary'
     | '/login'
+    | '/plus'
     | '/practice'
     | '/privacy'
     | '/progress'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/glossary'
     | '/login'
+    | '/plus'
     | '/practice'
     | '/privacy'
     | '/progress'
@@ -238,6 +250,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   GlossaryRoute: typeof GlossaryRoute
   LoginRoute: typeof LoginRoute
+  PlusRoute: typeof PlusRoute
   PracticeRoute: typeof PracticeRoute
   PrivacyRoute: typeof PrivacyRoute
   ProgressRoute: typeof ProgressRoute
@@ -287,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plus': {
+      id: '/plus'
+      path: '/plus'
+      fullPath: '/plus'
+      preLoaderRoute: typeof PlusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/practice': {
@@ -382,6 +402,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   GlossaryRoute: GlossaryRoute,
   LoginRoute: LoginRoute,
+  PlusRoute: PlusRoute,
   PracticeRoute: PracticeRoute,
   PrivacyRoute: PrivacyRoute,
   ProgressRoute: ProgressRoute,

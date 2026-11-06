@@ -34,3 +34,4 @@
 - The phone feedback invite only fires on the /learn path after at least one completed lesson (shouldInvite's phone context); computers pass no phone context so their rules stay unchanged.
 
 - Optional tracking (GA4, TikTok Pixel) goes only through trackEvent/trackPageView in src/lib/analytics.ts, which checks consent (src/lib/consent.ts) and the live-site host on every send, so nothing loads before Accept or outside production.
+- The Stockify Plus waitlist (`plus_waitlist`, plus `plus_waitlist_attempts` for rate limiting) has RLS on with no client policies and is written only by the `joinWaitlist` server function with the service role: emails must never be readable through the site, and duplicate checks and rate limiting need privileged reads. Read sign-ups with a service-role query.
