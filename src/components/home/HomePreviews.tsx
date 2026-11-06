@@ -1,5 +1,4 @@
 // Desktop homepage previews, drawn with the app's own styling (no photos).
-import { Link } from "@tanstack/react-router";
 import { BookOpen, CandlestickChart, LineChart } from "lucide-react";
 
 function Frame({ children }: { children: React.ReactNode }) {
@@ -71,9 +70,9 @@ function DayTradingPreview() {
 }
 
 const items = [
-  { icon: BookOpen, title: "Bite-size lessons", text: "Five-minute lessons with quick quizzes. One idea at a time.", preview: <LessonPreview />, to: "/learn" as const },
-  { icon: LineChart, title: "Paper Simulator", text: "Buy and sell real-world-style stocks with $10,000 of simulated money.", preview: <SimulatorPreview />, to: "/simulator" as const },
-  { icon: CandlestickChart, title: "Day trading practice", text: "A simulated, sped-up trading session to see how fast prices move and why risk rules matter.", preview: <DayTradingPreview />, to: "/simulator" as const },
+  { icon: BookOpen, title: "Bite-size lessons", text: "Five-minute lessons with quick quizzes. One idea at a time.", preview: <LessonPreview /> },
+  { icon: LineChart, title: "Paper Simulator", text: "Buy and sell real-world-style stocks with $10,000 of simulated money.", preview: <SimulatorPreview /> },
+  { icon: CandlestickChart, title: "Day trading practice", text: "A simulated, sped-up trading session to see how fast prices move and why risk rules matter.", preview: <DayTradingPreview /> },
 ];
 
 export function HomePreviews() {
@@ -81,12 +80,12 @@ export function HomePreviews() {
     <section className="mx-auto hidden max-w-6xl px-5 pb-20 md:block">
       <h2 className="text-center text-2xl font-bold">Three ways to learn</h2>
       <div className="mt-8 grid grid-cols-3 gap-5">
-        {items.map(({ icon: Icon, title, text, preview, to }) => (
-          <Link key={title} to={to} className="group rounded-2xl border bg-card p-5 shadow-card transition hover:border-primary/50">
+        {items.map(({ icon: Icon, title, text, preview }) => (
+          <div key={title} className="rounded-2xl border bg-card p-5 shadow-card">
             {preview}
             <h3 className="mt-4 flex items-center gap-2 text-lg font-semibold"><Icon className="h-5 w-5 text-primary" />{title}</h3>
             <p className="mt-1.5 text-sm text-muted-foreground">{text}</p>
-          </Link>
+          </div>
         ))}
       </div>
     </section>
